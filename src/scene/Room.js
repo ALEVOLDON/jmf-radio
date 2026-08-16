@@ -7,6 +7,11 @@ export class Room {
     this.neonElements = [];
     this.cityBuildings = [];
     this.vipLights = [];
+    this.stageCanvas = null;
+    this.stageTexture = null;
+    this.stageCtx = null;
+    this.stagePhase = 0;
+
     this.init();
     this.scene.add(this.group);
   }
@@ -18,6 +23,7 @@ export class Room {
     this.createAcousticPanels();
     this.createNeonSigns();
     this.createVIPLounge();
+    this.createStageScreen();
   }
 
   createFloor() {
@@ -344,6 +350,198 @@ export class Room {
     this.group.add(vipGroup);
   }
 
+  createStageScreen() {
+    const stageGroup = new THREE.Group();
+    stageGroup.position.set(0, 0, 11.2);
+
+    // 1. Massive LED Stage Backdrop Screen (1024x512 Canvas)
+    this.stageCanvas = document.createElement('canvas');
+    this.stageCanvas.width = 1024;
+    this.stageCanvas.height = 512;
+    this.stageCtx = this.stageCanvas.getContext('2d');
+
+    this.stageTexture = new THREE.CanvasTexture(this.stageCanvas);
+    this.stageTexture.minFilter = THREE.LinearFilter;
+    this.stageTexture.magFilter = THREE.LinearFilter;
+
+    const screenGeo = new THREE.PlaneGeometry(10.5, 5.2);
+    const screenMat = new THREE.MeshBasicMaterial({
+      map: this.stageTexture,
+      side: THREE.FrontSide
+    });
+    const screenMesh = new THREE.Mesh(screenGeo, screenMat);
+    screenMesh.position.set(0, 4.4, -0.1);
+    screenMesh.rotation.y = Math.PI; // Face towards DJ booth and dance floor
+    stageGroup.add(screenMesh);
+
+    // 2. Heavy Stage Screen Frame / Bezel
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: 0x07080f,
+      metalness: 0.9,
+      roughness: 0.2
+    });
+    const frameTop = new THREE.Mesh(new THREE.BoxGeometry(11.0, 0.2, 0.3), frameMat);
+    frameTop.position.set(0, 7.1, 0);
+    const frameBottom = new THREE.Mesh(new THREE.BoxGeometry(11.0, 0.3, 0.3), frameMat);
+    frameBottom.position.set(0, 1.7, 0);
+    const frameLeft = new THREE.Mesh(new THREE.BoxGeometry(0.3, 5.6, 0.3), frameMat);
+    frameLeft.position.set(-5.35, 4.4, 0);
+    const frameRight = new THREE.Mesh(new THREE.BoxGeometry(0.3, 5.6, 0.3), frameMat);
+    frameRight.position.set(5.35, 4.4, 0);
+    stageGroup.add(frameTop, frameBottom, frameLeft, frameRight);
+
+    // 3. Neon Outline Trim
+    const trimMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    const trim = new THREE.Mesh(new THREE.BoxGeometry(10.7, 0.04, 0.04), trimMat);
+    trim.position.set(0, 7.0, -0.15);
+    stageGroup.add(trim);
+
+    // 4. Elevated Club Stage Platform at base
+    const stageRiser = new THREE.Mesh(
+      new THREE.BoxGeometry(12.0, 0.5, 2.5),
+      new THREE.MeshStandardMaterial({ color: 0x0d0e18, metalness: 0.7, roughness: 0.3 })
+    );
+    stageRiser.position.set(0, 0.25, -1.0);
+    stageGroup.add(stageRiser);
+
+    // 5. Left & Right Neon Wall Banners ("VIP LOUNGE" & "COCKTAIL BAR")
+    const createNeonBanner = (text, xPos, colorHex) => {
+      const bannerCanvas = document.createElement('canvas');
+      bannerCanvas.width = 512;
+      bannerCanvas.height = 128;
+      const bCtx = bannerCanvas.getContext('2d');
+      bCtx.fillStyle = '#05060d';
+      bCtx.fillRect(0, 0, 512, 128);
+      bCtx.font = '900 44px Orbitron, sans-serif';
+      bCtx.fillStyle = colorHex;
+      bCtx.shadowColor = colorHex;
+      bCtx.shadowBlur = 18;
+      bCtx.textAlign = 'center';
+      bCtx.textBaseline = 'middle';
+      bCtx.fillText(text, 256, 64);
+
+      const bannerTex = new THREE.CanvasTexture(bannerCanvas);
+      const bannerMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.6, 0.9),
+        new THREE.MeshBasicMaterial({ map: bannerTex })
+      );
+      bannerMesh.position.set(xPos, 6.2, 3.5);
+      bannerMesh.rotation.y = xPos < 0 ? Math.PI / 2 : -Math.PI / 2;
+      this.group.add(bannerMesh);
+    };
+
+    createNeonBanner('VIP LOUNGE', -11.75, '#ff007f');
+    createNeonBanner('COCKTAIL BAR', 11.75, '#00f0ff');
+
+    this.group.add(stageGroup);
+    this.drawInitialStageScreen();
+  }
+
+  drawInitialStageScreen() {
+    if (!this.stageCtx) return;
+    const ctx = this.stageCtx;
+    ctx.fillStyle = '#05060c';
+    ctx.fillRect(0, 0, 1024, 512);
+
+    ctx.font = '900 84px Orbitron, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = '#00f0ff';
+    ctx.shadowBlur = 24;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('JMF RADIO', 512, 190);
+
+    ctx.font = '700 24px "Space Grotesk", sans-serif';
+    ctx.fillStyle = '#00f0ff';
+    ctx.shadowColor = '#00f0ff';
+    ctx.shadowBlur = 12;
+    ctx.fillText('● AUDIO SPECTRUM ● ON AIR ●', 512, 260);
+
+    if (this.stageTexture) this.stageTexture.needsUpdate = true;
+  }
+
+  updateStageScreen(audioAnalysis) {
+    if (!this.stageCtx) return;
+    const ctx = this.stageCtx;
+    const w = 1024;
+    const h = 512;
+
+    this.stagePhase += 0.05 + (audioAnalysis.bass || 0) * 0.05;
+
+    // Semi-transparent clear for smooth motion trails
+    ctx.fillStyle = 'rgba(5, 6, 12, 0.35)';
+    ctx.fillRect(0, 0, w, h);
+
+    // 1. Grid Background
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 64) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 0; y < h; y += 48) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // 2. Large Central "JMF RADIO" Brand Header
+    const pulse = 1.0 + (audioAnalysis.bass || 0) * 0.15;
+    ctx.save();
+    ctx.translate(512, 175);
+    ctx.scale(pulse, pulse);
+    ctx.font = '900 88px Orbitron, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = (audioAnalysis.bass || 0) > 0.6 ? '#ff007f' : '#00f0ff';
+    ctx.shadowBlur = 24 + (audioAnalysis.bass || 0) * 20;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('JMF RADIO', 0, 0);
+    ctx.restore();
+
+    ctx.font = '700 20px "Space Grotesk", sans-serif';
+    ctx.fillStyle = '#00f0ff';
+    ctx.shadowColor = '#00f0ff';
+    ctx.shadowBlur = 10;
+    ctx.textAlign = 'center';
+    ctx.fillText('THE FUTURE OF SOUND ● 24/7 PRO DJ', 512, 245);
+
+    // 3. Dynamic Sine & Multi-Wave Equalizer Spectrum Lines (like in reference photo)
+    const raw = audioAnalysis.rawArray || [];
+    const len = raw.length || 64;
+    const centerY = 375;
+
+    // Multi-color neon wave lines (Cyan, Magenta, Purple)
+    const waves = [
+      { color: '#00f0ff', blur: 16, amp: 70 * (0.4 + audioAnalysis.bass * 1.2), speed: 1.0, width: 3.5 },
+      { color: '#ff007f', blur: 14, amp: 55 * (0.3 + audioAnalysis.mids * 1.0), speed: 1.4, width: 2.5 },
+      { color: '#a855f7', blur: 12, amp: 40 * (0.3 + audioAnalysis.treble * 1.0), speed: 1.8, width: 2.0 }
+    ];
+
+    waves.forEach(wave => {
+      ctx.strokeStyle = wave.color;
+      ctx.shadowColor = wave.color;
+      ctx.shadowBlur = wave.blur;
+      ctx.lineWidth = wave.width;
+      ctx.beginPath();
+
+      for (let x = 0; x <= w; x += 8) {
+        const i = Math.floor((x / w) * (len - 1));
+        const val = (raw[i] || 0) / 255;
+        const sinPart = Math.sin(x * 0.015 + this.stagePhase * wave.speed) * Math.cos(x * 0.008);
+        const y = centerY + sinPart * wave.amp + (val - 0.5) * wave.amp * 1.5;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    });
+
+    if (this.stageTexture) this.stageTexture.needsUpdate = true;
+  }
+
   update(audioAnalysis, themeColors) {
     const time = performance.now() * 0.002;
     for (let i = 0; i < this.cityBuildings.length; i++) {
@@ -358,5 +556,7 @@ export class Room {
         lamp.emissiveIntensity = 0.5 + bass * 1.5;
       }
     }
+
+    this.updateStageScreen(audioAnalysis);
   }
 }

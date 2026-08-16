@@ -8,6 +8,10 @@ import { DanceFloor } from './DanceFloor.js';
 import { BarArea } from './BarArea.js';
 
 export const CAMERA_PRESETS = {
+  pov: {
+    position: new THREE.Vector3(0, 1.38, -0.65),
+    target: new THREE.Vector3(0, 1.15, 6.0)
+  },
   booth: {
     position: new THREE.Vector3(0, 1.8, 2.6),
     target: new THREE.Vector3(0, 1.4, 0)
@@ -93,6 +97,11 @@ export class DJScene {
   setCameraPreset(presetName) {
     if (!CAMERA_PRESETS[presetName]) return;
     this.activePreset = presetName;
+
+    // In 1st-person POV mode, hide DJ upper body so view over decks is 100% unobstructed
+    if (this.dj && this.dj.djTorso) {
+      this.dj.djTorso.visible = (presetName !== 'pov');
+    }
 
     if (presetName === 'cinematic') {
       this.isCinematicOrbit = true;
