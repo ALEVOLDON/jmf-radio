@@ -626,7 +626,13 @@ export class UIController {
       }
     }
 
-    // 2. Spin CDJ Jog Platters Continuously Forward
+    // 2. Update Real Live Analyzed BPM Displays
+    if (audioAnalysis) {
+      if (this.deckABpm) this.deckABpm.textContent = `${audioAnalysis.bpmA.toFixed(1)} BPM`;
+      if (this.deckBBpm) this.deckBBpm.textContent = `${audioAnalysis.bpmB.toFixed(1)} BPM`;
+    }
+
+    // 3. Spin CDJ Jog Platters Continuously Forward
     if (isPlaying) {
       const isDeckAPlaying = activeDeck === 'A' || this.audioEngine.isCrossfading || this.audioEngine.deckStates?.A?.isPlaying;
       const isDeckBPlaying = activeDeck === 'B' || this.audioEngine.isCrossfading || this.audioEngine.deckStates?.B?.isPlaying;

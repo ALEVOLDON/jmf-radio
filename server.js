@@ -102,6 +102,7 @@ async function getTrackMetadata(filePath, id) {
     duration: Math.max(60, Math.min(3600, estimatedDuration)),
     year: null,
     bitrate: 192,
+    bpm: null,
     hasCover: false
   };
 
@@ -115,6 +116,7 @@ async function getTrackMetadata(filePath, id) {
     if (mm.common.artist) meta.artist = mm.common.artist;
     if (mm.common.album) meta.album = mm.common.album;
     if (mm.common.year) meta.year = mm.common.year;
+    if (mm.common.bpm) meta.bpm = Math.round(mm.common.bpm * 10) / 10;
     if (mm.format.duration) meta.duration = Math.round(mm.format.duration * 10) / 10;
     if (mm.format.bitrate) meta.bitrate = Math.round(mm.format.bitrate / 1000);
   } catch (err) {
