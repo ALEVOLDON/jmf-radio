@@ -1062,6 +1062,8 @@ export class UIController {
   }
 
   onTransition(isTransitioning, fromDeck, toDeck, nextTrack) {
+    if (this.transitionTimer) clearTimeout(this.transitionTimer);
+
     if (isTransitioning && nextTrack) {
       if (this.transitionText) {
         this.transitionText.textContent = `🎛️ DJ MIXING: DECK ${fromDeck} ➔ DECK ${toDeck} ("${nextTrack.title.substring(0, 24)}...")`;
@@ -1075,6 +1077,11 @@ export class UIController {
         if (this.deckAState) this.deckAState.textContent = 'MIXING IN';
         if (this.deckAPlay) this.deckAPlay.classList.add('active-play');
       }
+
+      // Auto-hide transition banner after 3.5 seconds
+      this.transitionTimer = setTimeout(() => {
+        if (this.transitionBanner) this.transitionBanner.classList.add('hidden');
+      }, 3500);
     } else {
       if (this.transitionBanner) this.transitionBanner.classList.add('hidden');
     }

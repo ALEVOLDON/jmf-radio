@@ -712,6 +712,9 @@ export class AudioEngine {
               if (this.onTrackChange) {
                 this.onTrackChange(this.currentTrack, this.queue, this.totalTracks);
               }
+              if (this.onTransition) {
+                this.onTransition(false, null, null, null);
+              }
             }
           })
           .catch(e => console.warn('Error preloading upcoming track on standby deck:', e));
