@@ -672,11 +672,16 @@ export class UIController {
     }
 
     // Mode Switcher (DJ Workstation vs Minimalist Radio Mode)
+    document.body.classList.add('mode-dj');
+
     if (this.btnModeDj && this.btnModeRadio) {
       this.btnModeDj.addEventListener('click', () => {
         this.audioEngine.setMixMode('dj');
         this.btnModeDj.classList.add('active');
         this.btnModeRadio.classList.remove('active');
+
+        document.body.classList.add('mode-dj');
+        document.body.classList.remove('mode-radio');
 
         if (this.djStation) this.djStation.classList.remove('hidden');
         if (this.mobileDeckTabs) this.mobileDeckTabs.style.display = '';
@@ -688,6 +693,9 @@ export class UIController {
         this.audioEngine.setMixMode('radio');
         this.btnModeRadio.classList.add('active');
         this.btnModeDj.classList.remove('active');
+
+        document.body.classList.add('mode-radio');
+        document.body.classList.remove('mode-dj');
 
         if (this.djStation) this.djStation.classList.add('hidden');
         if (this.mobileDeckTabs) this.mobileDeckTabs.style.display = 'none';

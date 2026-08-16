@@ -342,6 +342,28 @@ html, body {
 }
 
 /* ======================================================== */
+/* 📻 RADIO MODE VS 🎛️ DJ MODE VISIBILITY RULES */
+/* ======================================================== */
+body.mode-radio .hardware-dj-station,
+body.mode-radio .mobile-deck-tabs,
+body.mode-radio .bottom-utility-bar,
+body.mode-radio .transition-banner,
+.hardware-dj-station.hidden,
+.bottom-utility-bar.hidden,
+.mobile-deck-tabs.hidden {
+  display: none !important;
+}
+
+body.mode-radio .radio-mode-console {
+  display: flex !important;
+}
+
+body.mode-dj .radio-mode-console,
+.radio-mode-console.hidden {
+  display: none !important;
+}
+
+/* ======================================================== */
 /* 🔵 DECK A & 🔴 DECK B FRAMES */
 /* ======================================================== */
 .cdj-deck-unit {
