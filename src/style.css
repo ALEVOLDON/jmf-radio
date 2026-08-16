@@ -1420,8 +1420,8 @@ body.mode-dj .radio-mode-console,
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: rgba(4, 5, 9, 0.88);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
@@ -1429,6 +1429,8 @@ body.mode-dj .radio-mode-console,
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .start-overlay.hidden { display: none; }
@@ -1437,10 +1439,13 @@ body.mode-dj .radio-mode-console,
   background: rgba(14, 16, 28, 0.95);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
-  padding: 30px 40px;
+  padding: 28px 20px;
   text-align: center;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(0, 240, 255, 0.15);
-  max-width: 440px;
+  width: 100%;
+  max-width: 360px;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
 .start-vinyl-icon { font-size: 40px; margin-bottom: 10px; }
@@ -1678,8 +1683,10 @@ body.mode-dj .radio-mode-console,
   }
 
   .start-card {
-    padding: 24px 20px;
-    margin: 12px;
+    padding: 24px 16px;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
   }
 
   .start-card h2 {
