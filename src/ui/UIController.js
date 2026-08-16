@@ -61,25 +61,13 @@ export class UIController {
     this.deckBLoop8 = document.getElementById('deck-b-loop-8');
 
     // --- PIONEER DJM MIXER CONTROLS ---
-    this.knobCh1Trim = document.getElementById('knob-ch1-trim');
-    this.knobCh1Hi = document.getElementById('knob-ch1-hi');
-    this.knobCh1Mid = document.getElementById('knob-ch1-mid');
-    this.knobCh1Low = document.getElementById('knob-ch1-low');
-    this.knobCh1Filter = document.getElementById('knob-ch1-filter');
     this.faderCh1 = document.getElementById('fader-ch1');
     this.vuMeterCh1Leds = document.querySelectorAll('#vu-meter-ch1 .led');
-
-    this.knobCh2Trim = document.getElementById('knob-ch2-trim');
-    this.knobCh2Hi = document.getElementById('knob-ch2-hi');
-    this.knobCh2Mid = document.getElementById('knob-ch2-mid');
-    this.knobCh2Low = document.getElementById('knob-ch2-low');
-    this.knobCh2Filter = document.getElementById('knob-ch2-filter');
     this.faderCh2 = document.getElementById('fader-ch2');
     this.vuMeterCh2Leds = document.querySelectorAll('#vu-meter-ch2 .led');
 
     this.masterVuL = document.querySelectorAll('#master-vu-l .led');
     this.masterVuR = document.querySelectorAll('#master-vu-r .led');
-    this.knobMasterVol = document.getElementById('knob-master-vol');
     this.btnMixNow = document.getElementById('btn-mix-now');
     this.btnPrev = document.getElementById('btn-prev');
     this.btnNext = document.getElementById('btn-next');
@@ -95,6 +83,135 @@ export class UIController {
     this.jogAngleB = 0;
 
     this.initHardwareEvents();
+    this.initRotaryKnobs();
+  }
+
+  // --- Real Circular Rotary Knobs Handler ---
+  initRotaryKnobs() {
+    const knobElements = document.querySelectorAll('.rotary-knob-component');
+
+    knobElements.forEach(knobEl => {
+      const param = knobEl.getAttribute('data-param');
+      const min = parseFloat(knobEl.getAttribute('data-min'));
+      const max = parseFloat(knobEl.getAttribute('data-max'));
+      const defaultVal = parseFloat(knobEl.getAttribute('data-default'));
+      let currentVal = parseFloat(knobEl.getAttribute('data-val'));
+
+      const capEl = knobEl.querySelector('.knob-cap');
+
+      // Update rotation visually (-135° to +135°)
+      const updateKnobVisual = (val) => {
+        const pct = (val - min) / (max - min);
+        const deg = -135 + (pct * 270);
+        if (capEl) capEl.style.transform = `rotate(${deg}deg)`;
+        knobEl.setAttribute('data-val', val);
+      };
+
+      // Dispatch parameter to AudioEngine
+      const dispatchParam = (val) => {
+        if (!this.audioEngine) return;
+        switch (param) {
+          case 'trim-A':
+            this.audioEngine.setChannelGain('A', val);
+            break;
+          case 'eq-A-high':
+            this.audioEngine.setEQ('A', 'high', val);
+            break;
+          case 'eq-A-mid':
+            this.audioEngine.setEQ('A', 'mid', val);
+            break;
+          case 'eq-A-low':
+            this.audioEngine.setEQ('A', 'low', val);
+            break;
+          case 'filter-A':
+            this.audioEngine.setFilterSweep('A', val);
+            break;
+
+          case 'trim-B':
+            this.audioEngine.setChannelGain('B', val);
+            break;
+          case 'eq-B-high':
+            this.audioEngine.setEQ('B', 'high', val);
+            break;
+          case 'eq-B-mid':
+            this.audioEngine.setEQ('B', 'mid', val);
+            break;
+          case 'eq-B-low':
+            this.audioEngine.setEQ('B', 'low', val);
+            break;
+          case 'filter-B':
+            this.audioEngine.setFilterSweep('B', val);
+            break;
+
+          case 'master-vol':
+            this.audioEngine.setVolume(val);
+            break;
+        }
+      };
+
+      // Initialize default angle
+      updateKnobVisual(currentVal);
+
+      // Drag to rotate
+      let isDragging = false;
+      let startY = 0;
+      let startVal = currentVal;
+
+      const onPointerDown = (e) => {
+        isDragging = true;
+        startY = e.clientY || (e.touches && e.touches[0].clientY);
+        startVal = currentVal;
+        knobEl.classList.add('is-dragging');
+        window.addEventListener('mousemove', onPointerMove);
+        window.addEventListener('mouseup', onPointerUp);
+        window.addEventListener('touchmove', onPointerMove, { passive: false });
+        window.addEventListener('touchend', onPointerUp);
+      };
+
+      const onPointerMove = (e) => {
+        if (!isDragging) return;
+        if (e.preventDefault) e.preventDefault();
+        const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        const deltaY = startY - clientY; // Up is increase
+        const range = max - min;
+        const sensitivity = range / 140; // 140px vertical drag for full rotation
+
+        currentVal = Math.max(min, Math.min(max, startVal + (deltaY * sensitivity)));
+        updateKnobVisual(currentVal);
+        dispatchParam(currentVal);
+      };
+
+      const onPointerUp = () => {
+        if (isDragging) {
+          isDragging = false;
+          knobEl.classList.remove('is-dragging');
+          window.removeEventListener('mousemove', onPointerMove);
+          window.removeEventListener('mouseup', onPointerUp);
+          window.removeEventListener('touchmove', onPointerMove);
+          window.removeEventListener('touchend', onPointerUp);
+        }
+      };
+
+      knobEl.addEventListener('mousedown', onPointerDown);
+      knobEl.addEventListener('touchstart', onPointerDown, { passive: false });
+
+      // Mouse Wheel adjustment
+      knobEl.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 1 : -1;
+        const step = (max - min) / 30;
+        currentVal = Math.max(min, Math.min(max, currentVal + (delta * step)));
+        updateKnobVisual(currentVal);
+        dispatchParam(currentVal);
+      });
+
+      // Double-click to reset
+      knobEl.addEventListener('dblclick', () => {
+        currentVal = defaultVal;
+        updateKnobVisual(currentVal);
+        dispatchParam(currentVal);
+      });
+    });
   }
 
   initHardwareEvents() {
@@ -195,43 +312,15 @@ export class UIController {
       });
     }
 
-    // --- PIONEER DJM MIXER Knobs & Faders ---
-    if (this.knobCh1Hi) {
-      this.knobCh1Hi.addEventListener('input', (e) => this.audioEngine.setEQ('A', 'high', parseFloat(e.target.value)));
-    }
-    if (this.knobCh1Mid) {
-      this.knobCh1Mid.addEventListener('input', (e) => this.audioEngine.setEQ('A', 'mid', parseFloat(e.target.value)));
-    }
-    if (this.knobCh1Low) {
-      this.knobCh1Low.addEventListener('input', (e) => this.audioEngine.setEQ('A', 'low', parseFloat(e.target.value)));
-    }
-    if (this.knobCh1Filter) {
-      this.knobCh1Filter.addEventListener('input', (e) => this.audioEngine.setFilterSweep('A', parseFloat(e.target.value)));
-    }
+    // --- Faders ---
     if (this.faderCh1) {
       this.faderCh1.addEventListener('input', (e) => this.audioEngine.setChannelGain('A', parseFloat(e.target.value)));
-    }
-
-    if (this.knobCh2Hi) {
-      this.knobCh2Hi.addEventListener('input', (e) => this.audioEngine.setEQ('B', 'high', parseFloat(e.target.value)));
-    }
-    if (this.knobCh2Mid) {
-      this.knobCh2Mid.addEventListener('input', (e) => this.audioEngine.setEQ('B', 'mid', parseFloat(e.target.value)));
-    }
-    if (this.knobCh2Low) {
-      this.knobCh2Low.addEventListener('input', (e) => this.audioEngine.setEQ('B', 'low', parseFloat(e.target.value)));
-    }
-    if (this.knobCh2Filter) {
-      this.knobCh2Filter.addEventListener('input', (e) => this.audioEngine.setFilterSweep('B', parseFloat(e.target.value)));
     }
     if (this.faderCh2) {
       this.faderCh2.addEventListener('input', (e) => this.audioEngine.setChannelGain('B', parseFloat(e.target.value)));
     }
 
     // Master Controls
-    if (this.knobMasterVol) {
-      this.knobMasterVol.addEventListener('input', (e) => this.audioEngine.setVolume(parseFloat(e.target.value)));
-    }
     if (this.btnMixNow) {
       this.btnMixNow.addEventListener('click', () => this.audioEngine.triggerDJCrossfade());
     }

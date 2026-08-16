@@ -188,29 +188,49 @@
           <div class="mixer-ch-strip" id="mixer-ch-1">
             <span class="ch-title cyan-text">CH 1</span>
             
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch1-trim" data-param="trim-A" data-min="0" data-max="1.5" data-val="1.0" data-default="1.0" title="CH 1 Trim / Gain">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">TRIM</span>
-              <input type="range" class="dj-knob" id="knob-ch1-trim" min="0" max="1.5" step="0.05" value="1.0">
             </div>
 
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch1-hi" data-param="eq-A-high" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 1 High EQ (-26dB to +6dB)">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">HI</span>
-              <input type="range" class="dj-knob" id="knob-ch1-hi" min="-26" max="6" step="1" value="0">
             </div>
 
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch1-mid" data-param="eq-A-mid" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 1 Mid EQ (-26dB to +6dB)">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">MID</span>
-              <input type="range" class="dj-knob" id="knob-ch1-mid" min="-26" max="6" step="1" value="0">
             </div>
 
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch1-low" data-param="eq-A-low" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 1 Low / Bass EQ (-26dB to +6dB)">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">LOW</span>
-              <input type="range" class="dj-knob" id="knob-ch1-low" min="-26" max="6" step="1" value="0">
             </div>
 
-            <div class="rotary-knob-wrap filter-knob">
-              <span class="knob-label">COLOR</span>
-              <input type="range" class="dj-knob filter-color" id="knob-ch1-filter" min="0" max="1" step="0.01" value="0.5">
+            <div class="rotary-knob-component knob-color-fx" id="knob-ch1-filter" data-param="filter-A" data-min="0" data-max="1" data-val="0.5" data-default="0.5" title="CH 1 Color Filter (LPF <-> HPF)">
+              <div class="knob-dial dial-large">
+                <div class="knob-cap cap-color-fx">
+                  <div class="knob-pointer pointer-pink"></div>
+                </div>
+              </div>
+              <span class="knob-label pink-text">COLOR</span>
             </div>
 
             <button class="btn-ch-cue active" id="btn-ch1-cue">🎧 CUE</button>
@@ -259,10 +279,14 @@
               </div>
             </div>
 
-            <!-- Master Volume Knob -->
-            <div class="rotary-knob-wrap">
-              <span class="knob-label">MASTER</span>
-              <input type="range" class="dj-knob master-knob" id="knob-master-vol" min="0" max="1" step="0.01" value="0.8">
+            <!-- Master Volume Rotary Knob -->
+            <div class="rotary-knob-component knob-master-fx" id="knob-master-vol" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Level">
+              <div class="knob-dial dial-master">
+                <div class="knob-cap cap-gold">
+                  <div class="knob-pointer pointer-gold"></div>
+                </div>
+              </div>
+              <span class="knob-label gold-text">MASTER</span>
             </div>
 
             <button class="btn-mix-flash" id="btn-mix-now" title="Trigger Instant 8-Second Crossfade Mix">
@@ -293,29 +317,49 @@
           <div class="mixer-ch-strip" id="mixer-ch-2">
             <span class="ch-title magenta-text">CH 2</span>
             
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch2-trim" data-param="trim-B" data-min="0" data-max="1.5" data-val="1.0" data-default="1.0" title="CH 2 Trim / Gain">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">TRIM</span>
-              <input type="range" class="dj-knob" id="knob-ch2-trim" min="0" max="1.5" step="0.05" value="1.0">
             </div>
 
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch2-hi" data-param="eq-B-high" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 2 High EQ (-26dB to +6dB)">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">HI</span>
-              <input type="range" class="dj-knob" id="knob-ch2-hi" min="-26" max="6" step="1" value="0">
             </div>
 
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch2-mid" data-param="eq-B-mid" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 2 Mid EQ (-26dB to +6dB)">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">MID</span>
-              <input type="range" class="dj-knob" id="knob-ch2-mid" min="-26" max="6" step="1" value="0">
             </div>
 
-            <div class="rotary-knob-wrap">
+            <div class="rotary-knob-component" id="knob-ch2-low" data-param="eq-B-low" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 2 Low / Bass EQ (-26dB to +6dB)">
+              <div class="knob-dial">
+                <div class="knob-cap">
+                  <div class="knob-pointer"></div>
+                </div>
+              </div>
               <span class="knob-label">LOW</span>
-              <input type="range" class="dj-knob" id="knob-ch2-low" min="-26" max="6" step="1" value="0">
             </div>
 
-            <div class="rotary-knob-wrap filter-knob">
-              <span class="knob-label">COLOR</span>
-              <input type="range" class="dj-knob filter-color" id="knob-ch2-filter" min="0" max="1" step="0.01" value="0.5">
+            <div class="rotary-knob-component knob-color-fx" id="knob-ch2-filter" data-param="filter-B" data-min="0" data-max="1" data-val="0.5" data-default="0.5" title="CH 2 Color Filter (LPF <-> HPF)">
+              <div class="knob-dial dial-large">
+                <div class="knob-cap cap-color-fx">
+                  <div class="knob-pointer pointer-pink"></div>
+                </div>
+              </div>
+              <span class="knob-label pink-text">COLOR</span>
             </div>
 
             <button class="btn-ch-cue" id="btn-ch2-cue">🎧 CUE</button>
