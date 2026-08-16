@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export class DJCharacter {
   constructor(scene) {
@@ -23,10 +24,34 @@ export class DJCharacter {
   }
 
   init() {
-    this.createDJBooth();
-    this.createTurntablesAndMixer();
     this.createLaptop();
     this.createDJAvatar();
+
+    const loader = new GLTFLoader();
+    loader.load(
+      '/models/dj_booth_equipment.glb',
+      (gltf) => {
+        const booth = gltf.scene;
+        booth.traverse((node) => {
+          if (node.isMesh) {
+            node.castShadow = true;
+            node.receiveShadow = true;
+            if (node.name.includes('JogPlatter_A')) {
+              this.turntables.push({ mesh: node, isA: true });
+            } else if (node.name.includes('JogPlatter_B')) {
+              this.turntables.push({ mesh: node, isA: false });
+            }
+          }
+        });
+        this.group.add(booth);
+      },
+      undefined,
+      (err) => {
+        console.warn('Fallback to procedural booth:', err);
+        this.createDJBooth();
+        this.createTurntablesAndMixer();
+      }
+    );
   }
 
   createDJBooth() {
@@ -356,9 +381,11 @@ export class DJCharacter {
     const rawFreq = audioAnalysis.rawArray || [];
 
     // 1. Spin Vinyl records when music is playing
-    if (isPlaying) {
-      this.turntables[0].vinyl.rotation.y += 0.04;
-      this.turntables[1].vinyl.rotation.y += 0.04;
+    if (isPlaying && this.turntables.length > 0) {
+      this.turntables.forEach(t => {
+        if (t.mesh) t.mesh.rotation.y += 0.04;
+        else if (t.vinyl) t.vinyl.rotation.y += 0.04;
+      });
     }
 
     // 2. Animate Mixer Crossfader position
