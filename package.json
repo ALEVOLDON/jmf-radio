@@ -1,0 +1,23 @@
+{
+  "name": "virtual-dj-radio",
+  "version": "1.0.0",
+  "description": "3D Virtual DJ Room with 24/7 Local Music Radio Stream",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "server": "node server.js",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "music-metadata": "^7.14.0",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}
