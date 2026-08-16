@@ -274,16 +274,10 @@ app.post(['/api/skip', '/api/next'], async (req, res) => {
   });
 });
 
-app.get('/api/stream', (req, res) => {
-  if (playlist.length === 0) {
-    return res.status(404).send('No tracks in playlist');
-  }
-
-  const current = playlist[currentIndex];
-  const filePath = current.path;
-
-  if (!fs.existsSync(filePath)) {
-    return res.status(404).send('File not found');
+// Audio streaming helper
+function streamAudioFile(filePath, req, res) {
+  if (!filePath || !fs.existsSync(filePath)) {
+    return res.status(404).send('Audio file not found');
   }
 
   const stat = fs.statSync(filePath);
@@ -297,7 +291,9 @@ app.get('/api/stream', (req, res) => {
     '.wav': 'audio/wav',
     '.flac': 'audio/flac',
     '.m4a': 'audio/mp4',
-    '.aac': 'audio/aac'
+    '.aac': 'audio/aac',
+    '.wma': 'audio/x-ms-wma',
+    '.opus': 'audio/opus'
   };
   const contentType = contentTypeMap[ext] || 'audio/mpeg';
 
@@ -312,52 +308,37 @@ app.get('/api/stream', (req, res) => {
       'Accept-Ranges': 'bytes',
       'Content-Length': chunksize,
       'Content-Type': contentType,
+      'Access-Control-Allow-Origin': '*'
     });
     file.pipe(res);
   } else {
     res.writeHead(200, {
       'Content-Length': fileSize,
       'Content-Type': contentType,
-      'Accept-Ranges': 'bytes'
+      'Accept-Ranges': 'bytes',
+      'Access-Control-Allow-Origin': '*'
     });
     fs.createReadStream(filePath).pipe(res);
   }
-});
+}
 
-app.get('/api/track/:id/audio', (req, res) => {
+// Stream specific track by ID
+app.get(['/api/stream/:id', '/api/track/:id/audio'], (req, res) => {
   const id = parseInt(req.params.id, 10);
   const track = playlist.find(t => t.id === id);
-  if (!track || !fs.existsSync(track.path)) {
-    return res.status(404).send('Track not found');
+  if (!track) {
+    return res.status(404).send('Track ID not found');
   }
+  streamAudioFile(track.path, req, res);
+});
 
-  const stat = fs.statSync(track.path);
-  const fileSize = stat.size;
-  const range = req.headers.range;
-  const ext = path.extname(track.path).toLowerCase();
-  const contentType = ext === '.flac' ? 'audio/flac' : ext === '.ogg' ? 'audio/ogg' : ext === '.wav' ? 'audio/wav' : 'audio/mpeg';
-
-  if (range) {
-    const parts = range.replace(/bytes=/, "").split("-");
-    const start = parseInt(parts[0], 10);
-    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
-    const chunksize = (end - start) + 1;
-    const file = fs.createReadStream(track.path, { start, end });
-    res.writeHead(206, {
-      'Content-Range': `bytes ${start}-${end}/${fileSize}`,
-      'Accept-Ranges': 'bytes',
-      'Content-Length': chunksize,
-      'Content-Type': contentType,
-    });
-    file.pipe(res);
-  } else {
-    res.writeHead(200, {
-      'Content-Length': fileSize,
-      'Content-Type': contentType,
-      'Accept-Ranges': 'bytes'
-    });
-    fs.createReadStream(track.path).pipe(res);
+// Stream current live radio track
+app.get('/api/stream', (req, res) => {
+  if (playlist.length === 0) {
+    return res.status(404).send('No tracks in playlist');
   }
+  const current = playlist[currentIndex];
+  streamAudioFile(current.path, req, res);
 });
 
 app.get('/api/cover/:id', async (req, res) => {
