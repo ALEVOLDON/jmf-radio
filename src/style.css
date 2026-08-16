@@ -555,41 +555,55 @@ html, body {
   font-family: monospace;
 }
 
-/* Deck Lower Controls (Jog + Controls) */
+/* Deck Lower Controls (Balanced 2-Block Layout) */
 .deck-lower-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: 148px 1fr;
+  align-items: stretch;
+  gap: 14px;
+  padding-top: 2px;
 }
 
-/* Pioneer CDJ Jog Platter */
+/* Left Block: Big 140px CDJ Jog Platter & Transport */
+.deck-left-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
 .cdj-jog-housing {
-  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cdj-jog-platter {
-  width: 88px;
-  height: 88px;
+  width: 136px;
+  height: 136px;
   border-radius: 50%;
-  background: radial-gradient(circle, #202436 0%, #0a0b12 70%);
-  border: 3px solid #33374a;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.6), inset 0 0 10px #000;
+  background: radial-gradient(circle, #252a3d 0%, #0c0d16 75%);
+  border: 3px solid #3d425a;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.7), inset 0 0 16px #000;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  transition: transform 0.05s linear;
+  transition: transform 0.04s linear;
 }
 
-.platter-a { border-color: rgba(0, 240, 255, 0.4); }
-.platter-b { border-color: rgba(255, 0, 127, 0.4); }
+.platter-a { border-color: rgba(0, 240, 255, 0.45); }
+.platter-b { border-color: rgba(255, 0, 127, 0.45); }
 
 .jog-ring {
-  width: 66px;
-  height: 66px;
+  width: 104px;
+  height: 104px;
   border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.2);
+  border: 1px dashed rgba(255, 255, 255, 0.25);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .jog-led-dot {
@@ -597,144 +611,82 @@ html, body {
   top: 2px;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
-  background: #fff;
+  width: 8px;
+  height: 8px;
+  background: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 0 8px #fff;
+  box-shadow: 0 0 10px #ffffff;
 }
 
 .jog-vinyl-surface {
-  width: 44px;
-  height: 44px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
-  background: #090a10;
+  background: radial-gradient(circle, #151824 0%, #06070a 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 0 6px #000;
+  box-shadow: inset 0 0 10px #000, 0 0 4px rgba(255,255,255,0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.jog-brand {
-  font-size: 7px;
+.jog-center-lcd {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.jog-deck-tag {
   font-family: var(--font-display);
-  font-weight: 800;
-  color: var(--text-muted);
-}
-
-/* Side Column (Pitch + Pads + Transport) */
-.deck-side-column {
-  flex-grow: 1;
-  display: flex;
-  gap: 8px;
-}
-
-.pitch-slider-housing {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: #0a0b12;
-  border-radius: 6px;
-  padding: 4px 2px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  gap: 2px;
-}
-
-.pitch-label {
   font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.jog-cue-marker {
+  font-size: 7px;
   font-weight: 800;
   color: var(--text-muted);
+  font-family: monospace;
 }
 
-.vertical-pitch-slider {
-  writing-mode: vertical-lr;
-  direction: rtl;
-  width: 14px;
-  height: 52px;
-  accent-color: var(--accent-cyan);
-  cursor: pointer;
-}
-
-.btn-micro {
-  font-size: 7px;
-  padding: 2px 4px;
-  background: rgba(255, 255, 255, 0.08);
-  border: none;
-  border-radius: 2px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.deck-buttons-grid {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 6px;
-}
-
-.pads-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-}
-
-.btn-pad {
-  background: #1c2032;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--accent-cyan);
-  font-size: 8px;
-  font-weight: 800;
-  padding: 4px 2px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.1s ease;
-}
-
-.btn-pad.pad-b { color: var(--accent-magenta); }
-.btn-pad:hover, .btn-pad.active {
-  background: var(--accent-cyan);
-  color: #000;
-  box-shadow: 0 0 8px var(--accent-cyan);
-}
-.btn-pad.pad-b:hover, .btn-pad.pad-b.active {
-  background: var(--accent-magenta);
-  color: #fff;
-  box-shadow: 0 0 8px var(--accent-magenta);
-}
-
-.transport-row {
+/* Round Pioneer Transport Buttons Below Jog */
+.jog-transport-row {
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
 }
 
 .btn-pioneer-cue {
-  width: 32px;
-  height: 32px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background: #251d10;
   border: 2px solid #ffaa00;
   color: #ffaa00;
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 900;
   cursor: pointer;
   transition: all 0.1s ease;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5);
 }
 
 .btn-pioneer-cue:hover, .btn-pioneer-cue:active {
   background: #ffaa00;
   color: #000;
-  box-shadow: 0 0 10px #ffaa00;
+  box-shadow: 0 0 12px #ffaa00;
 }
 
 .btn-pioneer-play {
-  width: 34px;
-  height: 34px;
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   background: #0f2617;
   border: 2px solid #00ff88;
@@ -744,23 +696,140 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.6);
 }
 
 .btn-pioneer-play.active-play {
   background: #00ff88;
   color: #05140b;
-  box-shadow: 0 0 12px #00ff88;
+  box-shadow: 0 0 16px #00ff88;
 }
 
 .btn-sync {
   background: #111a2e;
   border: 1px solid #00aaff;
   color: #00aaff;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 6px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.btn-sync:hover {
+  background: #00aaff;
+  color: #000;
+  box-shadow: 0 0 8px #00aaff;
+}
+
+/* Right Block: Pitch Fader & Performance Pads */
+.deck-right-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pitch-slider-section {
+  display: flex;
+  flex-direction: column;
+  background: #080910;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 6px 8px;
+  gap: 4px;
+}
+
+.pitch-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pitch-label-title {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.pitch-slider-housing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.pitch-label {
+  font-size: 10px;
+  font-weight: 900;
+  color: var(--text-muted);
+}
+
+.vertical-pitch-slider {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 18px;
+  height: 64px;
+  accent-color: var(--accent-cyan);
+  cursor: pointer;
+}
+
+.deck-b .vertical-pitch-slider {
+  accent-color: var(--accent-magenta);
+}
+
+.btn-micro {
   font-size: 8px;
   font-weight: 800;
-  padding: 4px 6px;
-  border-radius: 4px;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  color: #fff;
   cursor: pointer;
+}
+
+.btn-micro:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* 4 Silicone Performance Pads */
+.pads-vertical-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.btn-pad {
+  background: #191c2b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--accent-cyan);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 7px 4px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+.btn-pad.pad-b { color: var(--accent-magenta); }
+
+.btn-pad:hover, .btn-pad.active {
+  background: var(--accent-cyan);
+  color: #000;
+  box-shadow: 0 0 10px var(--accent-cyan);
+}
+
+.btn-pad.pad-b:hover, .btn-pad.pad-b.active {
+  background: var(--accent-magenta);
+  color: #fff;
+  box-shadow: 0 0 10px var(--accent-magenta);
 }
 
 /* ======================================================== */

@@ -137,44 +137,53 @@
         </div>
 
         <div class="deck-lower-controls">
-          <!-- Jog Wheel -->
-          <div class="cdj-jog-housing">
-            <div class="cdj-jog-platter platter-a" id="deck-a-jog">
-              <div class="jog-ring">
-                <div class="jog-led-dot"></div>
+          <!-- Left: Big 140px CDJ Jog Wheel & Transport -->
+          <div class="deck-left-block">
+            <div class="cdj-jog-housing">
+              <div class="cdj-jog-platter platter-a" id="deck-a-jog">
+                <div class="jog-outer-rim"></div>
+                <div class="jog-ring">
+                  <div class="jog-led-dot"></div>
+                  <div class="jog-led-chase"></div>
+                </div>
+                <div class="jog-vinyl-surface">
+                  <div class="jog-center-lcd">
+                    <span class="jog-deck-tag cyan-text">DECK A</span>
+                    <span class="jog-cue-marker">● ON AIR</span>
+                  </div>
+                </div>
               </div>
-              <div class="jog-vinyl-surface">
-                <div class="jog-brand">JMF CDJ</div>
-              </div>
+            </div>
+
+            <!-- Iconic Pioneer Round Transport Buttons under Jog -->
+            <div class="jog-transport-row">
+              <button class="btn-pioneer-cue" id="deck-a-cue" title="Cue Point">CUE</button>
+              <button class="btn-pioneer-play active-play" id="deck-a-play" title="Play / Pause Deck A">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </button>
+              <button class="btn-sync" id="deck-a-sync" title="Beat Sync">SYNC</button>
             </div>
           </div>
 
-          <!-- Pitch Fader & Performance Pads -->
-          <div class="deck-side-column">
-            <!-- Pitch Slider -->
-            <div class="pitch-slider-housing">
-              <span class="pitch-label">+</span>
-              <input type="range" class="vertical-pitch-slider" id="deck-a-pitch" min="-8" max="8" step="0.1" value="0">
-              <span class="pitch-label">-</span>
-              <button class="btn-micro" id="deck-a-pitch-reset" title="Reset Tempo">0%</button>
+          <!-- Right: Full-Travel Pitch Fader & Performance Pads -->
+          <div class="deck-right-block">
+            <div class="pitch-slider-section">
+              <div class="pitch-header">
+                <span class="pitch-label-title">TEMPO</span>
+                <button class="btn-micro" id="deck-a-pitch-reset" title="Reset Tempo">0%</button>
+              </div>
+              <div class="pitch-slider-housing">
+                <span class="pitch-label">+</span>
+                <input type="range" class="vertical-pitch-slider" id="deck-a-pitch" min="-8" max="8" step="0.1" value="0">
+                <span class="pitch-label">-</span>
+              </div>
             </div>
 
-            <!-- Pads & Transport -->
-            <div class="deck-buttons-grid">
-              <div class="pads-row">
-                <button class="btn-pad" id="deck-a-pad-1">PAD 1</button>
-                <button class="btn-pad" id="deck-a-pad-2">PAD 2</button>
-                <button class="btn-pad loop-pad" id="deck-a-loop-4">LOOP 4</button>
-                <button class="btn-pad loop-pad" id="deck-a-loop-8">LOOP 8</button>
-              </div>
-
-              <div class="transport-row">
-                <button class="btn-pioneer-cue" id="deck-a-cue" title="Cue Point">CUE</button>
-                <button class="btn-pioneer-play active-play" id="deck-a-play" title="Play / Pause Deck A">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                </button>
-                <button class="btn-sync" id="deck-a-sync" title="Beat Sync">SYNC</button>
-              </div>
+            <div class="pads-vertical-grid">
+              <button class="btn-pad" id="deck-a-pad-1">HOT CUE 1</button>
+              <button class="btn-pad" id="deck-a-pad-2">HOT CUE 2</button>
+              <button class="btn-pad loop-pad" id="deck-a-loop-4">LOOP 4</button>
+              <button class="btn-pad loop-pad" id="deck-a-loop-8">LOOP 8</button>
             </div>
           </div>
         </div>
@@ -429,44 +438,53 @@
         </div>
 
         <div class="deck-lower-controls">
-          <!-- Jog Wheel -->
-          <div class="cdj-jog-housing">
-            <div class="cdj-jog-platter platter-b" id="deck-b-jog">
-              <div class="jog-ring">
-                <div class="jog-led-dot"></div>
+          <!-- Left: Big 140px CDJ Jog Wheel & Transport -->
+          <div class="deck-left-block">
+            <div class="cdj-jog-housing">
+              <div class="cdj-jog-platter platter-b" id="deck-b-jog">
+                <div class="jog-outer-rim"></div>
+                <div class="jog-ring">
+                  <div class="jog-led-dot"></div>
+                  <div class="jog-led-chase"></div>
+                </div>
+                <div class="jog-vinyl-surface">
+                  <div class="jog-center-lcd">
+                    <span class="jog-deck-tag magenta-text">DECK B</span>
+                    <span class="jog-cue-marker" id="deck-b-jog-state">CUE / NEXT</span>
+                  </div>
+                </div>
               </div>
-              <div class="jog-vinyl-surface">
-                <div class="jog-brand">JMF CDJ</div>
-              </div>
+            </div>
+
+            <!-- Iconic Pioneer Round Transport Buttons under Jog -->
+            <div class="jog-transport-row">
+              <button class="btn-pioneer-cue" id="deck-b-cue" title="Cue Point">CUE</button>
+              <button class="btn-pioneer-play" id="deck-b-play" title="Play / Pause Deck B">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              </button>
+              <button class="btn-sync" id="deck-b-sync" title="Beat Sync">SYNC</button>
             </div>
           </div>
 
-          <!-- Pitch Fader & Performance Pads -->
-          <div class="deck-side-column">
-            <!-- Pitch Slider -->
-            <div class="pitch-slider-housing">
-              <span class="pitch-label">+</span>
-              <input type="range" class="vertical-pitch-slider" id="deck-b-pitch" min="-8" max="8" step="0.1" value="0">
-              <span class="pitch-label">-</span>
-              <button class="btn-micro" id="deck-b-pitch-reset" title="Reset Tempo">0%</button>
+          <!-- Right: Full-Travel Pitch Fader & Performance Pads -->
+          <div class="deck-right-block">
+            <div class="pitch-slider-section">
+              <div class="pitch-header">
+                <span class="pitch-label-title">TEMPO</span>
+                <button class="btn-micro" id="deck-b-pitch-reset" title="Reset Tempo">0%</button>
+              </div>
+              <div class="pitch-slider-housing">
+                <span class="pitch-label">+</span>
+                <input type="range" class="vertical-pitch-slider" id="deck-b-pitch" min="-8" max="8" step="0.1" value="0">
+                <span class="pitch-label">-</span>
+              </div>
             </div>
 
-            <!-- Pads & Transport -->
-            <div class="deck-buttons-grid">
-              <div class="pads-row">
-                <button class="btn-pad pad-b" id="deck-b-pad-1">PAD 1</button>
-                <button class="btn-pad pad-b" id="deck-b-pad-2">PAD 2</button>
-                <button class="btn-pad loop-pad" id="deck-b-loop-4">LOOP 4</button>
-                <button class="btn-pad loop-pad" id="deck-b-loop-8">LOOP 8</button>
-              </div>
-
-              <div class="transport-row">
-                <button class="btn-pioneer-cue" id="deck-b-cue" title="Cue Point">CUE</button>
-                <button class="btn-pioneer-play" id="deck-b-play" title="Play / Pause Deck B">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                </button>
-                <button class="btn-sync" id="deck-b-sync" title="Beat Sync">SYNC</button>
-              </div>
+            <div class="pads-vertical-grid">
+              <button class="btn-pad pad-b" id="deck-b-pad-1">HOT CUE 1</button>
+              <button class="btn-pad pad-b" id="deck-b-pad-2">HOT CUE 2</button>
+              <button class="btn-pad loop-pad" id="deck-b-loop-4">LOOP 4</button>
+              <button class="btn-pad loop-pad" id="deck-b-loop-8">LOOP 8</button>
             </div>
           </div>
         </div>

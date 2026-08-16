@@ -505,14 +505,17 @@ export class UIController {
       }
     }
 
-    // 2. Spin CDJ Jog Platters
+    // 2. Spin CDJ Jog Platters Continuously Forward
     if (isPlaying) {
-      if (activeDeck === 'A' || this.audioEngine.isCrossfading) {
-        this.jogAngleA = (this.jogAngleA + 3.0) % 360;
+      const isDeckAPlaying = activeDeck === 'A' || this.audioEngine.isCrossfading || this.audioEngine.deckStates?.A?.isPlaying;
+      const isDeckBPlaying = activeDeck === 'B' || this.audioEngine.isCrossfading || this.audioEngine.deckStates?.B?.isPlaying;
+
+      if (isDeckAPlaying) {
+        this.jogAngleA += 2.2;
         if (this.deckAJog) this.deckAJog.style.transform = `rotate(${this.jogAngleA}deg)`;
       }
-      if (activeDeck === 'B' || this.audioEngine.isCrossfading) {
-        this.jogAngleB = (this.jogAngleB + 3.0) % 360;
+      if (isDeckBPlaying) {
+        this.jogAngleB += 2.2;
         if (this.deckBJog) this.deckBJog.style.transform = `rotate(${this.jogAngleB}deg)`;
       }
     }
