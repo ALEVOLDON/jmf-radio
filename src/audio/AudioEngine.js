@@ -509,22 +509,31 @@ export class AudioEngine {
   }
 
   async skipNext() {
-    // Perform a smooth DJ crossfade to the other deck
-    if (this.isCrossfading) return;
-    
     try {
       const res = await fetch('/api/next', { method: 'POST' });
       const data = await res.json();
       if (data.track) {
-        this.nextTrack = data.track;
+        this.currentTrack = data.track;
         this.queue = data.queue || [];
         this.totalTracks = data.totalTracks || 0;
+        this.nextTrack = this.queue[0] || null;
+
+        this.loadDeck(this.activeDeck, this.currentTrack, 0, true);
+        this.analyzeTrackBpm(this.currentTrack, this.activeDeck);
+
+        const standbyDeck = this.activeDeck === 'A' ? 'B' : 'A';
+        if (this.nextTrack) {
+          this.loadDeck(standbyDeck, this.nextTrack, 0, false);
+          this.analyzeTrackBpm(this.nextTrack, standbyDeck);
+        }
+
+        if (this.onTrackChange) {
+          this.onTrackChange(this.currentTrack, this.queue, this.totalTracks);
+        }
       }
     } catch (err) {
-      console.warn('Error fetching next track for skip:', err);
+      console.error('Error skipping next track:', err);
     }
-
-    this.triggerDJCrossfade();
   }
 
   async skipPrev() {
