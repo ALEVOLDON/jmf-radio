@@ -203,9 +203,9 @@ function checkTrackAdvancement() {
 
 // --- API ENDPOINTS ---
 
-app.get('/api/status', (req, res) => {
+app.get(['/api/status', '/api/track'], (req, res) => {
   if (playlist.length === 0) {
-    return res.json({ isPlaying: false, totalTracks: 0 });
+    return res.json({ isPlaying: false, totalTracks: 0, track: null, queue: [] });
   }
 
   const current = playlist[currentIndex];
@@ -217,28 +217,60 @@ app.get('/api/status', (req, res) => {
     queue.push({
       id: playlist[nextIdx].id,
       title: playlist[nextIdx].title,
-      artist: playlist[nextIdx].artist
+      artist: playlist[nextIdx].artist,
+      duration: playlist[nextIdx].duration || 180,
+      bpm: playlist[nextIdx].bpm || null
     });
   }
+
+  const trackObj = {
+    id: current.id,
+    title: current.title,
+    artist: current.artist,
+    album: current.album || 'SoundCloud Collection',
+    duration: current.duration || 180,
+    bpm: current.bpm || null,
+    year: current.year,
+    bitrate: current.bitrate || 192,
+    hasCover: !!current.hasCover
+  };
 
   res.json({
     isPlaying: true,
     currentIndex,
     totalTracks: playlist.length,
     elapsedTime: elapsed,
+    serverProgress: elapsed,
     serverTime: Date.now(),
-    currentTrack: {
-      id: current.id,
-      title: current.title,
-      artist: current.artist,
-      album: current.album || 'SoundCloud Collection',
-      duration: current.duration || 180,
-      year: current.year,
-      bitrate: current.bitrate || 192,
-      hasCover: !!current.hasCover
-    },
+    track: trackObj,
+    currentTrack: trackObj,
     queue,
     history
+  });
+});
+
+app.post(['/api/skip', '/api/next'], async (req, res) => {
+  if (playlist.length === 0) return res.json({ success: false });
+  await playTrack((currentIndex + 1) % playlist.length);
+  const current = playlist[currentIndex];
+  const queue = [];
+  for (let i = 1; i <= 5; i++) {
+    const nextIdx = (currentIndex + i) % playlist.length;
+    queue.push({
+      id: playlist[nextIdx].id,
+      title: playlist[nextIdx].title,
+      artist: playlist[nextIdx].artist,
+      duration: playlist[nextIdx].duration || 180,
+      bpm: playlist[nextIdx].bpm || null
+    });
+  }
+  res.json({
+    success: true,
+    currentIndex,
+    totalTracks: playlist.length,
+    track: current,
+    currentTrack: current,
+    queue
   });
 });
 
