@@ -22,8 +22,80 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Supported audio formats
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.wav', '.ogg', '.flac', '.m4a', '.aac', '.wma', '.opus']);
+const CACHE_FILE = path.join(__dirname, 'genre_library_cache.json');
+
+// Genre Knowledge Base & Smart Categorization
+const GENRE_RULES = [
+  {
+    id: 'techno',
+    name: '⚡ TECHNO & ACID',
+    icon: '⚡',
+    color: '#00f0ff',
+    defaultBpm: 128,
+    keywords: [
+      'techno', 'acid', 'tolkachev', 'mork', 'mörk', 'tresor', 'berghain', 'semantica',
+      'token', 'killekill', 'blawan', 'surgeon', 'detach', 'cravo', 'dvs1', 'rodhad', 'rødhåd',
+      'ostgut', 'modular', 'industrial', 'dark', 'pole', 'recondite', 'avalon', 'shift',
+      'matrix', 'hardwax', 'krz', 'phase', 'clique', 'stomp', 'dystopia', 'concrete',
+      'scifi', 'pessimist', 'die orakel', 'crf007', 'antigone'
+    ]
+  },
+  {
+    id: 'house',
+    name: '🌴 HOUSE & DEEP',
+    icon: '🌴',
+    color: '#ff6b35',
+    defaultBpm: 124,
+    keywords: [
+      'house', 'deep', 'lehult', 'lobster theremin', 'giegling', 'smallville', 'disco',
+      'funk', 'groove', 'garage', 'afro', 'chicago', 'detroit', 'kerri', 'moodymann',
+      'parrish', 'mall grab', 'peggy', 'ross from friends', 'boring', 'four tet', 'floating points',
+      'bicep', 'dusky', 'keinemusik', 'soul', 'vocal', 'summer', 'beach', 'sunset', 'filter',
+      'qc records', 'qnete', 'carmel', 'fur coat', 'parallel'
+    ]
+  },
+  {
+    id: 'bass',
+    name: '🛸 UK BASS & BREAKS',
+    icon: '🛸',
+    color: '#a855f7',
+    defaultBpm: 168,
+    keywords: [
+      'overmono', 'jungle', 'dnb', 'drum & bass', 'drum and bass', 'breakbeat', 'breaks',
+      'dubstep', 'ukg', '2-step', 'laksa', 'bastakiya', 'boddika', 'joy orbison', 'skee mask',
+      'djrum', 'special request', 'calibre', 'goldie', 'bukem', 'sherelle', 'sulley', 'rave',
+      'bass', 'sub', 'grime', 'dubplate', 'tapes', 'amen', 'roller', 'human pitch', 'bjika'
+    ]
+  },
+  {
+    id: 'lofi',
+    name: '☕ LO-FI & CHILL',
+    icon: '☕',
+    color: '#ffd000',
+    defaultBpm: 84,
+    keywords: [
+      'lo-fi', 'lofi', 'ambient', 'chill', 'downtempo', 'trip-hop', 'beats', 'relax',
+      'drone', 'tape', 'sleep', 'snow', 'forest', 'space', 'calm', 'dream', 'piano',
+      'acoustic', 'nostalgia', 'meditation', 'morning', 'night', 'rain', 'slow', 'htrk'
+    ]
+  },
+  {
+    id: 'electro',
+    name: '🔮 ELECTRO & SYNTH',
+    icon: '🔮',
+    color: '#00ff88',
+    defaultBpm: 132,
+    keywords: [
+      'electro', 'synth', 'synthwave', 'retrowave', 'cyberpunk', '214', 'helios',
+      'drexciya', 'aux 88', 'dopplereffekt', 'gesloten cirkel', 'vocoder', '808', 'analog',
+      'robotic', 'sci-fi', 'future', 'neon', 'wave', 'cyber', 'uncanny valley'
+    ]
+  }
+];
 
 let playlist = [];
+let genreCache = {};
+let activeGenreFilter = 'all';
 let currentIndex = 0;
 let trackStartTime = Date.now();
 let trackDuration = 180;
@@ -44,6 +116,42 @@ function parseFilename(filename) {
   return {
     artist: 'JMF Radio',
     title: cleanName || nameWithoutExt
+  };
+}
+
+// Smart Genre Classifier
+function classifyGenre(title, artist, filename, album) {
+  const combinedText = `${title} ${artist} ${filename} ${album}`.toLowerCase();
+  
+  for (const genre of GENRE_RULES) {
+    for (const kw of genre.keywords) {
+      if (combinedText.includes(kw)) {
+        return {
+          id: genre.id,
+          name: genre.name,
+          icon: genre.icon,
+          color: genre.color,
+          bpm: genre.defaultBpm + Math.floor((Math.random() - 0.5) * 6)
+        };
+      }
+    }
+  }
+
+  // Fallback deterministic distribution based on string hash
+  let hash = 0;
+  for (let i = 0; i < combinedText.length; i++) {
+    hash = ((hash << 5) - hash) + combinedText.charCodeAt(i);
+    hash |= 0;
+  }
+  const fallbackGenres = ['techno', 'house', 'bass', 'lofi', 'electro'];
+  const chosenId = fallbackGenres[Math.abs(hash) % fallbackGenres.length];
+  const g = GENRE_RULES.find(x => x.id === chosenId);
+  return {
+    id: g.id,
+    name: g.name,
+    icon: g.icon,
+    color: g.color,
+    bpm: g.defaultBpm + Math.floor((Math.random() - 0.5) * 6)
   };
 }
 
@@ -80,6 +188,26 @@ function shuffleArray(array) {
   return arr;
 }
 
+// Load / Save Genre Cache
+function loadGenreCache() {
+  try {
+    if (fs.existsSync(CACHE_FILE)) {
+      const raw = fs.readFileSync(CACHE_FILE, 'utf8');
+      genreCache = JSON.parse(raw);
+    }
+  } catch (e) {
+    genreCache = {};
+  }
+}
+
+function saveGenreCache() {
+  try {
+    fs.writeFileSync(CACHE_FILE, JSON.stringify(genreCache, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Error saving genre cache:', e.message);
+  }
+}
+
 // Extract metadata with strict timeout and fallback
 async function getTrackMetadata(filePath, id) {
   const fallback = parseFilename(path.basename(filePath));
@@ -89,7 +217,6 @@ async function getTrackMetadata(filePath, id) {
     statSize = st.size;
   } catch (e) {}
 
-  // Estimated duration from filesize (assuming ~192kbps)
   const estimatedDuration = statSize > 0 ? Math.round(statSize / (24 * 1024)) : 180;
 
   let meta = {
@@ -103,12 +230,18 @@ async function getTrackMetadata(filePath, id) {
     year: null,
     bitrate: 192,
     bpm: null,
-    hasCover: false
+    hasCover: false,
+    genre: null
   };
 
-  // Parse header only (duration: false, skipCovers: true for super-fast non-blocking parse)
+  // Check cache first for instant load
+  if (genreCache[filePath]) {
+    Object.assign(meta, genreCache[filePath]);
+    return meta;
+  }
+
   const parsePromise = musicMetadata.parseFile(filePath, { duration: false, skipCovers: true });
-  const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 500));
+  const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 400));
 
   try {
     const mm = await Promise.race([parsePromise, timeoutPromise]);
@@ -119,16 +252,29 @@ async function getTrackMetadata(filePath, id) {
     if (mm.common.bpm) meta.bpm = Math.round(mm.common.bpm * 10) / 10;
     if (mm.format.duration) meta.duration = Math.round(mm.format.duration * 10) / 10;
     if (mm.format.bitrate) meta.bitrate = Math.round(mm.format.bitrate / 1000);
-  } catch (err) {
-    // Timeout or format warning, safely use fallback
-  }
+  } catch (err) {}
+
+  // Smart Genre Assignment
+  const g = classifyGenre(meta.title, meta.artist, meta.filename, meta.album);
+  meta.genre = g;
+  if (!meta.bpm) meta.bpm = g.bpm;
+
+  genreCache[filePath] = {
+    title: meta.title,
+    artist: meta.artist,
+    album: meta.album,
+    duration: meta.duration,
+    bpm: meta.bpm,
+    genre: meta.genre
+  };
 
   return meta;
 }
 
-// Initialize playlist
+// Initialize playlist & analyze library
 async function initRadio() {
   console.log(`\n🎧 [JMF Radio] Scanning music library at: ${MUSIC_DIR}`);
+  loadGenreCache();
   const files = await scanDirectory(MUSIC_DIR);
   console.log(`📁 Found ${files.length} audio tracks in directory.`);
 
@@ -143,16 +289,24 @@ async function initRadio() {
   for (let i = 0; i < shuffledPaths.length; i++) {
     const fn = path.basename(shuffledPaths[i]);
     const parsed = parseFilename(fn);
+    const cached = genreCache[shuffledPaths[i]];
+    const g = cached?.genre || classifyGenre(parsed.title, parsed.artist, fn, '');
+
     playlist.push({
       id: i,
       path: shuffledPaths[i],
       filename: fn,
-      title: parsed.title,
-      artist: parsed.artist,
-      duration: 180,
-      loaded: false
+      title: cached?.title || parsed.title,
+      artist: cached?.artist || parsed.artist,
+      duration: cached?.duration || 180,
+      bpm: cached?.bpm || g.bpm,
+      genre: g,
+      loaded: !!cached
     });
   }
+
+  // Save cache asynchronously
+  setTimeout(saveGenreCache, 2000);
 
   currentIndex = 0;
   await playTrack(currentIndex);
@@ -162,12 +316,33 @@ async function initRadio() {
   setInterval(checkTrackAdvancement, 1000);
 }
 
+// Filter playlist by active genre
+function getFilteredIndices(genreId = activeGenreFilter) {
+  if (genreId === 'all') {
+    return playlist.map((_, idx) => idx);
+  }
+  const indices = [];
+  for (let i = 0; i < playlist.length; i++) {
+    if (playlist[i].genre && playlist[i].genre.id === genreId) {
+      indices.push(i);
+    }
+  }
+  return indices.length > 0 ? indices : playlist.map((_, idx) => idx);
+}
+
+function getNextFilteredIndex() {
+  const filtered = getFilteredIndices(activeGenreFilter);
+  const currentPos = filtered.indexOf(currentIndex);
+  if (currentPos !== -1 && currentPos < filtered.length - 1) {
+    return filtered[currentPos + 1];
+  }
+  return filtered[Math.floor(Math.random() * filtered.length)];
+}
+
 async function playTrack(index) {
   if (playlist.length === 0) return;
-  if (index >= playlist.length) {
-    playlist = shuffleArray(playlist);
-    currentIndex = 0;
-    index = 0;
+  if (index >= playlist.length || index < 0) {
+    index = getNextFilteredIndex();
   }
 
   currentIndex = index;
@@ -182,12 +357,14 @@ async function playTrack(index) {
   trackStartTime = Date.now();
 
   console.log(`\n▶️ [NOW PLAYING ON JMF RADIO] (#${currentIndex + 1}/${playlist.length})`);
-  console.log(`   🎵 ${current.artist} - ${current.title}`);
-  console.log(`   ⏱️ Duration: ${Math.floor(trackDuration / 60)}:${Math.floor(trackDuration % 60).toString().padStart(2, '0')}`);
+  console.log(`   🎵 ${current.artist} - ${current.title} [${current.genre?.name || 'MUSIC'}]`);
+  console.log(`   ⏱️ Duration: ${Math.floor(trackDuration / 60)}:${Math.floor(trackDuration % 60).toString().padStart(2, '0')} | ${current.bpm || 128} BPM`);
 
   history.unshift({
     title: current.title,
     artist: current.artist,
+    genre: current.genre,
+    bpm: current.bpm,
     time: new Date().toLocaleTimeString()
   });
   if (history.length > 10) history.pop();
@@ -197,11 +374,47 @@ function checkTrackAdvancement() {
   if (!isRadioRunning || playlist.length === 0) return;
   const elapsed = (Date.now() - trackStartTime) / 1000;
   if (elapsed >= trackDuration) {
-    playTrack((currentIndex + 1) % playlist.length);
+    playTrack(getNextFilteredIndex());
   }
 }
 
 // --- API ENDPOINTS ---
+
+// 1. Get available genre filters with track counts
+app.get('/api/genres', (req, res) => {
+  const counts = { all: playlist.length, techno: 0, house: 0, bass: 0, lofi: 0, electro: 0 };
+  for (const track of playlist) {
+    if (track.genre?.id && counts[track.genre.id] !== undefined) {
+      counts[track.genre.id]++;
+    }
+  }
+
+  const list = [
+    { id: 'all', name: '🔥 ALL STYLES', icon: '🔥', count: counts.all, color: '#00f0ff' },
+    ...GENRE_RULES.map(g => ({
+      id: g.id,
+      name: g.name,
+      icon: g.icon,
+      count: counts[g.id] || 0,
+      color: g.color
+    }))
+  ];
+
+  res.json({ genres: list, activeGenre: activeGenreFilter });
+});
+
+// 2. Select active radio stream genre filter
+app.post('/api/genre/select', async (req, res) => {
+  const { genre } = req.body;
+  if (genre && (genre === 'all' || GENRE_RULES.some(g => g.id === genre))) {
+    activeGenreFilter = genre;
+    // Advance to a track from this genre
+    const nextIdx = getNextFilteredIndex();
+    await playTrack(nextIdx);
+    return res.json({ success: true, activeGenre: activeGenreFilter, currentTrack: playlist[currentIndex] });
+  }
+  res.status(400).json({ error: 'Invalid genre' });
+});
 
 app.get(['/api/status', '/api/track'], (req, res) => {
   if (playlist.length === 0) {
@@ -211,16 +424,22 @@ app.get(['/api/status', '/api/track'], (req, res) => {
   const current = playlist[currentIndex];
   const elapsed = Math.min(trackDuration, (Date.now() - trackStartTime) / 1000);
 
+  const filtered = getFilteredIndices(activeGenreFilter);
+  const curPos = filtered.indexOf(currentIndex);
   const queue = [];
-  for (let i = 1; i <= 5; i++) {
-    const nextIdx = (currentIndex + i) % playlist.length;
-    queue.push({
-      id: playlist[nextIdx].id,
-      title: playlist[nextIdx].title,
-      artist: playlist[nextIdx].artist,
-      duration: playlist[nextIdx].duration || 180,
-      bpm: playlist[nextIdx].bpm || null
-    });
+
+  for (let i = 1; i <= 6; i++) {
+    const qIdx = filtered[(curPos + i) % filtered.length];
+    if (playlist[qIdx]) {
+      queue.push({
+        id: playlist[qIdx].id,
+        title: playlist[qIdx].title,
+        artist: playlist[qIdx].artist,
+        duration: playlist[qIdx].duration || 180,
+        bpm: playlist[qIdx].bpm || 128,
+        genre: playlist[qIdx].genre || null
+      });
+    }
   }
 
   const trackObj = {
@@ -229,16 +448,18 @@ app.get(['/api/status', '/api/track'], (req, res) => {
     artist: current.artist,
     album: current.album || 'SoundCloud Collection',
     duration: current.duration || 180,
-    bpm: current.bpm || null,
+    bpm: current.bpm || 128,
     year: current.year,
     bitrate: current.bitrate || 192,
-    hasCover: !!current.hasCover
+    hasCover: !!current.hasCover,
+    genre: current.genre || null
   };
 
   res.json({
     isPlaying: true,
     currentIndex,
     totalTracks: playlist.length,
+    activeGenre: activeGenreFilter,
     elapsedTime: elapsed,
     serverProgress: elapsed,
     serverTime: Date.now(),
@@ -251,26 +472,15 @@ app.get(['/api/status', '/api/track'], (req, res) => {
 
 app.post(['/api/skip', '/api/next'], async (req, res) => {
   if (playlist.length === 0) return res.json({ success: false });
-  await playTrack((currentIndex + 1) % playlist.length);
+  await playTrack(getNextFilteredIndex());
   const current = playlist[currentIndex];
-  const queue = [];
-  for (let i = 1; i <= 5; i++) {
-    const nextIdx = (currentIndex + i) % playlist.length;
-    queue.push({
-      id: playlist[nextIdx].id,
-      title: playlist[nextIdx].title,
-      artist: playlist[nextIdx].artist,
-      duration: playlist[nextIdx].duration || 180,
-      bpm: playlist[nextIdx].bpm || null
-    });
-  }
   res.json({
     success: true,
     currentIndex,
     totalTracks: playlist.length,
+    activeGenre: activeGenreFilter,
     track: current,
-    currentTrack: current,
-    queue
+    currentTrack: current
   });
 });
 

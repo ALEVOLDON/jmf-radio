@@ -522,6 +522,38 @@ export class AudioEngine {
     this.crossfadeDuration = mode === 'dj' ? 8.0 : 3.0;
   }
 
+  async setGenre(genreId) {
+    this.activeGenre = genreId;
+    try {
+      const res = await fetch('/api/genre/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ genre: genreId })
+      });
+      const data = await res.json();
+      if (data.currentTrack) {
+        this.nextTrack = data.currentTrack;
+        if (this.mixMode === 'radio') {
+          this.loadDeck(this.activeDeck, data.currentTrack, 0, true);
+        } else {
+          this.triggerDJCrossfade();
+        }
+      }
+      await this.fetchStatus();
+    } catch (err) {
+      console.warn('Error setting genre:', err);
+    }
+  }
+
+  async fetchGenres() {
+    try {
+      const res = await fetch('/api/genres');
+      return await res.json();
+    } catch (e) {
+      return { genres: [], activeGenre: 'all' };
+    }
+  }
+
   togglePlay() {
     const activeAudio = this.activeDeck === 'A' ? this.audioA : this.audioB;
     if (this.audioContext && this.audioContext.state === 'suspended') {

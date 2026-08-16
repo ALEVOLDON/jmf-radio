@@ -128,6 +128,7 @@ export class UIController {
     this.initRotaryKnobs();
     this.initWaveformSeeking();
     this.initJogWheelMouseControl();
+    this.initGenreControls();
   }
 
   // Generate 120-slice realistic song waveform structure
@@ -914,14 +915,101 @@ export class UIController {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   }
 
-  onTrackChanged(track, queue, totalTracks) {
+  async initGenreControls() {
+    this.btnGenresToggle = document.getElementById('btn-genres-toggle');
+    this.genreModal = document.getElementById('genre-modal');
+    this.btnGenresClose = document.getElementById('btn-genres-close');
+    this.headerGenreIcon = document.getElementById('header-genre-icon');
+    this.headerGenreLabel = document.getElementById('header-genre-label');
+    this.genreModalGrid = document.getElementById('genre-modal-grid');
+    this.queueGenreFilter = document.getElementById('queue-genre-filter');
+
+    const openGenreModal = () => {
+      if (this.genreModal) this.genreModal.classList.remove('hidden');
+    };
+    const closeGenreModal = () => {
+      if (this.genreModal) this.genreModal.classList.add('hidden');
+    };
+
+    if (this.btnGenresToggle) this.btnGenresToggle.addEventListener('click', openGenreModal);
+    if (this.btnGenresClose) this.btnGenresClose.addEventListener('click', closeGenreModal);
+    if (this.genreModal) {
+      this.genreModal.addEventListener('click', (e) => {
+        if (e.target === this.genreModal) closeGenreModal();
+      });
+    }
+
+    try {
+      const { genres, activeGenre } = await this.audioEngine.fetchGenres();
+      this.activeGenre = activeGenre || 'all';
+
+      const renderGenreButtons = () => {
+        // 1. Populate Genre Modal Grid
+        if (this.genreModalGrid && genres) {
+          this.genreModalGrid.innerHTML = genres.map(g => `
+            <button class="genre-card-btn ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}">
+              <div class="genre-card-header">
+                <span class="genre-card-icon">${g.icon}</span>
+                <span class="genre-card-count">${g.count} tracks</span>
+              </div>
+              <div class="genre-card-name" style="color: ${g.color};">${g.name}</div>
+            </button>
+          `).join('');
+
+          this.genreModalGrid.querySelectorAll('.genre-card-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const genreId = btn.getAttribute('data-genre');
+              this.activeGenre = genreId;
+              const chosen = genres.find(x => x.id === genreId);
+              if (this.headerGenreIcon && chosen) this.headerGenreIcon.textContent = chosen.icon;
+              if (this.headerGenreLabel && chosen) this.headerGenreLabel.textContent = chosen.name.replace(/^[^\s]+\s/, '');
+              renderGenreButtons();
+              closeGenreModal();
+              await this.audioEngine.setGenre(genreId);
+            });
+          });
+        }
+
+        // 2. Populate Quick Filter Pills in Queue Drawer
+        if (this.queueGenreFilter && genres) {
+          this.queueGenreFilter.innerHTML = genres.map(g => `
+            <button class="q-filter-pill ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}" style="--pill-color: ${g.color}">
+              <span>${g.icon} ${g.name.split(' ')[1] || 'ALL'}</span>
+              <span class="pill-badge">${g.count}</span>
+            </button>
+          `).join('');
+
+          this.queueGenreFilter.querySelectorAll('.q-filter-pill').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const genreId = btn.getAttribute('data-genre');
+              this.activeGenre = genreId;
+              const chosen = genres.find(x => x.id === genreId);
+              if (this.headerGenreIcon && chosen) this.headerGenreIcon.textContent = chosen.icon;
+              if (this.headerGenreLabel && chosen) this.headerGenreLabel.textContent = chosen.name.replace(/^[^\s]+\s/, '');
+              renderGenreButtons();
+              await this.audioEngine.setGenre(genreId);
+            });
+          });
+        }
+      };
+
+      renderGenreButtons();
+    } catch (e) {
+      console.warn('Error loading genres:', e);
+    }
+  }
+
+  updateTrackInfo(track, nextTrack, queue) {
     if (!track) return;
-    const nextTrack = queue && queue.length > 0 ? queue[0] : null;
+    this.currentTrack = track;
     const activeDeck = this.audioEngine.activeDeck;
 
     // Radio Mode Displays
     if (this.radioTrackTitle) this.radioTrackTitle.textContent = track.title || 'Unknown Track';
-    if (this.radioTrackArtist) this.radioTrackArtist.textContent = track.artist || 'JMF Radio 24/7';
+    if (this.radioTrackArtist) {
+      const gBadge = track.genre ? ` [${track.genre.name.split(' ')[0]}]` : '';
+      this.radioTrackArtist.textContent = (track.artist || 'JMF Radio 24/7') + gBadge;
+    }
 
     if (activeDeck === 'A') {
       if (this.deckATitle) this.deckATitle.textContent = track.title || 'Unknown Track';
@@ -957,9 +1045,15 @@ export class UIController {
 
     if (queue && queue.length > 0 && this.queueList) {
       this.queueList.innerHTML = queue.map((item, idx) => `
-        <div class="queue-item">
-          <div class="queue-item-title">${idx + 1}. ${item.title}</div>
-          <div class="queue-item-artist">${item.artist}</div>
+        <div class="queue-item" data-id="${item.id}">
+          <div class="queue-item-left">
+            <div class="queue-item-title">${idx + 1}. ${item.title}</div>
+            <div class="queue-item-artist">${item.artist}</div>
+          </div>
+          <div class="queue-item-right">
+            ${item.genre ? `<span class="q-genre-pill" style="color: ${item.genre.color}; border-color: ${item.genre.color}40;">${item.genre.name.split(' ')[0]}</span>` : ''}
+            <span class="q-bpm-pill">${item.bpm || 128} BPM</span>
+          </div>
         </div>
       `).join('');
     }

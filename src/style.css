@@ -2398,3 +2398,230 @@ body.mode-dj .radio-mode-console,
   width: 40px;
   text-align: right;
 }
+
+/* ======================================================== */
+/* 🎵 MUSIC STYLES & GENRE FILTER UI */
+/* ======================================================== */
+.genre-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(14, 18, 30, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.08);
+}
+
+.genre-quick-btn:hover {
+  background: rgba(22, 28, 48, 0.95);
+  border-color: var(--deck-a-cyan);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+.genre-quick-btn .g-icon {
+  font-size: 11px;
+}
+
+.genre-quick-btn .g-label {
+  color: var(--deck-a-cyan);
+  text-transform: uppercase;
+}
+
+/* Queue Drawer Genre Filter Bar */
+.queue-genre-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  overflow-x: auto;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+  scrollbar-width: none;
+}
+
+.queue-genre-filter::-webkit-scrollbar {
+  display: none;
+}
+
+.q-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(20, 24, 38, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a6b2c2;
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 800;
+  padding: 4px 9px;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.q-filter-pill:hover {
+  background: rgba(30, 36, 56, 0.9);
+  color: #fff;
+}
+
+.q-filter-pill.active {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--pill-color, #00f0ff);
+  color: #fff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
+}
+
+.q-filter-pill .pill-badge {
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 7.5px;
+  padding: 1px 4px;
+  border-radius: 6px;
+  color: #ced6e2;
+}
+
+/* Queue List Enriched Item */
+.queue-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.15s ease;
+}
+
+.queue-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.queue-item-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.queue-item-title {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.queue-item-artist {
+  font-size: 8.5px;
+  color: #8c96a8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.queue-item-right {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.q-genre-pill {
+  font-family: var(--font-display);
+  font-size: 7.5px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.q-bpm-pill {
+  font-family: var(--font-mono);
+  font-size: 7.5px;
+  font-weight: 700;
+  color: #64748b;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+/* Genre Selection Modal */
+.genre-modal-card {
+  max-width: 480px;
+}
+
+.genre-modal-subtitle {
+  font-size: 9px;
+  color: #8c96a8;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.genre-grid-selection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.genre-card-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(18, 22, 34, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.genre-card-btn:hover {
+  background: rgba(28, 34, 52, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.genre-card-btn.active {
+  background: rgba(0, 240, 255, 0.12);
+  border-color: var(--deck-a-cyan);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.2);
+}
+
+.genre-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.genre-card-icon {
+  font-size: 16px;
+}
+
+.genre-card-count {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  color: #718096;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.genre-card-name {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+
