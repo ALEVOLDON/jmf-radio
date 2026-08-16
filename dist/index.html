@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-CejodSaA.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CKjhXLao.css">
+  <script type="module" crossorigin src="/assets/index-B35XUddt.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BPEZvNmU.css">
 </head>
 <body>
   <!-- 3D Canvas Container -->
@@ -94,10 +94,25 @@
     <!-- 🎛️ STATE-OF-THE-ART PRO DUAL-DECK & DJM WORKSTATION -->
     <!-- ======================================================== -->
     <div class="bottom-console-wrapper">
+      <!-- Mobile Deck / Mixer Switcher Tabs (Only visible on small screens) -->
+      <div class="mobile-deck-tabs" id="mobile-deck-tabs">
+        <button class="m-tab-btn active-tab-a" data-tab="deck-a" id="m-tab-a">
+          <span class="m-dot m-dot-a"></span>
+          <span>DECK A</span>
+        </button>
+        <button class="m-tab-btn" data-tab="mixer" id="m-tab-mixer">
+          <span>🎛️ MIXER</span>
+        </button>
+        <button class="m-tab-btn" data-tab="deck-b" id="m-tab-b">
+          <span class="m-dot m-dot-b"></span>
+          <span>DECK B</span>
+        </button>
+      </div>
+
       <footer class="hardware-dj-station">
       
       <!-- 🔵 DECK A (LEFT CDJ UNIT) -->
-      <div class="cdj-deck-unit deck-a-frame" id="deck-a-unit">
+      <div class="cdj-deck-unit deck-a-frame m-active-panel" id="deck-a-unit">
         <!-- Top Screen & Header -->
         <div class="deck-top-screen">
           <div class="screen-header">

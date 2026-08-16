@@ -682,6 +682,36 @@ export class UIController {
     if (this.queueCloseBtn && this.queueDrawer) {
       this.queueCloseBtn.addEventListener('click', () => this.queueDrawer.classList.add('hidden'));
     }
+
+    // Mobile Deck / Mixer Switcher Tabs
+    const mobileTabs = document.querySelectorAll('.m-tab-btn');
+    const deckAUnit = document.getElementById('deck-a-unit');
+    const mixerUnit = document.getElementById('djm-mixer');
+    const deckBUnit = document.getElementById('deck-b-unit');
+
+    mobileTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        mobileTabs.forEach(t => t.className = 'm-tab-btn');
+        const target = tab.getAttribute('data-tab');
+
+        if (target === 'deck-a') {
+          tab.classList.add('active-tab-a');
+          if (deckAUnit) deckAUnit.classList.add('m-active-panel');
+          if (mixerUnit) mixerUnit.classList.remove('m-active-panel');
+          if (deckBUnit) deckBUnit.classList.remove('m-active-panel');
+        } else if (target === 'mixer') {
+          tab.classList.add('active-tab-mixer');
+          if (deckAUnit) deckAUnit.classList.remove('m-active-panel');
+          if (mixerUnit) mixerUnit.classList.add('m-active-panel');
+          if (deckBUnit) deckBUnit.classList.remove('m-active-panel');
+        } else if (target === 'deck-b') {
+          tab.classList.add('active-tab-b');
+          if (deckAUnit) deckAUnit.classList.remove('m-active-panel');
+          if (mixerUnit) mixerUnit.classList.remove('m-active-panel');
+          if (deckBUnit) deckBUnit.classList.add('m-active-panel');
+        }
+      });
+    });
   }
 
   updatePlayState(isPlaying) {

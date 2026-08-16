@@ -93,10 +93,25 @@
     <!-- 🎛️ STATE-OF-THE-ART PRO DUAL-DECK & DJM WORKSTATION -->
     <!-- ======================================================== -->
     <div class="bottom-console-wrapper">
+      <!-- Mobile Deck / Mixer Switcher Tabs (Only visible on small screens) -->
+      <div class="mobile-deck-tabs" id="mobile-deck-tabs">
+        <button class="m-tab-btn active-tab-a" data-tab="deck-a" id="m-tab-a">
+          <span class="m-dot m-dot-a"></span>
+          <span>DECK A</span>
+        </button>
+        <button class="m-tab-btn" data-tab="mixer" id="m-tab-mixer">
+          <span>🎛️ MIXER</span>
+        </button>
+        <button class="m-tab-btn" data-tab="deck-b" id="m-tab-b">
+          <span class="m-dot m-dot-b"></span>
+          <span>DECK B</span>
+        </button>
+      </div>
+
       <footer class="hardware-dj-station">
       
       <!-- 🔵 DECK A (LEFT CDJ UNIT) -->
-      <div class="cdj-deck-unit deck-a-frame" id="deck-a-unit">
+      <div class="cdj-deck-unit deck-a-frame m-active-panel" id="deck-a-unit">
         <!-- Top Screen & Header -->
         <div class="deck-top-screen">
           <div class="screen-header">

@@ -1456,3 +1456,257 @@ html, body {
 }
 
 .btn-primary-glow:hover { transform: scale(1.05); }
+
+/* ======================================================== */
+/* 📱 MOBILE DECK SWITCHER TABS & RESPONSIVE DESIGN */
+/* ======================================================== */
+.mobile-deck-tabs {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 12, 22, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 4px;
+  margin-bottom: 2px;
+}
+
+.m-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 900;
+  padding: 6px 4px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.m-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.m-dot-a { background: var(--deck-a-cyan); box-shadow: 0 0 6px var(--deck-a-cyan); }
+.m-dot-b { background: var(--deck-b-pink); box-shadow: 0 0 6px var(--deck-b-pink); }
+
+.m-tab-btn.active-tab-a {
+  background: rgba(0, 240, 255, 0.18);
+  color: var(--deck-a-cyan);
+  border: 1px solid rgba(0, 240, 255, 0.4);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.m-tab-btn.active-tab-mixer {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+.m-tab-btn.active-tab-b {
+  background: rgba(255, 0, 127, 0.18);
+  color: var(--deck-b-pink);
+  border: 1px solid rgba(255, 0, 127, 0.4);
+  box-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
+}
+
+/* --- Mobile Breakpoint (<= 820px Tablets & Phones) --- */
+@media (max-width: 820px) {
+  #ui-overlay {
+    padding: 6px 8px 4px 8px;
+  }
+
+  .top-bar {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .camera-toolbar {
+    overflow-x: auto;
+    max-width: 320px;
+    scrollbar-width: none;
+  }
+
+  .camera-toolbar::-webkit-scrollbar { display: none; }
+
+  .cam-btn {
+    padding: 3px 6px;
+    font-size: 8.5px;
+    white-space: nowrap;
+  }
+
+  .mobile-deck-tabs {
+    display: flex;
+  }
+
+  /* In mobile portrait mode, display the active panel tab full width */
+  .hardware-dj-station {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hardware-dj-station > .cdj-deck-unit,
+  .hardware-dj-station > .djm-mixer-unit {
+    display: none;
+    width: 100%;
+  }
+
+  .hardware-dj-station > .m-active-panel {
+    display: flex;
+  }
+
+  .deck-middle-controls {
+    grid-template-columns: 120px 1fr;
+    gap: 6px;
+  }
+
+  .cdj-jog-platter {
+    width: 110px;
+    height: 110px;
+  }
+
+  .jog-center-lcd-screen {
+    width: 58px;
+    height: 58px;
+  }
+
+  .bottom-utility-bar {
+    padding: 4px 6px;
+    gap: 6px;
+  }
+
+  .hp-vu-meter-horiz, .master-horiz-vu {
+    width: 40px;
+  }
+}
+
+/* --- Small Mobile Phones (<= 480px) --- */
+@media (max-width: 480px) {
+  .top-bar {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .station-title {
+    font-size: 11px;
+  }
+
+  .camera-toolbar {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .deck-middle-controls {
+    grid-template-columns: 105px 1fr;
+    gap: 4px;
+  }
+
+  .cdj-jog-platter {
+    width: 100px;
+    height: 100px;
+  }
+
+  .jog-center-lcd-screen {
+    width: 54px;
+    height: 54px;
+  }
+
+  .jog-lcd-bpm {
+    font-size: 9px;
+  }
+
+  .deck-perf-container {
+    grid-template-columns: 1fr 30px;
+  }
+
+  .btn-pioneer-cue, .btn-pioneer-play, .btn-sync-master, .btn-deck-dark {
+    height: 32px;
+  }
+
+  .start-card {
+    padding: 24px 20px;
+    margin: 12px;
+  }
+
+  .start-card h2 {
+    font-size: 18px;
+  }
+}
+
+/* --- Mobile Landscape Mode (height <= 520px and landscape) --- */
+@media (max-height: 520px) and (orientation: landscape) {
+  #ui-overlay {
+    padding: 4px 6px;
+  }
+
+  .top-bar {
+    padding: 2px 8px;
+  }
+
+  .mobile-deck-tabs {
+    display: none;
+  }
+
+  .hardware-dj-station {
+    display: grid !important;
+    grid-template-columns: 1fr 180px 1fr !important;
+    gap: 4px;
+    max-height: 180px;
+  }
+
+  .hardware-dj-station > .cdj-deck-unit,
+  .hardware-dj-station > .djm-mixer-unit {
+    display: flex !important;
+  }
+
+  .cdj-jog-platter {
+    width: 75px;
+    height: 75px;
+  }
+
+  .jog-center-lcd-screen {
+    width: 44px;
+    height: 44px;
+  }
+
+  .jog-lcd-bpm { font-size: 7.5px; }
+
+  .deck-top-screen {
+    padding: 2px 4px;
+  }
+
+  .deck-waveform-canvas {
+    height: 14px;
+  }
+
+  .vertical-pitch-slider, .vertical-ch-fader {
+    height: 38px;
+  }
+
+  .btn-pioneer-cue, .btn-pioneer-play, .btn-sync-master, .btn-deck-dark {
+    height: 22px;
+    font-size: 7px;
+  }
+
+  .deck-fx-strip, .deck-bottom-navbar {
+    display: none;
+  }
+
+  .bottom-utility-bar {
+    display: none;
+  }
+}
