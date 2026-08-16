@@ -528,24 +528,31 @@ html, body {
 .screen-waveform-area {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
 }
 
-.waveform-track {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 3px;
+.waveform-canvas-wrap {
+  width: 100%;
+  height: 28px;
+  background: #040509;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
   overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+  transition: border-color 0.15s ease;
 }
 
-.waveform-fill {
+.waveform-canvas-wrap:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.deck-waveform-canvas {
+  width: 100%;
   height: 100%;
-  width: 0%;
-  transition: width 0.2s linear;
+  display: block;
 }
-
-.fill-cyan { background: linear-gradient(90deg, var(--accent-cyan), #9d4edd); box-shadow: 0 0 6px var(--accent-cyan); }
-.fill-magenta { background: linear-gradient(90deg, var(--accent-magenta), #ffd000); box-shadow: 0 0 6px var(--accent-magenta); }
 
 .waveform-times {
   display: flex;

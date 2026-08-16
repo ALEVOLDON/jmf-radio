@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-BAM15KPL.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CRNl55Tk.css">
+  <script type="module" crossorigin src="/assets/index-F8gqmxsp.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CgWV60Bc.css">
 </head>
 <body>
   <!-- 3D Canvas Container -->
@@ -127,8 +127,8 @@
           </div>
 
           <div class="screen-waveform-area">
-            <div class="waveform-track" id="deck-a-waveform">
-              <div class="waveform-fill fill-cyan" id="deck-a-progress"></div>
+            <div class="waveform-canvas-wrap" id="deck-a-waveform-wrap" title="Click to seek track">
+              <canvas class="deck-waveform-canvas" id="deck-a-canvas" width="400" height="28"></canvas>
             </div>
             <div class="waveform-times">
               <span id="deck-a-time-cur">0:00</span>
@@ -428,8 +428,8 @@
           </div>
 
           <div class="screen-waveform-area">
-            <div class="waveform-track" id="deck-b-waveform">
-              <div class="waveform-fill fill-magenta" id="deck-b-progress"></div>
+            <div class="waveform-canvas-wrap" id="deck-b-waveform-wrap" title="Click to seek track">
+              <canvas class="deck-waveform-canvas" id="deck-b-canvas" width="400" height="28"></canvas>
             </div>
             <div class="waveform-times">
               <span id="deck-b-time-cur">0:00</span>

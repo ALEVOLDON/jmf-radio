@@ -31,7 +31,8 @@ export class UIController {
     this.deckAPitchVal = document.getElementById('deck-a-pitch-val');
     this.deckAPitch = document.getElementById('deck-a-pitch');
     this.deckAPitchReset = document.getElementById('deck-a-pitch-reset');
-    this.deckAProgress = document.getElementById('deck-a-progress');
+    this.deckACanvas = document.getElementById('deck-a-canvas');
+    this.deckAWaveWrap = document.getElementById('deck-a-waveform-wrap');
     this.deckATimeCur = document.getElementById('deck-a-time-cur');
     this.deckATimeRem = document.getElementById('deck-a-time-rem');
     this.deckAJog = document.getElementById('deck-a-jog');
@@ -50,7 +51,8 @@ export class UIController {
     this.deckBPitchVal = document.getElementById('deck-b-pitch-val');
     this.deckBPitch = document.getElementById('deck-b-pitch');
     this.deckBPitchReset = document.getElementById('deck-b-pitch-reset');
-    this.deckBProgress = document.getElementById('deck-b-progress');
+    this.deckBCanvas = document.getElementById('deck-b-canvas');
+    this.deckBWaveWrap = document.getElementById('deck-b-waveform-wrap');
     this.deckBTimeCur = document.getElementById('deck-b-time-cur');
     this.deckBTimeRem = document.getElementById('deck-b-time-rem');
     this.deckBJog = document.getElementById('deck-b-jog');
@@ -82,11 +84,145 @@ export class UIController {
     this.jogAngleA = 0;
     this.jogAngleB = 0;
 
+    // Generated Waveform Profiles
+    this.waveformProfileA = this.generateWaveformProfile('seed-a');
+    this.waveformProfileB = this.generateWaveformProfile('seed-b');
+
     this.initHardwareEvents();
     this.initRotaryKnobs();
+    this.initWaveformSeeking();
   }
 
-  // --- Real Circular Rotary Knobs Handler ---
+  // Generate 120-slice realistic song waveform structure
+  generateWaveformProfile(seedStr) {
+    let hash = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      hash = ((hash << 5) - hash) + seedStr.charCodeAt(i);
+      hash |= 0;
+    }
+
+    const pseudoRand = (idx) => {
+      const x = Math.sin(hash + idx * 12.9898) * 43758.5453;
+      return x - Math.floor(x);
+    };
+
+    const slices = [];
+    const count = 120;
+
+    for (let i = 0; i < count; i++) {
+      const progress = i / count;
+      let baseEnergy = 0.5;
+
+      // Song Energy Curve (Intro -> Verse -> Build -> Drop 1 -> Bridge -> Drop 2 -> Outro)
+      if (progress < 0.12) {
+        baseEnergy = 0.3 + 0.35 * (progress / 0.12); // Intro build
+      } else if (progress < 0.35) {
+        baseEnergy = 0.75 + 0.2 * Math.sin(progress * 40); // Verse / Groove
+      } else if (progress < 0.45) {
+        baseEnergy = 0.35 + 0.15 * Math.sin(progress * 20); // Breakdown
+      } else if (progress < 0.75) {
+        baseEnergy = 0.88 + 0.12 * Math.sin(progress * 50); // Peak Main Drop
+      } else if (progress < 0.85) {
+        baseEnergy = 0.45 + 0.2 * Math.sin(progress * 30); // Breakdown 2
+      } else {
+        baseEnergy = 0.7 * (1.0 - (progress - 0.85) / 0.15); // Outro fade
+      }
+
+      // Add high-frequency transient spikes (kick drums / snares)
+      const noise = pseudoRand(i);
+      const isKickBeat = (i % 4 === 0) || (i % 6 === 0);
+      const spike = isKickBeat ? 0.25 * noise : 0.12 * noise;
+      const height = Math.max(0.15, Math.min(1.0, baseEnergy + spike));
+
+      slices.push(height);
+    }
+    return slices;
+  }
+
+  // Draw Pioneer RGB Waveform on HTML5 Canvas
+  drawWaveform(canvas, profile, progressPct, deckType, liveAnalysis) {
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+    const centerY = h / 2;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const count = profile.length;
+    const barWidth = w / count;
+    const playheadX = progressPct * w;
+    const bassPulse = liveAnalysis ? liveAnalysis.bass * 3 : 0;
+
+    for (let i = 0; i < count; i++) {
+      const x = i * barWidth;
+      const isPlayed = x <= playheadX;
+      const distToPlayhead = Math.abs(x - playheadX);
+      const localBounce = (distToPlayhead < 15 && isPlayed) ? bassPulse : 0;
+
+      const rawH = (profile[i] * (h * 0.82)) + localBounce;
+      const barH = Math.max(3, Math.min(h - 2, rawH));
+      const topY = centerY - (barH / 2);
+
+      if (isPlayed) {
+        // Active Played Color (Pioneer 3-Band RGB / Cyan / Magenta Gradient)
+        if (deckType === 'A') {
+          const grad = ctx.createLinearGradient(0, topY, 0, topY + barH);
+          grad.addColorStop(0, '#ffffff');
+          grad.addColorStop(0.3, '#00f0ff');
+          grad.addColorStop(0.7, '#7928ca');
+          grad.addColorStop(1, '#00f0ff');
+          ctx.fillStyle = grad;
+        } else {
+          const grad = ctx.createLinearGradient(0, topY, 0, topY + barH);
+          grad.addColorStop(0, '#ffffff');
+          grad.addColorStop(0.3, '#ff007f');
+          grad.addColorStop(0.7, '#ffd000');
+          grad.addColorStop(1, '#ff007f');
+          ctx.fillStyle = grad;
+        }
+      } else {
+        // Dimmed Unplayed Color
+        ctx.fillStyle = 'rgba(100, 115, 150, 0.28)';
+      }
+
+      ctx.fillRect(x + 0.5, topY, Math.max(1.5, barWidth - 1), barH);
+    }
+
+    // Draw Glowing White Playhead Line
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = deckType === 'A' ? '#00f0ff' : '#ff007f';
+    ctx.shadowBlur = 8;
+    ctx.fillRect(playheadX - 1, 0, 2, h);
+    ctx.shadowBlur = 0; // reset
+  }
+
+  // Interactive Click / Drag to seek track
+  initWaveformSeeking() {
+    if (this.deckAWaveWrap) {
+      this.deckAWaveWrap.addEventListener('click', (e) => {
+        const rect = this.deckAWaveWrap.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const audio = this.audioEngine.activeDeck === 'A' ? this.audioEngine.getActiveAudio() : this.audioEngine.audioA;
+        if (audio && audio.duration) {
+          audio.currentTime = pct * audio.duration;
+        }
+      });
+    }
+
+    if (this.deckBWaveWrap) {
+      this.deckBWaveWrap.addEventListener('click', (e) => {
+        const rect = this.deckBWaveWrap.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const audio = this.audioEngine.activeDeck === 'B' ? this.audioEngine.getActiveAudio() : this.audioEngine.audioB;
+        if (audio && audio.duration) {
+          audio.currentTime = pct * audio.duration;
+        }
+      });
+    }
+  }
+
+  // Real Circular Rotary Knobs Handler
   initRotaryKnobs() {
     const knobElements = document.querySelectorAll('.rotary-knob-component');
 
@@ -96,10 +232,8 @@ export class UIController {
       const max = parseFloat(knobEl.getAttribute('data-max'));
       const defaultVal = parseFloat(knobEl.getAttribute('data-default'));
       let currentVal = parseFloat(knobEl.getAttribute('data-val'));
-
       const capEl = knobEl.querySelector('.knob-cap');
 
-      // Update rotation visually (-135° to +135°)
       const updateKnobVisual = (val) => {
         const pct = (val - min) / (max - min);
         const deg = -135 + (pct * 270);
@@ -107,52 +241,27 @@ export class UIController {
         knobEl.setAttribute('data-val', val);
       };
 
-      // Dispatch parameter to AudioEngine
       const dispatchParam = (val) => {
         if (!this.audioEngine) return;
         switch (param) {
-          case 'trim-A':
-            this.audioEngine.setChannelGain('A', val);
-            break;
-          case 'eq-A-high':
-            this.audioEngine.setEQ('A', 'high', val);
-            break;
-          case 'eq-A-mid':
-            this.audioEngine.setEQ('A', 'mid', val);
-            break;
-          case 'eq-A-low':
-            this.audioEngine.setEQ('A', 'low', val);
-            break;
-          case 'filter-A':
-            this.audioEngine.setFilterSweep('A', val);
-            break;
+          case 'trim-A': this.audioEngine.setChannelGain('A', val); break;
+          case 'eq-A-high': this.audioEngine.setEQ('A', 'high', val); break;
+          case 'eq-A-mid': this.audioEngine.setEQ('A', 'mid', val); break;
+          case 'eq-A-low': this.audioEngine.setEQ('A', 'low', val); break;
+          case 'filter-A': this.audioEngine.setFilterSweep('A', val); break;
 
-          case 'trim-B':
-            this.audioEngine.setChannelGain('B', val);
-            break;
-          case 'eq-B-high':
-            this.audioEngine.setEQ('B', 'high', val);
-            break;
-          case 'eq-B-mid':
-            this.audioEngine.setEQ('B', 'mid', val);
-            break;
-          case 'eq-B-low':
-            this.audioEngine.setEQ('B', 'low', val);
-            break;
-          case 'filter-B':
-            this.audioEngine.setFilterSweep('B', val);
-            break;
+          case 'trim-B': this.audioEngine.setChannelGain('B', val); break;
+          case 'eq-B-high': this.audioEngine.setEQ('B', 'high', val); break;
+          case 'eq-B-mid': this.audioEngine.setEQ('B', 'mid', val); break;
+          case 'eq-B-low': this.audioEngine.setEQ('B', 'low', val); break;
+          case 'filter-B': this.audioEngine.setFilterSweep('B', val); break;
 
-          case 'master-vol':
-            this.audioEngine.setVolume(val);
-            break;
+          case 'master-vol': this.audioEngine.setVolume(val); break;
         }
       };
 
-      // Initialize default angle
       updateKnobVisual(currentVal);
 
-      // Drag to rotate
       let isDragging = false;
       let startY = 0;
       let startVal = currentVal;
@@ -172,9 +281,9 @@ export class UIController {
         if (!isDragging) return;
         if (e.preventDefault) e.preventDefault();
         const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-        const deltaY = startY - clientY; // Up is increase
+        const deltaY = startY - clientY;
         const range = max - min;
-        const sensitivity = range / 140; // 140px vertical drag for full rotation
+        const sensitivity = range / 140;
 
         currentVal = Math.max(min, Math.min(max, startVal + (deltaY * sensitivity)));
         updateKnobVisual(currentVal);
@@ -195,7 +304,6 @@ export class UIController {
       knobEl.addEventListener('mousedown', onPointerDown);
       knobEl.addEventListener('touchstart', onPointerDown, { passive: false });
 
-      // Mouse Wheel adjustment
       knobEl.addEventListener('wheel', (e) => {
         e.preventDefault();
         const delta = e.deltaY < 0 ? 1 : -1;
@@ -205,7 +313,6 @@ export class UIController {
         dispatchParam(currentVal);
       });
 
-      // Double-click to reset
       knobEl.addEventListener('dblclick', () => {
         currentVal = defaultVal;
         updateKnobVisual(currentVal);
@@ -215,7 +322,6 @@ export class UIController {
   }
 
   initHardwareEvents() {
-    // Start Overlay
     if (this.btnStart) {
       this.btnStart.addEventListener('click', async () => {
         if (this.overlay) this.overlay.classList.add('hidden');
@@ -430,11 +536,15 @@ export class UIController {
       if (this.deckAState) this.deckAState.textContent = 'ON AIR';
       if (this.deckAPlay) this.deckAPlay.classList.add('active-play');
 
+      // Generate unique waveform for Deck A track
+      this.waveformProfileA = this.generateWaveformProfile(track.title + (track.id || 'a'));
+
       if (nextTrack) {
         if (this.deckBTitle) this.deckBTitle.textContent = nextTrack.title || 'Upcoming Track';
         if (this.deckBArtist) this.deckBArtist.textContent = nextTrack.artist || 'Next on Deck';
         if (this.deckBState) this.deckBState.textContent = 'CUE / NEXT';
         if (this.deckBPlay) this.deckBPlay.classList.remove('active-play');
+        this.waveformProfileB = this.generateWaveformProfile(nextTrack.title + (nextTrack.id || 'b'));
       }
     } else {
       if (this.deckBTitle) this.deckBTitle.textContent = track.title || 'Unknown Track';
@@ -442,11 +552,14 @@ export class UIController {
       if (this.deckBState) this.deckBState.textContent = 'ON AIR';
       if (this.deckBPlay) this.deckBPlay.classList.add('active-play');
 
+      this.waveformProfileB = this.generateWaveformProfile(track.title + (track.id || 'b'));
+
       if (nextTrack) {
         if (this.deckATitle) this.deckATitle.textContent = nextTrack.title || 'Upcoming Track';
         if (this.deckAArtist) this.deckAArtist.textContent = nextTrack.artist || 'Next on Deck';
         if (this.deckAState) this.deckAState.textContent = 'CUE / NEXT';
         if (this.deckAPlay) this.deckAPlay.classList.remove('active-play');
+        this.waveformProfileA = this.generateWaveformProfile(nextTrack.title + (nextTrack.id || 'a'));
       }
     }
 
@@ -480,28 +593,36 @@ export class UIController {
     const activeDeck = this.audioEngine.activeDeck;
     const isPlaying = this.audioEngine.isPlaying;
     const rem = Math.max(0, duration - elapsedTime);
-    const pct = duration > 0 ? Math.min(100, (elapsedTime / duration) * 100) : 0;
+    const pct = duration > 0 ? Math.min(1.0, elapsedTime / duration) : 0;
 
-    // 1. Deck Waveform Progress
+    // 1. Draw Waveforms on HTML5 Canvas
     if (activeDeck === 'A') {
-      if (this.deckAProgress) this.deckAProgress.style.width = `${pct}%`;
+      this.drawWaveform(this.deckACanvas, this.waveformProfileA, pct, 'A', audioAnalysis);
       if (this.deckATimeCur) this.deckATimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckATimeRem) this.deckATimeRem.textContent = `-${this.formatTime(rem)}`;
 
-      if (this.deckBTimeCur && !this.audioEngine.isCrossfading) {
-        this.deckBProgress.style.width = '0%';
-        this.deckBTimeCur.textContent = '0:00';
-        this.deckBTimeRem.textContent = 'READY';
+      // Standby Deck B
+      if (!this.audioEngine.isCrossfading) {
+        this.drawWaveform(this.deckBCanvas, this.waveformProfileB, 0, 'B', null);
+        if (this.deckBTimeCur) this.deckBTimeCur.textContent = '0:00';
+        if (this.deckBTimeRem) this.deckBTimeRem.textContent = 'READY';
+      } else {
+        const crossPct = audioAnalysis ? audioAnalysis.crossfadeProgress : 0;
+        this.drawWaveform(this.deckBCanvas, this.waveformProfileB, crossPct * 0.1, 'B', audioAnalysis);
       }
     } else {
-      if (this.deckBProgress) this.deckBProgress.style.width = `${pct}%`;
+      this.drawWaveform(this.deckBCanvas, this.waveformProfileB, pct, 'B', audioAnalysis);
       if (this.deckBTimeCur) this.deckBTimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckBTimeRem) this.deckBTimeRem.textContent = `-${this.formatTime(rem)}`;
 
-      if (this.deckATimeCur && !this.audioEngine.isCrossfading) {
-        this.deckAProgress.style.width = '0%';
-        this.deckATimeCur.textContent = '0:00';
-        this.deckATimeRem.textContent = 'READY';
+      // Standby Deck A
+      if (!this.audioEngine.isCrossfading) {
+        this.drawWaveform(this.deckACanvas, this.waveformProfileA, 0, 'A', null);
+        if (this.deckATimeCur) this.deckATimeCur.textContent = '0:00';
+        if (this.deckATimeRem) this.deckATimeRem.textContent = 'READY';
+      } else {
+        const crossPct = audioAnalysis ? audioAnalysis.crossfadeProgress : 0;
+        this.drawWaveform(this.deckACanvas, this.waveformProfileA, crossPct * 0.1, 'A', audioAnalysis);
       }
     }
 
