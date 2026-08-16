@@ -107,6 +107,7 @@ export class UIController {
     this.initHardwareEvents();
     this.initRotaryKnobs();
     this.initWaveformSeeking();
+    this.initJogWheelMouseControl();
   }
 
   // Generate 120-slice realistic song waveform structure
@@ -223,6 +224,125 @@ export class UIController {
     };
     handleSeek(this.deckAWaveWrap, 'A');
     handleSeek(this.deckBWaveWrap, 'B');
+  }
+
+  // Real Vinyl Scratching, Jog Wheel Mouse Drag & Nudge
+  initJogWheelMouseControl() {
+    const setupJog = (jogEl, deck) => {
+      if (!jogEl) return;
+
+      let isDragging = false;
+      let prevAngle = 0;
+      let wasPlayingBeforeDrag = false;
+
+      const getCenter = () => {
+        const rect = jogEl.getBoundingClientRect();
+        return {
+          x: rect.left + rect.width / 2,
+          y: rect.top + rect.height / 2
+        };
+      };
+
+      const getMouseAngle = (e) => {
+        const center = getCenter();
+        const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+        const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+        return Math.atan2(clientY - center.y, clientX - center.x);
+      };
+
+      const onMouseDown = (e) => {
+        e.preventDefault();
+        isDragging = true;
+        prevAngle = getMouseAngle(e);
+
+        jogEl.classList.add('is-scratching');
+        const audio = deck === 'A' ? this.audioEngine.audioA : this.audioEngine.audioB;
+        wasPlayingBeforeDrag = audio && !audio.paused;
+
+        if (wasPlayingBeforeDrag) {
+          audio.pause();
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        window.addEventListener('touchmove', onMouseMove, { passive: false });
+        window.addEventListener('touchend', onMouseUp);
+      };
+
+      const onMouseMove = (e) => {
+        if (!isDragging) return;
+        if (e.preventDefault) e.preventDefault();
+
+        const currentAngle = getMouseAngle(e);
+        let delta = currentAngle - prevAngle;
+
+        // Handle wrap-around across -PI / +PI boundary
+        if (delta > Math.PI) delta -= 2 * Math.PI;
+        if (delta < -Math.PI) delta += 2 * Math.PI;
+
+        prevAngle = currentAngle;
+
+        const deltaDeg = delta * (180 / Math.PI);
+        if (deck === 'A') {
+          this.jogAngleA += deltaDeg;
+          jogEl.style.transform = `rotate(${this.jogAngleA}deg)`;
+        } else {
+          this.jogAngleB += deltaDeg;
+          jogEl.style.transform = `rotate(${this.jogAngleB}deg)`;
+        }
+
+        // Real Vinyl Scratch Scrub: 1 full rotation = 1.8s audio
+        const audio = deck === 'A' ? this.audioEngine.audioA : this.audioEngine.audioB;
+        if (audio && audio.duration) {
+          const deltaSec = (delta / (2 * Math.PI)) * 1.8;
+          audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + deltaSec));
+        }
+      };
+
+      const onMouseUp = () => {
+        if (isDragging) {
+          isDragging = false;
+          jogEl.classList.remove('is-scratching');
+
+          window.removeEventListener('mousemove', onMouseMove);
+          window.removeEventListener('mouseup', onMouseUp);
+          window.removeEventListener('touchmove', onMouseMove);
+          window.removeEventListener('touchend', onMouseUp);
+
+          const audio = deck === 'A' ? this.audioEngine.audioA : this.audioEngine.audioB;
+          if (wasPlayingBeforeDrag && audio) {
+            audio.play().catch(err => console.warn('Resume error after jog scratch:', err));
+          }
+        }
+      };
+
+      jogEl.addEventListener('mousedown', onMouseDown);
+      jogEl.addEventListener('touchstart', onMouseDown, { passive: false });
+
+      // Mouse Wheel Nudge / Pitch Bend
+      jogEl.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 1 : -1;
+        const nudgeSec = delta * 0.35;
+        const nudgeDeg = delta * 12;
+
+        if (deck === 'A') {
+          this.jogAngleA += nudgeDeg;
+          jogEl.style.transform = `rotate(${this.jogAngleA}deg)`;
+        } else {
+          this.jogAngleB += nudgeDeg;
+          jogEl.style.transform = `rotate(${this.jogAngleB}deg)`;
+        }
+
+        const audio = deck === 'A' ? this.audioEngine.audioA : this.audioEngine.audioB;
+        if (audio && audio.duration) {
+          audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + nudgeSec));
+        }
+      });
+    };
+
+    setupJog(this.deckAJog, 'A');
+    setupJog(this.deckBJog, 'B');
   }
 
   // Real Circular Rotary Knobs Handler
