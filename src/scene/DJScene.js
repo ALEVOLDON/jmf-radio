@@ -117,6 +117,22 @@ export class DJScene {
   }
 
   update(audioAnalysis, isPlaying) {
+    const safeAnalysis = audioAnalysis || {
+      bass: 0,
+      mids: 0,
+      treble: 0,
+      volume: 0,
+      rawArray: [],
+      beat: 0,
+      activeDeck: 'A',
+      crossfadeProgress: 0,
+      isCrossfading: false,
+      deckALevel: 0,
+      deckBLevel: 0,
+      bpmA: 128,
+      bpmB: 126
+    };
+
     // 1. Camera interpolation or cinematic orbit
     if (this.isCinematicOrbit) {
       this.cinematicAngle += 0.0025;
@@ -138,12 +154,12 @@ export class DJScene {
     this.controls.update();
 
     // 2. Update Subsystems
-    this.room.update(audioAnalysis, this.lighting.currentTheme);
-    this.soundSystem.update(audioAnalysis, this.lighting.currentTheme);
-    this.dj.update(audioAnalysis, isPlaying, this.lighting.currentTheme);
-    this.danceFloor.update(audioAnalysis, isPlaying, this.lighting.currentTheme);
-    this.barArea.update(audioAnalysis, isPlaying, this.lighting.currentTheme);
-    this.lighting.update(audioAnalysis);
+    this.room.update(safeAnalysis, this.lighting.currentTheme);
+    this.soundSystem.update(safeAnalysis, this.lighting.currentTheme);
+    this.dj.update(safeAnalysis, isPlaying, this.lighting.currentTheme);
+    this.danceFloor.update(safeAnalysis, isPlaying, this.lighting.currentTheme);
+    this.barArea.update(safeAnalysis, isPlaying, this.lighting.currentTheme);
+    this.lighting.update(safeAnalysis);
 
     // 3. Render
     this.renderer.render(this.scene, this.camera);

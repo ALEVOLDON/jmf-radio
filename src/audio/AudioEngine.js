@@ -676,4 +676,8 @@ export class AudioEngine {
 
     return this.analysis;
   }
+
+  update() {
+    return this.getAudioAnalysis();
+  }
 }
