@@ -1551,20 +1551,49 @@ body.mode-dj .radio-mode-console,
   }
 
   .top-bar {
-    padding: 4px 8px;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
     gap: 6px;
+    padding: 6px 10px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .station-brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .header-right {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: end;
   }
 
   .camera-toolbar {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    width: 100%;
+    max-width: 100%;
     overflow-x: auto;
-    max-width: 320px;
+    white-space: nowrap;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 3px 6px;
   }
 
   .camera-toolbar::-webkit-scrollbar { display: none; }
 
   .cam-btn {
-    padding: 3px 6px;
+    flex-shrink: 0;
+    padding: 3px 8px;
     font-size: 8.5px;
     white-space: nowrap;
   }
@@ -1617,19 +1646,8 @@ body.mode-dj .radio-mode-console,
 
 /* --- Small Mobile Phones (<= 480px) --- */
 @media (max-width: 480px) {
-  .top-bar {
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
   .station-title {
     font-size: 11px;
-  }
-
-  .camera-toolbar {
-    order: 3;
-    width: 100%;
-    justify-content: flex-start;
   }
 
   .deck-middle-controls {
