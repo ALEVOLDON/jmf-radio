@@ -437,107 +437,376 @@ export class Room {
     this.drawInitialStageScreen();
   }
 
+  setTrackInfo(currentTrack, nextTrack, elapsedTime, duration) {
+    this.currentTrack = currentTrack;
+    this.nextTrack = nextTrack;
+    this.elapsedTime = elapsedTime || 0;
+    this.duration = duration || 180;
+  }
+
   drawInitialStageScreen() {
     if (!this.stageCtx) return;
     const ctx = this.stageCtx;
     ctx.fillStyle = '#05060c';
     ctx.fillRect(0, 0, 1024, 512);
 
-    ctx.font = '900 84px Orbitron, sans-serif';
+    ctx.font = '900 76px Orbitron, sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = '#00f0ff';
     ctx.shadowBlur = 24;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('JMF RADIO', 512, 190);
+    ctx.fillText('JMF RADIO', 512, 180);
 
-    ctx.font = '700 24px "Space Grotesk", sans-serif';
+    ctx.font = '700 22px "Space Grotesk", sans-serif';
     ctx.fillStyle = '#00f0ff';
     ctx.shadowColor = '#00f0ff';
     ctx.shadowBlur = 12;
-    ctx.fillText('● AUDIO SPECTRUM ● ON AIR ●', 512, 260);
+    ctx.fillText('● 24/7 PRO VIRTUAL DJ ● ON AIR ●', 512, 240);
 
     if (this.stageTexture) this.stageTexture.needsUpdate = true;
   }
 
-  updateStageScreen(audioAnalysis) {
+  updateStageScreen(audioAnalysis, themeColors) {
     if (!this.stageCtx) return;
     const ctx = this.stageCtx;
     const w = 1024;
     const h = 512;
+    const now = performance.now();
 
-    this.stagePhase += 0.05 + (audioAnalysis.bass || 0) * 0.05;
+    // Initialize VJ state if not present
+    if (this.vjMode === undefined) {
+      this.vjMode = 0;
+      this.lastVJSwitch = now;
+      this.spectrumPeaks = new Float32Array(48);
+      this.scrollTickerX = 0;
+      this.radialAngle = 0;
+    }
 
-    // Semi-transparent clear for smooth motion trails
-    ctx.fillStyle = 'rgba(5, 6, 12, 0.35)';
+    // Auto-switch VJ mode every 18 seconds or on massive bass drops
+    if (now - this.lastVJSwitch > 18000 || (audioAnalysis.bass > 0.88 && Math.random() < 0.03 && now - this.lastVJSwitch > 5000)) {
+      this.vjMode = (this.vjMode + 1 + Math.floor(Math.random() * 2)) % 5;
+      this.lastVJSwitch = now;
+    }
+
+    this.stagePhase += 0.04 + (audioAnalysis.bass || 0) * 0.06;
+    this.radialAngle += 0.02 + (audioAnalysis.treble || 0) * 0.04;
+
+    const accentHex = (themeColors && themeColors.primary) ? `#${themeColors.primary.toString(16).padStart(6, '0')}` : '#00f0ff';
+    const subHex = (themeColors && themeColors.accent) ? `#${themeColors.accent.toString(16).padStart(6, '0')}` : '#ff007f';
+
+    // 1. Clear with motion trail
+    ctx.fillStyle = 'rgba(4, 5, 10, 0.38)';
     ctx.fillRect(0, 0, w, h);
 
-    // 1. Grid Background
-    ctx.strokeStyle = 'rgba(0, 240, 255, 0.08)';
-    ctx.lineWidth = 1;
-    for (let x = 0; x < w; x += 64) {
-      ctx.beginPath();
-      ctx.moveTo(x, 0);
-      ctx.lineTo(x, h);
-      ctx.stroke();
-    }
-    for (let y = 0; y < h; y += 48) {
-      ctx.beginPath();
-      ctx.moveTo(0, y);
-      ctx.lineTo(w, y);
-      ctx.stroke();
-    }
-
-    // 2. Large Central "JMF RADIO" Brand Header
-    const pulse = 1.0 + (audioAnalysis.bass || 0) * 0.15;
-    ctx.save();
-    ctx.translate(512, 175);
-    ctx.scale(pulse, pulse);
-    ctx.font = '900 88px Orbitron, sans-serif';
-    ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = (audioAnalysis.bass || 0) > 0.6 ? '#ff007f' : '#00f0ff';
-    ctx.shadowBlur = 24 + (audioAnalysis.bass || 0) * 20;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('JMF RADIO', 0, 0);
-    ctx.restore();
-
-    ctx.font = '700 20px "Space Grotesk", sans-serif';
-    ctx.fillStyle = '#00f0ff';
-    ctx.shadowColor = '#00f0ff';
-    ctx.shadowBlur = 10;
-    ctx.textAlign = 'center';
-    ctx.fillText('THE FUTURE OF SOUND ● 24/7 PRO DJ', 512, 245);
-
-    // 3. Dynamic Sine & Multi-Wave Equalizer Spectrum Lines (like in reference photo)
+    // ==========================================
+    // 🎨 VJ VISUALIZER MODES (Background / Midground)
+    // ==========================================
     const raw = audioAnalysis.rawArray || [];
     const len = raw.length || 64;
-    const centerY = 375;
 
-    // Multi-color neon wave lines (Cyan, Magenta, Purple)
-    const waves = [
-      { color: '#00f0ff', blur: 16, amp: 70 * (0.4 + audioAnalysis.bass * 1.2), speed: 1.0, width: 3.5 },
-      { color: '#ff007f', blur: 14, amp: 55 * (0.3 + audioAnalysis.mids * 1.0), speed: 1.4, width: 2.5 },
-      { color: '#a855f7', blur: 12, amp: 40 * (0.3 + audioAnalysis.treble * 1.0), speed: 1.8, width: 2.0 }
-    ];
+    if (this.vjMode === 0) {
+      // --- MODE 0: 🌊 Multi-Layer Cyber Sine Waves ---
+      const waves = [
+        { color: accentHex, blur: 16, amp: 65 * (0.4 + audioAnalysis.bass * 1.3), speed: 1.0, width: 3.5, yOff: 380 },
+        { color: subHex, blur: 14, amp: 50 * (0.3 + audioAnalysis.mids * 1.0), speed: 1.4, width: 2.5, yOff: 380 },
+        { color: '#a855f7', blur: 12, amp: 35 * (0.3 + audioAnalysis.treble * 1.0), speed: 1.8, width: 2.0, yOff: 380 }
+      ];
 
-    waves.forEach(wave => {
-      ctx.strokeStyle = wave.color;
-      ctx.shadowColor = wave.color;
-      ctx.shadowBlur = wave.blur;
-      ctx.lineWidth = wave.width;
+      waves.forEach(wave => {
+        ctx.strokeStyle = wave.color;
+        ctx.shadowColor = wave.color;
+        ctx.shadowBlur = wave.blur;
+        ctx.lineWidth = wave.width;
+        ctx.beginPath();
+        for (let x = 0; x <= w; x += 10) {
+          const i = Math.floor((x / w) * (len - 1));
+          const val = (raw[i] || 0) / 255;
+          const sinPart = Math.sin(x * 0.012 + this.stagePhase * wave.speed) * Math.cos(x * 0.007);
+          const y = wave.yOff + sinPart * wave.amp + (val - 0.5) * wave.amp * 1.4;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      });
+    } else if (this.vjMode === 1) {
+      // --- MODE 1: 📊 48-Band Mirrored Equalizer Spectrum Bars ---
+      const numBars = 44;
+      const barWidth = (w - 120) / numBars - 4;
+      const baseY = 420;
+
+      for (let i = 0; i < numBars; i++) {
+        const rawIdx = Math.floor((i / numBars) * (len - 1));
+        const val = ((raw[rawIdx] || 0) / 255) * (0.5 + audioAnalysis.bass * 0.7);
+        const barH = Math.max(6, val * 160);
+
+        if (barH > this.spectrumPeaks[i]) {
+          this.spectrumPeaks[i] = barH;
+        } else {
+          this.spectrumPeaks[i] = Math.max(0, this.spectrumPeaks[i] - 2.5);
+        }
+
+        const x = 60 + i * (barWidth + 4);
+        const y = baseY - barH;
+
+        // Gradient Bar
+        const grad = ctx.createLinearGradient(0, y, 0, baseY);
+        grad.addColorStop(0, subHex);
+        grad.addColorStop(0.5, accentHex);
+        grad.addColorStop(1, '#1e293b');
+
+        ctx.fillStyle = grad;
+        ctx.shadowColor = accentHex;
+        ctx.shadowBlur = 8;
+        ctx.fillRect(x, y, barWidth, barH);
+
+        // Mirrored Reflection below base
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
+        ctx.fillRect(x, baseY + 2, barWidth, barH * 0.35);
+
+        // Floating Peak Cap
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowColor = '#ffffff';
+        ctx.shadowBlur = 6;
+        ctx.fillRect(x, baseY - this.spectrumPeaks[i] - 3, barWidth, 2.5);
+      }
+    } else if (this.vjMode === 2) {
+      // --- MODE 2: 🌌 Cyber Hyperspace Grid & Neon Horizon ---
+      ctx.strokeStyle = 'rgba(0, 240, 255, 0.18)';
+      ctx.lineWidth = 1.5;
+      const horizonY = 320;
+      const fovCenter = 512;
+
+      // Perspective Grid Lines
+      for (let x = -400; x <= w + 400; x += 100) {
+        ctx.beginPath();
+        ctx.moveTo(fovCenter, horizonY);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+
+      // Moving Horizontal Distance Lines
+      const gridSpeed = (this.stagePhase * 40) % 35;
+      for (let d = 0; d < 180; d += 25) {
+        const y = horizonY + Math.pow((d + gridSpeed) / 180, 2) * (h - horizonY);
+        if (y <= h) {
+          ctx.beginPath();
+          ctx.moveTo(0, y);
+          ctx.lineTo(w, y);
+          ctx.stroke();
+        }
+      }
+
+      // Glowing Sun / Halo at horizon
+      ctx.save();
+      const sunRad = 55 + (audioAnalysis.bass || 0) * 30;
+      ctx.shadowColor = subHex;
+      ctx.shadowBlur = 30;
+      ctx.strokeStyle = subHex;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(512, horizonY, sunRad, Math.PI, 0);
+      ctx.stroke();
+      ctx.restore();
+    } else if (this.vjMode === 3) {
+      // --- MODE 3: 🌀 Radial Audio Orbit & Geometric Star ---
+      const cx = 512;
+      const cy = 370;
+      const baseRad = 70 + (audioAnalysis.bass || 0) * 35;
+
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(this.radialAngle);
+
+      // Radial Spectrum Spikes
+      const spokes = 36;
+      for (let i = 0; i < spokes; i++) {
+        const ang = (i / spokes) * Math.PI * 2;
+        const rIdx = Math.floor((i / spokes) * (len - 1));
+        const mag = ((raw[rIdx] || 0) / 255) * 60 * (0.6 + audioAnalysis.mids);
+
+        const x1 = Math.cos(ang) * baseRad;
+        const y1 = Math.sin(ang) * baseRad;
+        const x2 = Math.cos(ang) * (baseRad + mag);
+        const y2 = Math.sin(ang) * (baseRad + mag);
+
+        ctx.strokeStyle = i % 2 === 0 ? accentHex : subHex;
+        ctx.shadowColor = ctx.strokeStyle;
+        ctx.shadowBlur = 10;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+      }
+
+      // Inner Rotating Hexagon
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#00f0ff';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2 - this.radialAngle * 2;
+        const hx = Math.cos(a) * (baseRad * 0.55);
+        const hy = Math.sin(a) * (baseRad * 0.55);
+        if (i === 0) ctx.moveTo(hx, hy);
+        else ctx.lineTo(hx, hy);
+      }
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+    } else if (this.vjMode === 4) {
+      // --- MODE 4: ⚡ Lissajous Oscilloscope Matrix ---
+      ctx.save();
+      ctx.translate(512, 380);
+      ctx.strokeStyle = accentHex;
+      ctx.shadowColor = accentHex;
+      ctx.shadowBlur = 18;
+      ctx.lineWidth = 3;
       ctx.beginPath();
 
-      for (let x = 0; x <= w; x += 8) {
-        const i = Math.floor((x / w) * (len - 1));
-        const val = (raw[i] || 0) / 255;
-        const sinPart = Math.sin(x * 0.015 + this.stagePhase * wave.speed) * Math.cos(x * 0.008);
-        const y = centerY + sinPart * wave.amp + (val - 0.5) * wave.amp * 1.5;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      const aParam = 3;
+      const bParam = 2;
+      const delta = this.stagePhase * 1.5;
+      const scaleX = 220 * (0.6 + audioAnalysis.bass * 0.6);
+      const scaleY = 70 * (0.6 + audioAnalysis.mids * 0.6);
+
+      for (let t = 0; t <= Math.PI * 2; t += 0.05) {
+        const lx = Math.sin(aParam * t + delta) * scaleX;
+        const ly = Math.sin(bParam * t) * scaleY;
+        if (t === 0) ctx.moveTo(lx, ly);
+        else ctx.lineTo(lx, ly);
       }
       ctx.stroke();
-    });
+      ctx.restore();
+    }
+
+    // ==========================================
+    // 🎧 TOP STATUS BAR (Live Status, Genre & Time)
+    // ==========================================
+    // Subtle Top Bar Background Strip
+    ctx.fillStyle = 'rgba(10, 14, 24, 0.75)';
+    ctx.fillRect(0, 0, w, 52);
+    ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, 52);
+    ctx.lineTo(w, 52);
+    ctx.stroke();
+
+    // 1. Pulsing "● ON AIR" Indicator
+    const livePulse = Math.sin(now * 0.005) > 0;
+    ctx.fillStyle = livePulse ? '#ff0055' : '#880022';
+    ctx.shadowColor = '#ff0055';
+    ctx.shadowBlur = livePulse ? 14 : 4;
+    ctx.beginPath();
+    ctx.arc(36, 26, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.font = '900 15px Orbitron, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = '#ffffff';
+    ctx.shadowBlur = 6;
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ON AIR  |  JMF RADIO 24/7', 52, 26);
+
+    // 2. Genre / Style Pill Badge
+    const genre = this.currentTrack?.genre;
+    const genreText = genre ? `${genre.icon} ${genre.name}` : '🔥 ALL STYLES';
+    const genreColor = genre?.color || '#00f0ff';
+
+    ctx.font = '900 13px Orbitron, sans-serif';
+    const gWidth = ctx.measureText(genreText).width + 24;
+    const gX = 512 - gWidth / 2;
+
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.strokeStyle = genreColor;
+    ctx.lineWidth = 1.5;
+    ctx.shadowColor = genreColor;
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.roundRect(gX, 12, gWidth, 28, 14);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'center';
+    ctx.fillText(genreText, 512, 26);
+
+    // 3. Time Counter & BPM
+    const bpm = this.currentTrack?.bpm || 128;
+    const curMin = Math.floor(this.elapsedTime / 60);
+    const curSec = Math.floor(this.elapsedTime % 60).toString().padStart(2, '0');
+    const totMin = Math.floor(this.duration / 60);
+    const totSec = Math.floor(this.duration % 60).toString().padStart(2, '0');
+    const timeStr = `${curMin}:${curSec} / ${totMin}:${totSec}  •  ${bpm} BPM`;
+
+    ctx.font = '700 14px "Space Grotesk", monospace';
+    ctx.fillStyle = '#94a3b8';
+    ctx.shadowBlur = 0;
+    ctx.textAlign = 'right';
+    ctx.fillText(timeStr, w - 36, 26);
+
+    // Track Progress Micro Line
+    const pct = this.duration > 0 ? Math.min(1.0, this.elapsedTime / this.duration) : 0;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.fillRect(0, 52, w, 2.5);
+    ctx.fillStyle = accentHex;
+    ctx.shadowColor = accentHex;
+    ctx.shadowBlur = 8;
+    ctx.fillRect(0, 52, w * pct, 2.5);
+
+    // ==========================================
+    // 🎵 NOW PLAYING TRACK DISPLAY (Center of Screen)
+    // ==========================================
+    const track = this.currentTrack;
+    const artistName = (track?.artist || 'JMF RADIO').toUpperCase();
+    const trackTitle = (track?.title || 'THE FUTURE OF SOUND').toUpperCase();
+
+    // Bass-reactive scaling on text
+    const bassScale = 1.0 + (audioAnalysis.bass || 0) * 0.08;
+
+    // 1. ARTIST NAME (Large, Powerful)
+    ctx.save();
+    ctx.translate(512, 135);
+    ctx.scale(bassScale, bassScale);
+    ctx.font = '900 52px Orbitron, sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = (audioAnalysis.bass || 0) > 0.65 ? subHex : accentHex;
+    ctx.shadowBlur = 20 + (audioAnalysis.bass || 0) * 20;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(artistName.length > 28 ? artistName.substring(0, 26) + '...' : artistName, 0, 0);
+    ctx.restore();
+
+    // 2. TRACK TITLE (Glowing with smooth ticker scroll if long)
+    ctx.save();
+    ctx.font = '700 26px "Space Grotesk", sans-serif';
+    ctx.fillStyle = accentHex;
+    ctx.shadowColor = accentHex;
+    ctx.shadowBlur = 14;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    const titleWidth = ctx.measureText(trackTitle).width;
+    if (titleWidth > 800) {
+      this.scrollTickerX = (this.scrollTickerX - 1.2) % (titleWidth + 200);
+      ctx.fillText(trackTitle, 512 + this.scrollTickerX, 195);
+      ctx.fillText(trackTitle, 512 + this.scrollTickerX + titleWidth + 200, 195);
+    } else {
+      ctx.fillText(trackTitle, 512, 195);
+    }
+    ctx.restore();
+
+    // 3. Mini VJ Mode Watermark in bottom corner
+    const vjModeNames = ['🌊 CYBER WAVES', '📊 SPECTRUM PEAKS', '🌌 HYPERSPACE GRID', '🌀 RADIAL ORBIT', '⚡ VECTOR SCOPE'];
+    ctx.font = '700 11px Orbitron, sans-serif';
+    ctx.fillStyle = 'rgba(148, 163, 184, 0.4)';
+    ctx.shadowBlur = 0;
+    ctx.textAlign = 'left';
+    ctx.fillText(`[ VJ: ${vjModeNames[this.vjMode]} ]`, 24, h - 18);
 
     if (this.stageTexture) this.stageTexture.needsUpdate = true;
   }
@@ -557,6 +826,6 @@ export class Room {
       }
     }
 
-    this.updateStageScreen(audioAnalysis);
+    this.updateStageScreen(audioAnalysis, themeColors);
   }
 }

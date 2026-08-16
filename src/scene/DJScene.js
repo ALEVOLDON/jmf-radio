@@ -125,6 +125,12 @@ export class DJScene {
     this.renderer.setSize(this.width, this.height);
   }
 
+  setTrackInfo(currentTrack, nextTrack, elapsedTime, duration) {
+    if (this.room && this.room.setTrackInfo) {
+      this.room.setTrackInfo(currentTrack, nextTrack, elapsedTime, duration);
+    }
+  }
+
   update(audioAnalysis, isPlaying) {
     const safeAnalysis = audioAnalysis || {
       bass: 0,

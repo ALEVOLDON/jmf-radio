@@ -37,12 +37,20 @@ function initApp() {
     // Analyze current audio frequencies & beats
     const audioAnalysis = audioEngine.update();
 
+    // Pass live track metadata, progress and duration to 3D stage screen
+    djScene.setTrackInfo(
+      audioEngine.currentTrack,
+      audioEngine.nextTrack,
+      audioEngine.elapsedTime,
+      audioEngine.duration
+    );
+
     // Update UI track progress, dual deck waveforms & VU meters
     if (audioEngine.isPlaying || audioEngine.isCrossfading) {
       uiController.updateProgress(audioEngine.elapsedTime, audioEngine.duration, audioAnalysis);
     }
 
-    // Update 3D Scene elements (DJ movements, speakers, neons, lights)
+    // Update 3D Scene elements (DJ movements, speakers, neons, lights, stage screen)
     djScene.update(audioAnalysis, audioEngine.isPlaying);
   }
 
