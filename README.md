@@ -11,6 +11,12 @@
 [![Blender](https://img.shields.io/badge/Blender-5.2_LTS-E87D0D.svg?logo=blender&logoColor=white)](https://www.blender.org/)
 [![Cloudflare](https://img.shields.io/badge/Cloudflare-Tunnel-F38020.svg?logo=cloudflare&logoColor=white)](https://cloudflare.com/)
 
+<br/>
+
+![JMF Radio Cover](public/cover.jpg)
+
+<br/>
+
 [**Live Demo**](https://apache-accurately-biography-forming.trycloudflare.com) • [**Features**](#-key-features) • [**Quick Start**](#-quick-start) • [**Architecture**](#-architecture) • [**Deployment**](#-deployment-options)
 
 </div>
