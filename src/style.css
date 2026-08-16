@@ -50,7 +50,7 @@ html, body {
   pointer-events: none;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   padding: 8px 12px 6px 12px;
 }
 
@@ -308,13 +308,22 @@ html, body {
 /* ======================================================== */
 /* 🎛️ MAIN HARDWARE DJ WORKSTATION (BOTTOM DOCKED) */
 /* ======================================================== */
+.bottom-console-wrapper {
+  margin-top: auto;
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .hardware-dj-station {
   display: grid;
   grid-template-columns: 1fr 240px 1fr;
   gap: 8px;
   width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
   align-items: stretch;
 }
 
