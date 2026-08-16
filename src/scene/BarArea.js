@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export class BarArea {
   constructor(scene) {
@@ -16,29 +15,13 @@ export class BarArea {
   }
 
   init() {
-    this.createBartender();
+    this.group.position.set(6.8, 0, 3.5);
+    this.group.rotation.y = -Math.PI / 2; // Facing towards the dance floor
 
-    const loader = new GLTFLoader();
-    loader.load(
-      '/models/club_lounge_bar.glb',
-      (gltf) => {
-        const barLounge = gltf.scene;
-        barLounge.traverse((node) => {
-          if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-          }
-        });
-        this.group.add(barLounge);
-      },
-      undefined,
-      (err) => {
-        console.warn('Fallback to procedural bar:', err);
-        this.createBarCounter();
-        this.createBackShelvesAndBottles();
-        this.createBarStools();
-      }
-    );
+    this.createBarCounter();
+    this.createBackShelvesAndBottles();
+    this.createBarStools();
+    this.createBartender();
   }
 
   createBarCounter() {

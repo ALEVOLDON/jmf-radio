@@ -24,34 +24,10 @@ export class DJCharacter {
   }
 
   init() {
+    this.createDJBooth();
+    this.createTurntablesAndMixer();
     this.createLaptop();
     this.createDJAvatar();
-
-    const loader = new GLTFLoader();
-    loader.load(
-      '/models/dj_booth_equipment.glb',
-      (gltf) => {
-        const booth = gltf.scene;
-        booth.traverse((node) => {
-          if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-            if (node.name.includes('JogPlatter_A')) {
-              this.turntables.push({ mesh: node, isA: true });
-            } else if (node.name.includes('JogPlatter_B')) {
-              this.turntables.push({ mesh: node, isA: false });
-            }
-          }
-        });
-        this.group.add(booth);
-      },
-      undefined,
-      (err) => {
-        console.warn('Fallback to procedural booth:', err);
-        this.createDJBooth();
-        this.createTurntablesAndMixer();
-      }
-    );
   }
 
   createDJBooth() {

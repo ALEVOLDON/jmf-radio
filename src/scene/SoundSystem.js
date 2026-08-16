@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 export class SoundSystem {
   constructor(scene) {
@@ -9,35 +8,14 @@ export class SoundSystem {
     this.subCones = [];
     this.tweeters = [];
     this.eqLedBars = [];
-    this.discoBall = null;
     this.init();
     this.scene.add(this.group);
   }
 
   init() {
-    const loader = new GLTFLoader();
-    loader.load(
-      '/models/club_sound_lighting.glb',
-      (gltf) => {
-        const soundRig = gltf.scene;
-        soundRig.traverse((node) => {
-          if (node.isMesh) {
-            node.castShadow = true;
-            node.receiveShadow = true;
-            if (node.name.includes('Disco_Mirror_Ball') || node.name.includes('Icosphere')) {
-              this.discoBall = node;
-            }
-          }
-        });
-        this.group.add(soundRig);
-      },
-      undefined,
-      (err) => {
-        console.warn('Fallback to procedural sound system:', err);
-        this.createSpeakerTower(-3.2, 0, -2.8, Math.PI / 8);
-        this.createSpeakerTower(3.2, 0, -2.8, -Math.PI / 8);
-      }
-    );
+    // Create Left & Right massive Club Monitor Towers
+    this.createSpeakerTower(-3.2, 0, -2.8, Math.PI / 8);
+    this.createSpeakerTower(3.2, 0, -2.8, -Math.PI / 8);
   }
 
   createSpeakerTower(x, y, z, rotY) {
