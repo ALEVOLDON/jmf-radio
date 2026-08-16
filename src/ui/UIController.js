@@ -502,13 +502,32 @@ export class UIController {
       });
     }
 
-    // Crossfader Click / Drag
+    // Crossfader Click / Drag & CH 1 / CH 2 Smooth Transition Buttons
+    const btnCfCh1 = document.getElementById('btn-cf-ch1');
+    const btnCfCh2 = document.getElementById('btn-cf-ch2');
+    if (btnCfCh1) {
+      btnCfCh1.addEventListener('click', () => {
+        this.audioEngine.crossfadeToDeck('A', 5.0);
+      });
+    }
+    if (btnCfCh2) {
+      btnCfCh2.addEventListener('click', () => {
+        this.audioEngine.crossfadeToDeck('B', 5.0);
+      });
+    }
+
     if (this.crossfaderTrack) {
       this.crossfaderTrack.addEventListener('click', (e) => {
         const rect = this.crossfaderTrack.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const pct = Math.max(0, Math.min(1, clickX / rect.width));
-        this.audioEngine.setCrossfader(pct);
+        if (pct < 0.35) {
+          this.audioEngine.crossfadeToDeck('A', 4.0);
+        } else if (pct > 0.65) {
+          this.audioEngine.crossfadeToDeck('B', 4.0);
+        } else {
+          this.audioEngine.setCrossfader(pct);
+        }
       });
     }
 

@@ -472,6 +472,32 @@ export class AudioEngine {
     }
   }
 
+  async crossfadeToDeck(targetDeck, duration = 5.0) {
+    if (this.isCrossfading) return;
+    if (this.activeDeck === targetDeck) return;
+
+    const incomingDeck = targetDeck;
+    const outgoingDeck = targetDeck === 'A' ? 'B' : 'A';
+
+    const incomingAudio = incomingDeck === 'A' ? this.audioA : this.audioB;
+    if (incomingAudio.paused || incomingAudio.currentTime === 0) {
+      const trackToPlay = incomingDeck === 'A' ? this.currentTrack : (this.nextTrack || this.queue[0]);
+      if (trackToPlay) {
+        this.loadDeck(incomingDeck, trackToPlay, 0, true);
+        this.analyzeTrackBpm(trackToPlay, incomingDeck);
+      }
+    }
+
+    this.isCrossfading = true;
+    this.crossfadeStartTime = performance.now();
+    this.crossfadeDuration = duration;
+
+    if (this.onTransition) {
+      const incomingTrack = incomingDeck === 'A' ? this.currentTrack : this.nextTrack;
+      this.onTransition(true, outgoingDeck, incomingDeck, incomingTrack);
+    }
+  }
+
   setMixMode(mode) {
     this.mixMode = mode;
     this.crossfadeDuration = mode === 'dj' ? 8.0 : 3.0;
