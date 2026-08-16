@@ -439,14 +439,31 @@ export class AudioEngine {
     return true;
   }
 
-  triggerDJCrossfade() {
-    if (this.isCrossfading || this.queue.length === 0) return;
+  async triggerDJCrossfade() {
+    if (this.isCrossfading) return;
+
+    const incomingDeck = this.activeDeck === 'A' ? 'B' : 'A';
+
+    if (!this.nextTrack) {
+      try {
+        const res = await fetch('/api/next', { method: 'POST' });
+        const data = await res.json();
+        if (data.track) {
+          this.nextTrack = data.track;
+          this.queue = data.queue || [];
+          this.totalTracks = data.totalTracks || 0;
+        }
+      } catch (err) {
+        console.warn('Error fetching next track for crossfade:', err);
+      }
+    }
+
+    if (!this.nextTrack) return;
 
     this.isCrossfading = true;
     this.crossfadeStartTime = performance.now();
-    const incomingDeck = this.activeDeck === 'A' ? 'B' : 'A';
-    this.nextTrack = this.queue[0];
 
+    // Start playback on incoming standby deck
     this.loadDeck(incomingDeck, this.nextTrack, 0, true);
     this.analyzeTrackBpm(this.nextTrack, incomingDeck);
 
@@ -492,31 +509,22 @@ export class AudioEngine {
   }
 
   async skipNext() {
+    // Perform a smooth DJ crossfade to the other deck
+    if (this.isCrossfading) return;
+    
     try {
       const res = await fetch('/api/next', { method: 'POST' });
       const data = await res.json();
       if (data.track) {
-        this.currentTrack = data.track;
+        this.nextTrack = data.track;
         this.queue = data.queue || [];
         this.totalTracks = data.totalTracks || 0;
-        this.nextTrack = this.queue[0] || null;
-
-        this.loadDeck(this.activeDeck, this.currentTrack, 0, true);
-        this.analyzeTrackBpm(this.currentTrack, this.activeDeck);
-
-        const standbyDeck = this.activeDeck === 'A' ? 'B' : 'A';
-        if (this.nextTrack) {
-          this.loadDeck(standbyDeck, this.nextTrack, 0, false);
-          this.analyzeTrackBpm(this.nextTrack, standbyDeck);
-        }
-
-        if (this.onTrackChange) {
-          this.onTrackChange(this.currentTrack, this.queue, this.totalTracks);
-        }
       }
     } catch (err) {
-      console.error('Error skipping next track:', err);
+      console.warn('Error fetching next track for skip:', err);
     }
+
+    this.triggerDJCrossfade();
   }
 
   async skipPrev() {
@@ -567,13 +575,13 @@ export class AudioEngine {
 
     const remaining = this.duration - this.elapsedTime;
 
-    // Auto DJ Crossfade Trigger
+    // Auto DJ Crossfade Trigger (starts 8s before end)
     if (this.mixMode === 'dj' && remaining <= this.crossfadeDuration && !this.isTransitionTriggered && this.elapsedTime > 5) {
       this.isTransitionTriggered = true;
       this.triggerDJCrossfade();
     }
 
-    // Crossfade Curve
+    // Crossfade Curve & Bass Swap
     if (this.isCrossfading && this.audioContext) {
       const now = performance.now();
       const elapsedCrossfade = (now - this.crossfadeStartTime) / 1000;
@@ -582,22 +590,45 @@ export class AudioEngine {
       if (this.activeDeck === 'A') {
         this.setCrossfader(progress);
         this.setFilterSweep('A', 0.5 - 0.4 * progress);
+        this.setFilterSweep('B', 0.1 + 0.4 * progress);
       } else {
         this.setCrossfader(1.0 - progress);
         this.setFilterSweep('B', 0.5 - 0.4 * progress);
+        this.setFilterSweep('A', 0.1 + 0.4 * progress);
       }
 
       if (progress >= 1.0) {
         this.isCrossfading = false;
-        const oldAudio = this.activeDeck === 'A' ? this.audioA : this.audioB;
+        const previousDeck = this.activeDeck;
+        const newActiveDeck = this.activeDeck === 'A' ? 'B' : 'A';
+        
+        const oldAudio = previousDeck === 'A' ? this.audioA : this.audioB;
         oldAudio.pause();
         oldAudio.currentTime = 0;
+        this.deckStates[previousDeck].isPlaying = false;
 
-        this.activeDeck = this.activeDeck === 'A' ? 'B' : 'A';
+        this.activeDeck = newActiveDeck;
         this.currentTrack = this.nextTrack;
         this.isTransitionTriggered = false;
         this.setFilterSweep('A', 0.5);
         this.setFilterSweep('B', 0.5);
+
+        // Preload next track on the standby deck
+        fetch('/api/next', { method: 'POST' })
+          .then(r => r.json())
+          .then(d => {
+            if (d.track) {
+              this.nextTrack = d.track;
+              this.queue = d.queue || [];
+              this.totalTracks = d.totalTracks || 0;
+              this.loadDeck(previousDeck, this.nextTrack, 0, false);
+              this.analyzeTrackBpm(this.nextTrack, previousDeck);
+              if (this.onTrackChange) {
+                this.onTrackChange(this.currentTrack, this.queue, this.totalTracks);
+              }
+            }
+          })
+          .catch(e => console.warn('Error preloading upcoming track on standby deck:', e));
 
         if (this.onTrackChange) {
           this.onTrackChange(this.currentTrack, this.queue, this.totalTracks);

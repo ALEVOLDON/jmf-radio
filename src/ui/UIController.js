@@ -626,8 +626,13 @@ export class UIController {
       }
       if (this.transitionBanner) this.transitionBanner.classList.remove('hidden');
 
-      if (toDeck === 'B' && this.deckBState) this.deckBState.textContent = 'MIXING IN';
-      else if (toDeck === 'A' && this.deckAState) this.deckAState.textContent = 'MIXING IN';
+      if (toDeck === 'B') {
+        if (this.deckBState) this.deckBState.textContent = 'MIXING IN';
+        if (this.deckBPlay) this.deckBPlay.classList.add('active-play');
+      } else if (toDeck === 'A') {
+        if (this.deckAState) this.deckAState.textContent = 'MIXING IN';
+        if (this.deckAPlay) this.deckAPlay.classList.add('active-play');
+      }
     } else {
       if (this.transitionBanner) this.transitionBanner.classList.add('hidden');
     }
@@ -636,35 +641,46 @@ export class UIController {
   updateProgress(elapsedTime, duration, audioAnalysis) {
     const activeDeck = this.audioEngine.activeDeck;
     const isPlaying = this.audioEngine.isPlaying;
+    const isCrossfading = this.audioEngine.isCrossfading;
     const rem = Math.max(0, duration - elapsedTime);
     const pct = duration > 0 ? Math.min(1.0, elapsedTime / duration) : 0;
 
-    // 1. Draw Waveforms on HTML5 Canvas
+    // 1. Draw Waveforms on HTML5 Canvas & Update Time Displays
     if (activeDeck === 'A') {
       this.drawWaveform(this.deckACanvas, this.waveformProfileA, pct, 'A', audioAnalysis);
       if (this.deckATimeCur) this.deckATimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckATimeRem) this.deckATimeRem.textContent = `-${this.formatTime(rem)}`;
 
-      if (!this.audioEngine.isCrossfading) {
+      if (!isCrossfading) {
         this.drawWaveform(this.deckBCanvas, this.waveformProfileB, 0, 'B', null);
         if (this.deckBTimeCur) this.deckBTimeCur.textContent = '0:00';
         if (this.deckBTimeRem) this.deckBTimeRem.textContent = 'READY';
       } else {
-        const crossPct = audioAnalysis ? audioAnalysis.crossfadeProgress : 0;
-        this.drawWaveform(this.deckBCanvas, this.waveformProfileB, crossPct * 0.1, 'B', audioAnalysis);
+        const incomingAudio = this.audioEngine.audioB;
+        const inElapsed = incomingAudio.currentTime || 0;
+        const inDur = incomingAudio.duration || 180;
+        const inPct = inDur > 0 ? Math.min(1.0, inElapsed / inDur) : 0;
+        this.drawWaveform(this.deckBCanvas, this.waveformProfileB, inPct, 'B', audioAnalysis);
+        if (this.deckBTimeCur) this.deckBTimeCur.textContent = this.formatTime(inElapsed);
+        if (this.deckBTimeRem) this.deckBTimeRem.textContent = `-${this.formatTime(Math.max(0, inDur - inElapsed))}`;
       }
     } else {
       this.drawWaveform(this.deckBCanvas, this.waveformProfileB, pct, 'B', audioAnalysis);
       if (this.deckBTimeCur) this.deckBTimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckBTimeRem) this.deckBTimeRem.textContent = `-${this.formatTime(rem)}`;
 
-      if (!this.audioEngine.isCrossfading) {
+      if (!isCrossfading) {
         this.drawWaveform(this.deckACanvas, this.waveformProfileA, 0, 'A', null);
         if (this.deckATimeCur) this.deckATimeCur.textContent = '0:00';
         if (this.deckATimeRem) this.deckATimeRem.textContent = 'READY';
       } else {
-        const crossPct = audioAnalysis ? audioAnalysis.crossfadeProgress : 0;
-        this.drawWaveform(this.deckACanvas, this.waveformProfileA, crossPct * 0.1, 'A', audioAnalysis);
+        const incomingAudio = this.audioEngine.audioA;
+        const inElapsed = incomingAudio.currentTime || 0;
+        const inDur = incomingAudio.duration || 180;
+        const inPct = inDur > 0 ? Math.min(1.0, inElapsed / inDur) : 0;
+        this.drawWaveform(this.deckACanvas, this.waveformProfileA, inPct, 'A', audioAnalysis);
+        if (this.deckATimeCur) this.deckATimeCur.textContent = this.formatTime(inElapsed);
+        if (this.deckATimeRem) this.deckATimeRem.textContent = `-${this.formatTime(Math.max(0, inDur - inElapsed))}`;
       }
     }
 
