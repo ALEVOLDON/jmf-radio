@@ -311,7 +311,7 @@ html, body {
 .bottom-console-wrapper {
   margin-top: auto;
   width: 100%;
-  max-width: 1440px;
+  max-width: 980px;
   margin-left: auto;
   margin-right: auto;
   display: flex;
@@ -321,8 +321,8 @@ html, body {
 
 .hardware-dj-station {
   display: grid;
-  grid-template-columns: 1fr 240px 1fr;
-  gap: 8px;
+  grid-template-columns: 1fr 200px 1fr;
+  gap: 6px;
   width: 100%;
   align-items: stretch;
 }
@@ -1218,9 +1218,6 @@ html, body {
   margin-top: 4px;
   gap: 8px;
   width: 100%;
-  max-width: 1440px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .util-section {
