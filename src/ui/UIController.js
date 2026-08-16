@@ -672,27 +672,11 @@ export class UIController {
     }
 
     // Mode Switcher (DJ Workstation vs Minimalist Radio Mode)
-    document.body.classList.add('mode-dj');
-
-    if (this.btnModeDj && this.btnModeRadio) {
-      this.btnModeDj.addEventListener('click', () => {
-        this.audioEngine.setMixMode('dj');
-        this.btnModeDj.classList.add('active');
-        this.btnModeRadio.classList.remove('active');
-
-        document.body.classList.add('mode-dj');
-        document.body.classList.remove('mode-radio');
-
-        if (this.djStation) this.djStation.classList.remove('hidden');
-        if (this.mobileDeckTabs) this.mobileDeckTabs.style.display = '';
-        if (this.bottomUtilityBar) this.bottomUtilityBar.classList.remove('hidden');
-        if (this.radioModeConsole) this.radioModeConsole.classList.add('hidden');
-      });
-
-      this.btnModeRadio.addEventListener('click', () => {
+    this.setMode = (mode) => {
+      if (mode === 'radio') {
         this.audioEngine.setMixMode('radio');
-        this.btnModeRadio.classList.add('active');
-        this.btnModeDj.classList.remove('active');
+        if (this.btnModeRadio) this.btnModeRadio.classList.add('active');
+        if (this.btnModeDj) this.btnModeDj.classList.remove('active');
 
         document.body.classList.add('mode-radio');
         document.body.classList.remove('mode-dj');
@@ -702,7 +686,32 @@ export class UIController {
         if (this.bottomUtilityBar) this.bottomUtilityBar.classList.add('hidden');
         if (this.radioModeConsole) this.radioModeConsole.classList.remove('hidden');
         if (this.transitionBanner) this.transitionBanner.classList.add('hidden');
-      });
+      } else {
+        this.audioEngine.setMixMode('dj');
+        if (this.btnModeDj) this.btnModeDj.classList.add('active');
+        if (this.btnModeRadio) this.btnModeRadio.classList.remove('active');
+
+        document.body.classList.add('mode-dj');
+        document.body.classList.remove('mode-radio');
+
+        if (this.djStation) this.djStation.classList.remove('hidden');
+        if (this.mobileDeckTabs) this.mobileDeckTabs.style.display = '';
+        if (this.bottomUtilityBar) this.bottomUtilityBar.classList.remove('hidden');
+        if (this.radioModeConsole) this.radioModeConsole.classList.add('hidden');
+      }
+    };
+
+    // Auto-detect mobile devices and default to Radio Mode
+    const isMobileDevice = window.innerWidth <= 820 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobileDevice) {
+      this.setMode('radio');
+    } else {
+      this.setMode('dj');
+    }
+
+    if (this.btnModeDj && this.btnModeRadio) {
+      this.btnModeDj.addEventListener('click', () => this.setMode('dj'));
+      this.btnModeRadio.addEventListener('click', () => this.setMode('radio'));
     }
 
     // Radio Mode Controls
