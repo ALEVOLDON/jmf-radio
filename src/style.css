@@ -125,6 +125,72 @@ html, body {
   gap: 16px;
 }
 
+/* Playback Mode Switcher (DJ MIX vs RADIO) */
+.mode-switch-group {
+  display: flex;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 3px;
+  border-radius: 20px;
+  gap: 4px;
+}
+
+.mode-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+  color: #fff;
+}
+
+.mode-btn.active {
+  background: linear-gradient(135deg, var(--accent-magenta), var(--accent-purple));
+  color: #fff;
+  box-shadow: 0 0 12px rgba(255, 0, 127, 0.4);
+}
+
+/* DJ Mixing Transition Banner */
+.transition-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(90deg, rgba(255, 0, 127, 0.25), rgba(157, 78, 221, 0.25));
+  border: 1px solid rgba(255, 0, 127, 0.5);
+  backdrop-filter: blur(16px);
+  padding: 8px 20px;
+  border-radius: 20px;
+  max-width: 500px;
+  margin: 0 auto 10px auto;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 0, 127, 0.3);
+  animation: pulse-border 1.5s infinite alternate;
+}
+
+.pulse-pink {
+  background-color: #ff007f !important;
+  box-shadow: 0 0 10px #ff007f !important;
+}
+
+@keyframes pulse-border {
+  0% { border-color: rgba(255, 0, 127, 0.4); box-shadow: 0 0 10px rgba(255, 0, 127, 0.2); }
+  100% { border-color: rgba(0, 240, 255, 0.8); box-shadow: 0 0 24px rgba(0, 240, 255, 0.4); }
+}
+
 /* Audio wave bars */
 .audio-wave-indicator {
   display: flex;

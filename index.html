@@ -26,6 +26,12 @@
       </div>
 
       <div class="header-right">
+        <!-- Playback Mode Switcher -->
+        <div class="mode-switch-group">
+          <button class="mode-btn active" id="btn-mode-dj" data-mode="dj" title="Seamless 8-second club crossfade with bass swap">🎛️ DJ MIX</button>
+          <button class="mode-btn" id="btn-mode-radio" data-mode="radio" title="Standard full track playback">📻 RADIO</button>
+        </div>
+
         <!-- Live Audio Waveform Icon -->
         <div class="audio-wave-indicator" id="wave-indicator">
           <span class="wave-bar"></span>
@@ -83,6 +89,12 @@
       <div class="queue-list" id="queue-list">
         <!-- Injected via JS -->
       </div>
+    </div>
+
+    <!-- Live DJ Mixing Notification Banner -->
+    <div id="transition-banner" class="transition-banner hidden">
+      <span class="live-dot pulse-pink"></span>
+      <span id="transition-text">🎛️ DJ MIXING: CROSSFADING TO NEXT TRACK...</span>
     </div>
 
     <!-- Bottom Player Control Bar -->

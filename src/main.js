@@ -15,11 +15,18 @@ function initApp() {
   // 2. Initialize Audio Engine & UI Controller
   let uiController = null;
 
-  const audioEngine = new AudioEngine((track, queue, totalTracks) => {
-    if (uiController) {
-      uiController.onTrackChanged(track, queue, totalTracks);
+  const audioEngine = new AudioEngine(
+    (track, queue, totalTracks) => {
+      if (uiController) {
+        uiController.onTrackChanged(track, queue, totalTracks);
+      }
+    },
+    (isTransitioning, fromDeck, toDeck, nextTrack) => {
+      if (uiController) {
+        uiController.onTransition(isTransitioning, fromDeck, toDeck, nextTrack);
+      }
     }
-  });
+  );
 
   uiController = new UIController(audioEngine, djScene);
 

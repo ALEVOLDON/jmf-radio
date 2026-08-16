@@ -150,12 +150,12 @@ export class DJCharacter {
     mixerGroup.add(mixerBody);
 
     // Crossfader Slot & Knob
-    const xFader = new THREE.Mesh(
+    this.xFader = new THREE.Mesh(
       new THREE.BoxGeometry(0.06, 0.03, 0.04),
       new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.2 })
     );
-    xFader.position.set(0, 0.04, 0.28);
-    mixerGroup.add(xFader);
+    this.xFader.position.set(0, 0.04, 0.28);
+    mixerGroup.add(this.xFader);
 
     // EQ Knobs (High, Mid, Low per channel)
     const knobGeo = new THREE.CylinderGeometry(0.02, 0.022, 0.03, 16);
@@ -361,7 +361,14 @@ export class DJCharacter {
       this.turntables[1].vinyl.rotation.y += 0.04;
     }
 
-    // 2. DJ Head Bobbing (BPM & Bass dynamic response)
+    // 2. Animate Mixer Crossfader position
+    if (this.xFader && audioAnalysis.crossfadeProgress !== undefined) {
+      // Moves from -0.15 (Deck A) to +0.15 (Deck B)
+      const targetX = (audioAnalysis.crossfadeProgress - 0.5) * 0.3;
+      this.xFader.position.x = THREE.MathUtils.lerp(this.xFader.position.x, targetX, 0.1);
+    }
+
+    // 3. DJ Head Bobbing (BPM & Bass dynamic response)
     if (this.djHead) {
       const bobFreq = isPlaying ? 5.0 : 1.5;
       const bobAmount = isPlaying ? (0.08 + bass * 0.12 + beat * 0.15) : 0.02;
@@ -370,27 +377,31 @@ export class DJCharacter {
       this.djHead.rotation.y = Math.sin(time * 1.5) * 0.1;
     }
 
-    // 3. DJ Torso Groove / Body Sway
+    // 4. DJ Torso Groove / Body Sway
     if (this.djTorso) {
       const swayFreq = isPlaying ? 2.5 : 0.8;
       this.djTorso.rotation.z = Math.sin(time * swayFreq) * (0.03 + bass * 0.06);
       this.djTorso.position.y = 0.9 + Math.cos(time * swayFreq * 2) * (0.01 + bass * 0.03);
     }
 
-    // 4. DJ Arms Scratching & Tweaking
+    // 5. DJ Arms Scratching & Tweaking (Focusing on active deck or crossfading)
     if (this.djLeftArm && isPlaying) {
-      // Left arm moves back and forth with scratching rhythm
       this.djLeftArm.rotation.y = Math.sin(time * 6.0) * (0.15 + bass * 0.2);
       this.djLeftArm.position.z = Math.cos(time * 6.0) * 0.05;
     }
 
     if (this.djRightArm && isPlaying) {
-      // Right arm tweaks mixer knobs and filter sweeps
-      this.djRightArm.rotation.x = Math.sin(time * 3.0) * (0.1 + bass * 0.15);
-      this.djRightArm.rotation.y = Math.cos(time * 2.0) * 0.12;
+      if (audioAnalysis.isCrossfading) {
+        // Hand directly on crossfader & EQ tweaking
+        this.djRightArm.rotation.x = Math.PI / 4 + Math.sin(time * 8.0) * 0.15;
+        this.djRightArm.position.x = 0.3 + (audioAnalysis.crossfadeProgress - 0.5) * 0.2;
+      } else {
+        this.djRightArm.rotation.x = Math.sin(time * 3.0) * (0.1 + bass * 0.15);
+        this.djRightArm.rotation.y = Math.cos(time * 2.0) * 0.12;
+      }
     }
 
-    // 5. Mixer VU-Meter LEDs animation
+    // 6. Mixer VU-Meter LEDs animation
     for (let i = 0; i < this.vuLeds.length; i++) {
       const led = this.vuLeds[i];
       const level = (i % 8) / 8;
@@ -410,7 +421,7 @@ export class DJCharacter {
       }
     }
 
-    // 6. Laptop Screen Waveform Live Drawing
+    // 7. Laptop Screen Waveform Live Drawing
     if (this.laptopCtx) {
       this.drawLaptopScreen(audioAnalysis, isPlaying);
     }
@@ -421,7 +432,6 @@ export class DJCharacter {
     const w = this.laptopCanvas.width;
     const h = this.laptopCanvas.height;
 
-    // Dark DAW interface background
     ctx.fillStyle = '#0e101a';
     ctx.fillRect(0, 0, w, h);
 
@@ -452,14 +462,17 @@ export class DJCharacter {
       ctx.fillRect(i * barW + 2, h - barH - 20, barW - 4, barH);
     }
 
-    // Header info text
+    // Header info text & Deck indicator
     ctx.font = 'bold 18px sans-serif';
-    ctx.fillStyle = '#00f0ff';
-    ctx.fillText('JMF RADIO // 24/7 ON AIR', 16, 30);
+    ctx.fillStyle = audioAnalysis.isCrossfading ? '#ff007f' : '#00f0ff';
+    const deckInfo = audioAnalysis.isCrossfading 
+      ? `MIXING: DECK ${audioAnalysis.activeDeck} ➔ DECK ${audioAnalysis.activeDeck === 'A' ? 'B' : 'A'} (${Math.round(audioAnalysis.crossfadeProgress * 100)}%)`
+      : `DECK ${audioAnalysis.activeDeck || 'A'} ACTIVE // ON AIR`;
+    ctx.fillText(deckInfo, 16, 30);
 
     ctx.font = '14px monospace';
     ctx.fillStyle = '#8a8d9b';
-    ctx.fillText(`BPM: 128.0   VOL: ${Math.round(audioAnalysis.volume * 100)}%`, 16, 52);
+    ctx.fillText(`BPM: 128.0   VOL: ${Math.round(audioAnalysis.volume * 100)}%   EQ: BASS SWAP ON`, 16, 52);
 
     this.laptopTexture.needsUpdate = true;
   }
