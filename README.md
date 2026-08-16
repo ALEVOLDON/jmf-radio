@@ -51,12 +51,6 @@
 * **Lighting & Rigging**: Parametric quad aluminum trusses with moving-head scanner beam lasers and a faceted chrome mirror disco ball.
 * **8 Camera Director Presets**: `🎧 DJ Focus`, `👀 DJ POV` (1st-person view behind decks), `🕺 Dance Floor`, `🍸 Bar Lounge`, `👑 VIP Lounge`, `🎛️ Decks`, `🛋️ Full Club`, `🛸 Cinema Cam`.
 
-<br/>
-
-![DJ Booth POV Perspective](public/dj-booth-pov.jpg)
-
-<br/>
-
 ### 4. 💡 Real-Time Club Lighting & Visual FX Controller
 * **4 Color Palettes**: `🔵 Cyberpunk Neon`, `🌅 Sunset Lo-Fi`, `🟢 Emerald Matrix`, `🟣 Electric Blue`.
 * **Dynamic FX Toggles**:
