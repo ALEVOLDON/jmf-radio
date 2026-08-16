@@ -562,12 +562,12 @@ html, body {
   font-family: monospace;
 }
 
-/* Deck Lower Controls (Balanced 2-Block Layout) */
+/* Deck Lower Controls (3-Section Pro Pioneer CDJ Layout) */
 .deck-lower-controls {
   display: grid;
-  grid-template-columns: 148px 1fr;
+  grid-template-columns: 148px 1fr 44px;
   align-items: stretch;
-  gap: 14px;
+  gap: 10px;
   padding-top: 2px;
 }
 
@@ -730,85 +730,12 @@ html, body {
   box-shadow: 0 0 8px #00aaff;
 }
 
-/* Right Block: Pitch Fader & Performance Pads */
-.deck-right-block {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.pitch-slider-section {
-  display: flex;
-  flex-direction: column;
-  background: #080910;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
-  padding: 6px 8px;
-  gap: 4px;
-}
-
-.pitch-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.pitch-label-title {
-  font-family: var(--font-display);
-  font-size: 8px;
-  font-weight: 900;
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
-}
-
-.pitch-slider-housing {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.pitch-label {
-  font-size: 10px;
-  font-weight: 900;
-  color: var(--text-muted);
-}
-
-.vertical-pitch-slider {
-  writing-mode: vertical-lr;
-  direction: rtl;
-  width: 18px;
-  height: 64px;
-  accent-color: var(--accent-cyan);
-  cursor: pointer;
-}
-
-.deck-b .vertical-pitch-slider {
-  accent-color: var(--accent-magenta);
-}
-
-.btn-micro {
-  font-size: 8px;
-  font-weight: 800;
-  padding: 2px 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 3px;
-  color: #fff;
-  cursor: pointer;
-}
-
-.btn-micro:hover {
-  background: #fff;
-  color: #000;
-}
-
-/* 4 Silicone Performance Pads */
-.pads-vertical-grid {
+/* Middle: 4 Silicone Performance Pads */
+.deck-pads-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 5px;
+  gap: 6px;
+  align-content: center;
 }
 
 .btn-pad {
@@ -818,8 +745,8 @@ html, body {
   font-family: var(--font-display);
   font-size: 9px;
   font-weight: 800;
-  padding: 7px 4px;
-  border-radius: 5px;
+  padding: 10px 4px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.1s ease;
   box-shadow: 0 2px 4px rgba(0,0,0,0.4);
@@ -837,6 +764,79 @@ html, body {
   background: var(--accent-magenta);
   color: #fff;
   box-shadow: 0 0 10px var(--accent-magenta);
+}
+
+/* Right: Slim Narrow Pioneer Tempo Strip (44px) */
+.deck-tempo-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: #07080f;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 4px;
+  width: 44px;
+  box-sizing: border-box;
+}
+
+.tempo-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.pitch-label-title {
+  font-family: var(--font-display);
+  font-size: 7px;
+  font-weight: 900;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.btn-micro {
+  font-size: 7px;
+  font-weight: 800;
+  padding: 1px 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-micro:hover {
+  background: #fff;
+  color: #000;
+}
+
+.tempo-slider-housing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  flex-grow: 1;
+}
+
+.pitch-label {
+  font-size: 9px;
+  font-weight: 900;
+  color: var(--text-muted);
+}
+
+.vertical-pitch-slider {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 14px;
+  height: 80px;
+  accent-color: var(--accent-cyan);
+  cursor: pointer;
+}
+
+.deck-b .vertical-pitch-slider {
+  accent-color: var(--accent-magenta);
 }
 
 /* ======================================================== */
