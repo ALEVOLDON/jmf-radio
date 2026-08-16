@@ -422,6 +422,25 @@ export class AudioEngine {
     this.deckStates[deck].pitch = rate;
   }
 
+  setEQPreset(preset) {
+    const presets = {
+      'flat': { low: 0, mid: 0, high: 0 },
+      'bass': { low: 5.5, mid: 0, high: 2 },
+      'club': { low: 4.5, mid: -2, high: 3.5 },
+      'vocal': { low: -3, mid: 4, high: 2 },
+      'electronic': { low: 5, mid: 1, high: 4 }
+    };
+
+    const target = presets[preset] || presets['flat'];
+    this.setEQ('A', 'low', target.low);
+    this.setEQ('A', 'mid', target.mid);
+    this.setEQ('A', 'high', target.high);
+
+    this.setEQ('B', 'low', target.low);
+    this.setEQ('B', 'mid', target.mid);
+    this.setEQ('B', 'high', target.high);
+  }
+
   toggleLoop(deck, beats) {
     const audio = deck === 'A' ? this.audioA : this.audioB;
     const state = this.deckStates[deck];

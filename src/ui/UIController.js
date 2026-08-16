@@ -97,6 +97,26 @@ export class UIController {
     this.btnSplit = document.getElementById('btn-split');
     this.horizVuBars = document.querySelectorAll('.horiz-vu-bar');
 
+    // Radio Mode Console Elements (100% Mockup)
+    this.radioModeConsole = document.getElementById('radio-mode-console');
+    this.djStation = document.querySelector('.hardware-dj-station');
+    this.mobileDeckTabs = document.getElementById('mobile-deck-tabs');
+    this.bottomUtilityBar = document.querySelector('.bottom-utility-bar');
+    this.radioTrackTitle = document.getElementById('radio-track-title');
+    this.radioTrackArtist = document.getElementById('radio-track-artist');
+    this.btnRadioPrev = document.getElementById('btn-radio-prev');
+    this.btnRadioPlay = document.getElementById('btn-radio-play');
+    this.btnRadioNext = document.getElementById('btn-radio-next');
+    this.radioWaveformCanvas = document.getElementById('radio-waveform-canvas');
+    this.radioWaveformWrap = document.getElementById('radio-waveform-wrap');
+    this.radioTimeCur = document.getElementById('radio-time-cur');
+    this.radioTimeTotal = document.getElementById('radio-time-total');
+    this.radioEqPreset = document.getElementById('radio-eq-preset');
+    this.btnRadioEqToggle = document.getElementById('btn-radio-eq-toggle');
+    this.radioHpSegs = document.querySelectorAll('#radio-hp-meter .r-seg');
+    this.radioMasterVuLSegs = document.querySelectorAll('.r-row-l .r-seg');
+    this.radioMasterVuRSegs = document.querySelectorAll('.r-row-r .r-seg');
+
     this.jogAngleA = 0;
     this.jogAngleB = 0;
 
@@ -651,18 +671,67 @@ export class UIController {
       });
     }
 
-    // Mode Switcher
+    // Mode Switcher (DJ Workstation vs Minimalist Radio Mode)
     if (this.btnModeDj && this.btnModeRadio) {
       this.btnModeDj.addEventListener('click', () => {
         this.audioEngine.setMixMode('dj');
         this.btnModeDj.classList.add('active');
         this.btnModeRadio.classList.remove('active');
+
+        if (this.djStation) this.djStation.classList.remove('hidden');
+        if (this.mobileDeckTabs) this.mobileDeckTabs.style.display = '';
+        if (this.bottomUtilityBar) this.bottomUtilityBar.classList.remove('hidden');
+        if (this.radioModeConsole) this.radioModeConsole.classList.add('hidden');
       });
+
       this.btnModeRadio.addEventListener('click', () => {
         this.audioEngine.setMixMode('radio');
         this.btnModeRadio.classList.add('active');
         this.btnModeDj.classList.remove('active');
+
+        if (this.djStation) this.djStation.classList.add('hidden');
+        if (this.mobileDeckTabs) this.mobileDeckTabs.style.display = 'none';
+        if (this.bottomUtilityBar) this.bottomUtilityBar.classList.add('hidden');
+        if (this.radioModeConsole) this.radioModeConsole.classList.remove('hidden');
         if (this.transitionBanner) this.transitionBanner.classList.add('hidden');
+      });
+    }
+
+    // Radio Mode Controls
+    if (this.btnRadioPlay) {
+      this.btnRadioPlay.addEventListener('click', () => {
+        const isPlaying = this.audioEngine.togglePlay();
+        this.updatePlayState(isPlaying);
+      });
+    }
+    if (this.btnRadioPrev) {
+      this.btnRadioPrev.addEventListener('click', () => this.audioEngine.skipPrev());
+    }
+    if (this.btnRadioNext) {
+      this.btnRadioNext.addEventListener('click', () => this.audioEngine.skipNext());
+    }
+    if (this.radioEqPreset) {
+      this.radioEqPreset.addEventListener('change', (e) => {
+        this.audioEngine.setEQPreset(e.target.value);
+      });
+    }
+    if (this.btnRadioEqToggle && this.radioEqPreset) {
+      this.btnRadioEqToggle.addEventListener('click', () => {
+        const options = ['flat', 'bass', 'club', 'vocal', 'electronic'];
+        const currentIdx = options.indexOf(this.radioEqPreset.value);
+        const nextIdx = (currentIdx + 1) % options.length;
+        this.radioEqPreset.value = options[nextIdx];
+        this.audioEngine.setEQPreset(options[nextIdx]);
+      });
+    }
+    if (this.radioWaveformWrap) {
+      this.radioWaveformWrap.addEventListener('click', (e) => {
+        const rect = this.radioWaveformWrap.getBoundingClientRect();
+        const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const audio = this.audioEngine.getActiveAudio();
+        if (audio && audio.duration) {
+          audio.currentTime = pct * audio.duration;
+        }
       });
     }
 
@@ -717,8 +786,16 @@ export class UIController {
   updatePlayState(isPlaying) {
     if (isPlaying) {
       if (this.waveIndicator) this.waveIndicator.classList.add('wave-playing');
+      if (this.btnRadioPlay) {
+        this.btnRadioPlay.classList.add('active-play');
+        this.btnRadioPlay.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`;
+      }
     } else {
       if (this.waveIndicator) this.waveIndicator.classList.remove('wave-playing');
+      if (this.btnRadioPlay) {
+        this.btnRadioPlay.classList.remove('active-play');
+        this.btnRadioPlay.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>`;
+      }
     }
   }
 
@@ -743,6 +820,10 @@ export class UIController {
     if (!track) return;
     const nextTrack = queue && queue.length > 0 ? queue[0] : null;
     const activeDeck = this.audioEngine.activeDeck;
+
+    // Radio Mode Displays
+    if (this.radioTrackTitle) this.radioTrackTitle.textContent = track.title || 'Unknown Track';
+    if (this.radioTrackArtist) this.radioTrackArtist.textContent = track.artist || 'JMF Radio 24/7';
 
     if (activeDeck === 'A') {
       if (this.deckATitle) this.deckATitle.textContent = track.title || 'Unknown Track';
@@ -813,6 +894,22 @@ export class UIController {
     const isCrossfading = this.audioEngine.isCrossfading;
     const rem = Math.max(0, duration - elapsedTime);
     const pct = duration > 0 ? Math.min(1.0, elapsedTime / duration) : 0;
+
+    // 📻 Radio Mode Visual Updates
+    if (this.radioTimeCur) this.radioTimeCur.textContent = this.formatTime(elapsedTime);
+    if (this.radioTimeTotal) this.radioTimeTotal.textContent = this.formatTime(duration);
+    if (this.radioWaveformCanvas) {
+      this.drawWaveform(this.radioWaveformCanvas, this.waveformProfileA, pct, 'A', audioAnalysis);
+    }
+    if (audioAnalysis && isPlaying) {
+      this.updateSegmentedLEDs(this.radioHpSegs, audioAnalysis.volume * 0.85);
+      this.updateSegmentedLEDs(this.radioMasterVuLSegs, audioAnalysis.volume * 1.1 + audioAnalysis.bass * 0.3);
+      this.updateSegmentedLEDs(this.radioMasterVuRSegs, audioAnalysis.volume * 1.1 + audioAnalysis.treble * 0.3);
+    } else {
+      this.updateSegmentedLEDs(this.radioHpSegs, 0);
+      this.updateSegmentedLEDs(this.radioMasterVuLSegs, 0);
+      this.updateSegmentedLEDs(this.radioMasterVuRSegs, 0);
+    }
 
     // 1. Draw Waveforms on HTML5 Canvas & Update Time Displays
     if (activeDeck === 'A') {
@@ -910,6 +1007,22 @@ export class UIController {
       const threshold = (total - 1 - i) / total;
       const isLit = level >= threshold;
       leds[i].className = 'led ' + (isLit ? (i <= 1 ? 'lit-red' : i <= 2 ? 'lit-orange' : i <= 3 ? 'lit-yellow' : 'lit-green') : '');
+    }
+  }
+
+  updateSegmentedLEDs(elements, level) {
+    if (!elements || elements.length === 0) return;
+    const total = elements.length;
+    for (let i = 0; i < total; i++) {
+      const threshold = i / total;
+      const isLit = level >= threshold;
+      if (isLit) {
+        if (i >= total - 3) elements[i].className = 'r-seg lit-yellow';
+        else if (i >= total - 7) elements[i].className = 'r-seg lit-green';
+        else elements[i].className = 'r-seg lit-cyan';
+      } else {
+        elements[i].className = 'r-seg';
+      }
     }
   }
 }
