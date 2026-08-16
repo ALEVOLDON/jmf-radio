@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JMF Radio | 24/7 Live Stream</title>
+  <title>JMF Radio | 24/7 Pro DJ Live Station</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
@@ -23,6 +23,31 @@
           <span>ON AIR</span>
         </div>
         <h1 class="station-title">JMF <span>RADIO</span></h1>
+      </div>
+
+      <!-- Camera Switcher Pills (Center) -->
+      <div class="camera-toolbar">
+        <button class="cam-btn active" data-cam="booth">
+          <span>🎧 DJ Focus</span>
+        </button>
+        <button class="cam-btn" data-cam="dance">
+          <span>🕺 Dance Floor</span>
+        </button>
+        <button class="cam-btn" data-cam="bar">
+          <span>🍸 Bar Lounge</span>
+        </button>
+        <button class="cam-btn" data-cam="lounge">
+          <span>👑 VIP Lounge</span>
+        </button>
+        <button class="cam-btn" data-cam="decks">
+          <span>🎛️ Decks</span>
+        </button>
+        <button class="cam-btn" data-cam="room">
+          <span>🛋️ Full Club</span>
+        </button>
+        <button class="cam-btn" data-cam="cinematic">
+          <span>🛸 Cinema Cam</span>
+        </button>
       </div>
 
       <div class="header-right">
@@ -47,39 +72,6 @@
       </div>
     </header>
 
-    <!-- Camera Switcher Pills (Top Center) -->
-    <div class="camera-toolbar">
-      <button class="cam-btn active" data-cam="booth">
-        <span>🎧 DJ Focus</span>
-      </button>
-      <button class="cam-btn" data-cam="dance">
-        <span>🕺 Dance Floor</span>
-      </button>
-      <button class="cam-btn" data-cam="bar">
-        <span>🍸 Bar Lounge</span>
-      </button>
-      <button class="cam-btn" data-cam="lounge">
-        <span>👑 VIP Lounge</span>
-      </button>
-      <button class="cam-btn" data-cam="decks">
-        <span>🎛️ Decks</span>
-      </button>
-      <button class="cam-btn" data-cam="room">
-        <span>🛋️ Full Club</span>
-      </button>
-      <button class="cam-btn" data-cam="cinematic">
-        <span>🛸 Cinema Cam</span>
-      </button>
-    </div>
-
-    <!-- Theme / Lighting Switcher (Right Side) -->
-    <div class="lighting-toolbar">
-      <button class="theme-btn active" data-theme="cyber" title="Cyberpunk Neon">🟣</button>
-      <button class="theme-btn" data-theme="sunset" title="Sunset Lo-Fi">🌅</button>
-      <button class="theme-btn" data-theme="matrix" title="Emerald Matrix">🟢</button>
-      <button class="theme-btn" data-theme="acid" title="Electric Blue">⚡</button>
-    </div>
-
     <!-- Upcoming Queue Drawer -->
     <div class="queue-drawer hidden" id="queue-drawer">
       <div class="queue-header">
@@ -98,12 +90,13 @@
     </div>
 
     <!-- ======================================================== -->
-    <!-- PROFESSIONAL HARDWARE DJ WORKSTATION (DECKS + PIONEER DJM) -->
+    <!-- 🎛️ STATE-OF-THE-ART PRO DUAL-DECK & DJM WORKSTATION -->
     <!-- ======================================================== -->
     <footer class="hardware-dj-station">
       
-      <!-- 🔵 DECK A (LEFT PIONEER CDJ CONTROLLER) -->
-      <div class="cdj-deck-unit deck-a" id="deck-a-unit">
+      <!-- 🔵 DECK A (LEFT CDJ UNIT) -->
+      <div class="cdj-deck-unit deck-a-frame" id="deck-a-unit">
+        <!-- Top Screen & Header -->
         <div class="deck-top-screen">
           <div class="screen-header">
             <div class="deck-indicator-badge badge-a">
@@ -113,21 +106,22 @@
             </div>
             <div class="screen-stats">
               <span>BPM: <strong id="deck-a-bpm">128.0</strong></span>
-              <span>KEY: <strong>8A</strong></span>
+              <span>KEY: <strong id="deck-a-key">8A</strong></span>
               <span>PITCH: <strong id="deck-a-pitch-val">+0.0%</strong></span>
             </div>
           </div>
 
           <div class="screen-track-info">
             <div class="track-title-scroller">
-              <h3 id="deck-a-title">Connecting to radio stream...</h3>
+              <h3 id="deck-a-title">RSD001 Preview</h3>
             </div>
-            <p id="deck-a-artist">JMF Radio 24/7</p>
+            <p id="deck-a-artist">JMF Radio</p>
           </div>
 
+          <!-- Waveform with Times -->
           <div class="screen-waveform-area">
             <div class="waveform-canvas-wrap" id="deck-a-waveform-wrap" title="Click to seek track">
-              <canvas class="deck-waveform-canvas" id="deck-a-canvas" width="400" height="28"></canvas>
+              <canvas class="deck-waveform-canvas" id="deck-a-canvas" width="440" height="32"></canvas>
             </div>
             <div class="waveform-times">
               <span id="deck-a-time-cur">0:00</span>
@@ -136,60 +130,142 @@
           </div>
         </div>
 
-        <div class="deck-lower-controls">
-          <!-- Left: Big 140px CDJ Jog Wheel & Transport -->
-          <div class="deck-left-block">
-            <div class="cdj-jog-housing">
-              <div class="cdj-jog-platter platter-a" id="deck-a-jog">
-                <div class="jog-outer-rim"></div>
-                <div class="jog-ring">
-                  <div class="jog-led-dot"></div>
-                  <div class="jog-led-chase"></div>
+        <!-- Middle Section: Jog Wheel & Performance Grid -->
+        <div class="deck-middle-controls">
+          <!-- Big CDJ Jog Wheel with Center LCD -->
+          <div class="cdj-jog-housing">
+            <div class="cdj-jog-platter platter-a" id="deck-a-jog">
+              <div class="jog-knurled-rim"></div>
+              <div class="jog-led-ring">
+                <div class="jog-needle-dot"></div>
+              </div>
+              <div class="jog-center-lcd-screen">
+                <div class="jog-lcd-bpm" id="deck-a-jog-bpm">128.0</div>
+                <div class="jog-lcd-label">BPM</div>
+                <div class="jog-lcd-pitch" id="deck-a-jog-pitch">0.0%</div>
+                <div class="jog-lcd-key" id="deck-a-jog-key">8A</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance Pads & Pitch Slider -->
+          <div class="deck-perf-container">
+            <div class="perf-buttons-section">
+              <!-- HOT CUES -->
+              <div class="perf-group">
+                <span class="perf-group-title cyan-text">HOT CUES</span>
+                <div class="perf-grid-2x2">
+                  <button class="btn-cue-pad active" id="deck-a-pad-1">1</button>
+                  <button class="btn-cue-pad" id="deck-a-pad-2">2</button>
+                  <button class="btn-cue-pad" id="deck-a-pad-3">3</button>
+                  <button class="btn-cue-pad" id="deck-a-pad-4">4</button>
                 </div>
-                <div class="jog-vinyl-surface">
-                  <div class="jog-center-lcd">
-                    <span class="jog-deck-tag cyan-text">DECK A</span>
-                    <span class="jog-cue-marker">● ON AIR</span>
-                  </div>
+              </div>
+
+              <!-- LOOPS -->
+              <div class="perf-group">
+                <span class="perf-group-title">LOOPS</span>
+                <div class="perf-row-2">
+                  <button class="btn-loop-pad" id="deck-a-loop-4">4</button>
+                  <button class="btn-loop-pad" id="deck-a-loop-8">8</button>
+                </div>
+              </div>
+
+              <!-- FX PADS -->
+              <div class="perf-group">
+                <span class="perf-group-title">FX</span>
+                <div class="perf-row-2">
+                  <button class="btn-fx-pad" id="deck-a-fx-1">FX 1</button>
+                  <button class="btn-fx-pad" id="deck-a-fx-2">FX 2</button>
                 </div>
               </div>
             </div>
 
-            <!-- Iconic Pioneer Round Transport Buttons under Jog -->
-            <div class="jog-transport-row">
-              <button class="btn-pioneer-cue" id="deck-a-cue" title="Cue Point">CUE</button>
-              <button class="btn-pioneer-play active-play" id="deck-a-play" title="Play / Pause Deck A">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              </button>
-              <button class="btn-sync" id="deck-a-sync" title="Beat Sync">SYNC</button>
+            <!-- Pitch / Tempo Slider Strip -->
+            <div class="deck-tempo-section">
+              <div class="tempo-header-tag">
+                <span>TEMPO</span>
+                <span class="tempo-range">±8%</span>
+              </div>
+              <button class="btn-tempo-step" id="deck-a-tempo-plus">+</button>
+              <div class="tempo-slider-track">
+                <input type="range" class="vertical-pitch-slider slider-cyan" id="deck-a-pitch" min="-8" max="8" step="0.1" value="0">
+                <span class="tempo-zero-mark" id="deck-a-pitch-reset" title="Click to Reset Tempo">0%</span>
+              </div>
+              <button class="btn-tempo-step" id="deck-a-tempo-minus">-</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transport Row -->
+        <div class="deck-transport-row">
+          <button class="btn-pioneer-cue" id="deck-a-cue" title="Cue Point">CUE</button>
+          <button class="btn-pioneer-play active-play" id="deck-a-play" title="Play / Pause Deck A">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+          </button>
+          <button class="btn-sync-master" id="deck-a-sync" title="Beat Sync">
+            <span>SYNC</span>
+            <small>MASTER</small>
+          </button>
+          <button class="btn-deck-dark" id="deck-a-grid" title="Beat Grid">BEAT<br>GRID</button>
+          <button class="btn-deck-dark btn-gear" id="deck-a-gear" title="Deck Settings">⚙</button>
+        </div>
+
+        <!-- Effects Strip -->
+        <div class="deck-fx-strip">
+          <div class="fx-header-left">
+            <span class="fx-label cyan-text">EFFECTS</span>
+            <select class="fx-dropdown" id="deck-a-fx-type">
+              <option value="filter">FILTER ⌵</option>
+              <option value="echo">ECHO ⌵</option>
+              <option value="reverb">REVERB ⌵</option>
+              <option value="flanger">FLANGER ⌵</option>
+            </select>
+          </div>
+
+          <div class="fx-knobs-row">
+            <div class="rotary-knob-component knob-compact" data-param="fx-a-lpf" data-min="0" data-max="1" data-val="0.5" data-default="0.5">
+              <div class="knob-dial dial-compact">
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-cyan"></div>
+                </div>
+              </div>
+              <span class="knob-label">LPF</span>
+            </div>
+
+            <div class="rotary-knob-component knob-compact" data-param="fx-a-res" data-min="0" data-max="1" data-val="0.3" data-default="0.3">
+              <div class="knob-dial dial-compact">
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-cyan"></div>
+                </div>
+              </div>
+              <span class="knob-label">RES</span>
+            </div>
+
+            <div class="rotary-knob-component knob-compact" data-param="fx-a-drywet" data-min="0" data-max="1" data-val="0.4" data-default="0.4">
+              <div class="knob-dial dial-compact">
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-cyan"></div>
+                </div>
+              </div>
+              <span class="knob-label">DRY / WET</span>
             </div>
           </div>
 
-          <!-- Middle: Performance Hot Cues & Loops -->
-          <div class="deck-pads-column">
-            <button class="btn-pad" id="deck-a-pad-1">HOT CUE 1</button>
-            <button class="btn-pad" id="deck-a-pad-2">HOT CUE 2</button>
-            <button class="btn-pad loop-pad" id="deck-a-loop-4">LOOP 4</button>
-            <button class="btn-pad loop-pad" id="deck-a-loop-8">LOOP 8</button>
-          </div>
+          <button class="btn-fx-on active" id="deck-a-fx-toggle">ON</button>
+        </div>
 
-          <!-- Right: Slim Narrow Pioneer Tempo Strip -->
-          <div class="deck-tempo-strip">
-            <div class="tempo-header">
-              <span class="pitch-label-title">TEMPO</span>
-              <button class="btn-micro" id="deck-a-pitch-reset" title="Reset Tempo">0%</button>
-            </div>
-            <div class="tempo-slider-housing">
-              <span class="pitch-label">+</span>
-              <input type="range" class="vertical-pitch-slider" id="deck-a-pitch" min="-8" max="8" step="0.1" value="0">
-              <span class="pitch-label">-</span>
-            </div>
-          </div>
+        <!-- Deck Bottom Navigation Bar -->
+        <div class="deck-bottom-navbar">
+          <button class="btn-nav-tab" id="deck-a-tab-info">🎵 TRACK INFO</button>
+          <button class="btn-nav-tab" id="deck-a-tab-browser">📁 BROWSER</button>
+          <button class="btn-nav-tab" id="deck-a-tab-playlist">📑 PLAYLIST</button>
+          <button class="btn-nav-tab btn-nav-arrow">⌃</button>
         </div>
       </div>
 
       <!-- 🎛️ CENTRAL PIONEER DJM MIXER CONSOLE -->
-      <div class="djm-mixer-unit">
+      <div class="djm-mixer-unit" id="djm-mixer">
         <div class="mixer-ch-columns">
           
           <!-- CHANNEL 1 (Deck A) STRIP -->
@@ -199,7 +275,7 @@
             <div class="rotary-knob-component" id="knob-ch1-trim" data-param="trim-A" data-min="0" data-max="1.5" data-val="1.0" data-default="1.0" title="CH 1 Trim / Gain">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">TRIM</span>
@@ -208,7 +284,7 @@
             <div class="rotary-knob-component" id="knob-ch1-hi" data-param="eq-A-high" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 1 High EQ (-26dB to +6dB)">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">HI</span>
@@ -217,7 +293,7 @@
             <div class="rotary-knob-component" id="knob-ch1-mid" data-param="eq-A-mid" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 1 Mid EQ (-26dB to +6dB)">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">MID</span>
@@ -226,7 +302,7 @@
             <div class="rotary-knob-component" id="knob-ch1-low" data-param="eq-A-low" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 1 Low / Bass EQ (-26dB to +6dB)">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">LOW</span>
@@ -234,7 +310,7 @@
 
             <div class="rotary-knob-component knob-color-fx" id="knob-ch1-filter" data-param="filter-A" data-min="0" data-max="1" data-val="0.5" data-default="0.5" title="CH 1 Color Filter (LPF <-> HPF)">
               <div class="knob-dial dial-large">
-                <div class="knob-cap cap-color-fx">
+                <div class="knob-cap">
                   <div class="knob-pointer pointer-pink"></div>
                 </div>
               </div>
@@ -245,7 +321,7 @@
 
             <!-- Channel 1 Fader & VU Meter -->
             <div class="fader-meter-row">
-              <div class="channel-vu-meter" id="vu-meter-ch1">
+              <div class="channel-vu-meter meter-cyan" id="vu-meter-ch1">
                 <div class="led red"></div>
                 <div class="led red"></div>
                 <div class="led orange"></div>
@@ -256,7 +332,7 @@
                 <div class="led green"></div>
               </div>
               <div class="fader-housing">
-                <input type="range" class="vertical-ch-fader" id="fader-ch1" min="0" max="1" step="0.01" value="1.0">
+                <input type="range" class="vertical-ch-fader fader-cyan-cap" id="fader-ch1" min="0" max="1" step="0.01" value="1.0">
               </div>
             </div>
           </div>
@@ -265,9 +341,19 @@
           <div class="mixer-center-strip">
             <span class="ch-title gold-text">MASTER</span>
 
-            <!-- Dual Master Stereo VU Meter -->
-            <div class="master-stereo-vu">
+            <!-- High-Res Master Stereo VU Meter with dB scales -->
+            <div class="master-stereo-vu-panel">
+              <div class="vu-scale-labels">
+                <span>+6</span>
+                <span>0</span>
+                <span>-6</span>
+                <span>-12</span>
+                <span>-18</span>
+                <span>-24</span>
+                <span>L</span>
+              </div>
               <div class="master-vu-column" id="master-vu-l">
+                <div class="led red"></div>
                 <div class="led red"></div>
                 <div class="led orange"></div>
                 <div class="led yellow"></div>
@@ -278,6 +364,7 @@
               </div>
               <div class="master-vu-column" id="master-vu-r">
                 <div class="led red"></div>
+                <div class="led red"></div>
                 <div class="led orange"></div>
                 <div class="led yellow"></div>
                 <div class="led green"></div>
@@ -285,25 +372,37 @@
                 <div class="led green"></div>
                 <div class="led green"></div>
               </div>
+              <div class="vu-scale-labels">
+                <span>+6</span>
+                <span>0</span>
+                <span>-6</span>
+                <span>-12</span>
+                <span>-18</span>
+                <span>-24</span>
+                <span>R</span>
+              </div>
             </div>
 
-            <!-- Master Volume Rotary Knob -->
-            <div class="rotary-knob-component knob-master-fx" id="knob-master-vol" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Level">
+            <!-- Master Rotary Level Knob -->
+            <div class="rotary-knob-component" id="knob-mixer-center-master" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Level">
               <div class="knob-dial dial-master">
-                <div class="knob-cap cap-gold">
-                  <div class="knob-pointer pointer-gold"></div>
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-cyan"></div>
                 </div>
               </div>
-              <span class="knob-label gold-text">MASTER</span>
             </div>
 
             <button class="btn-mix-flash" id="btn-mix-now" title="Trigger Instant 8-Second Crossfade Mix">
-              <span>⚡ AUTO MIX</span>
+              <span>AUTO MIX</span>
             </button>
 
+            <!-- Transport Skip & Pause Buttons -->
             <div class="mixer-nav-controls">
               <button class="btn-nav-prev" id="btn-prev" title="Previous Track">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
+              </button>
+              <button class="btn-nav-play" id="btn-mixer-play" title="Play / Pause Station">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
               </button>
               <button class="btn-nav-next" id="btn-next" title="Next Track">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
@@ -311,11 +410,11 @@
             </div>
 
             <div class="headphones-tools">
-              <button class="icon-btn-ghost" id="btn-mute" title="Mute">
+              <button class="icon-btn-ghost" id="btn-mute" title="Mute Audio">
                 <svg id="icon-vol" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
                 <svg id="icon-mute" class="hidden" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
               </button>
-              <button class="icon-btn-ghost" id="btn-fullscreen" title="Fullscreen">
+              <button class="icon-btn-ghost" id="btn-fullscreen" title="Fullscreen Mode">
                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
               </button>
             </div>
@@ -328,7 +427,7 @@
             <div class="rotary-knob-component" id="knob-ch2-trim" data-param="trim-B" data-min="0" data-max="1.5" data-val="1.0" data-default="1.0" title="CH 2 Trim / Gain">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">TRIM</span>
@@ -337,7 +436,7 @@
             <div class="rotary-knob-component" id="knob-ch2-hi" data-param="eq-B-high" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 2 High EQ (-26dB to +6dB)">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">HI</span>
@@ -346,7 +445,7 @@
             <div class="rotary-knob-component" id="knob-ch2-mid" data-param="eq-B-mid" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 2 Mid EQ (-26dB to +6dB)">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">MID</span>
@@ -355,7 +454,7 @@
             <div class="rotary-knob-component" id="knob-ch2-low" data-param="eq-B-low" data-min="-26" data-max="6" data-val="0" data-default="0" title="CH 2 Low / Bass EQ (-26dB to +6dB)">
               <div class="knob-dial">
                 <div class="knob-cap">
-                  <div class="knob-pointer"></div>
+                  <div class="knob-pointer pointer-white"></div>
                 </div>
               </div>
               <span class="knob-label">LOW</span>
@@ -363,7 +462,7 @@
 
             <div class="rotary-knob-component knob-color-fx" id="knob-ch2-filter" data-param="filter-B" data-min="0" data-max="1" data-val="0.5" data-default="0.5" title="CH 2 Color Filter (LPF <-> HPF)">
               <div class="knob-dial dial-large">
-                <div class="knob-cap cap-color-fx">
+                <div class="knob-cap">
                   <div class="knob-pointer pointer-pink"></div>
                 </div>
               </div>
@@ -374,7 +473,7 @@
 
             <!-- Channel 2 Fader & VU Meter -->
             <div class="fader-meter-row">
-              <div class="channel-vu-meter" id="vu-meter-ch2">
+              <div class="channel-vu-meter meter-magenta" id="vu-meter-ch2">
                 <div class="led red"></div>
                 <div class="led red"></div>
                 <div class="led orange"></div>
@@ -385,7 +484,7 @@
                 <div class="led green"></div>
               </div>
               <div class="fader-housing">
-                <input type="range" class="vertical-ch-fader" id="fader-ch2" min="0" max="1" step="0.01" value="1.0">
+                <input type="range" class="vertical-ch-fader fader-magenta-cap" id="fader-ch2" min="0" max="1" step="0.01" value="1.0">
               </div>
             </div>
           </div>
@@ -402,8 +501,9 @@
         </div>
       </div>
 
-      <!-- 🔴 DECK B (RIGHT PIONEER CDJ CONTROLLER) -->
-      <div class="cdj-deck-unit deck-b" id="deck-b-unit">
+      <!-- 🔴 DECK B (RIGHT CDJ UNIT) -->
+      <div class="cdj-deck-unit deck-b-frame" id="deck-b-unit">
+        <!-- Top Screen & Header -->
         <div class="deck-top-screen">
           <div class="screen-header">
             <div class="deck-indicator-badge badge-b">
@@ -413,82 +513,224 @@
             </div>
             <div class="screen-stats">
               <span>BPM: <strong id="deck-b-bpm">128.0</strong></span>
-              <span>KEY: <strong>8A</strong></span>
+              <span>KEY: <strong id="deck-b-key">8A</strong></span>
               <span>PITCH: <strong id="deck-b-pitch-val">+0.0%</strong></span>
             </div>
           </div>
 
           <div class="screen-track-info">
             <div class="track-title-scroller">
-              <h3 id="deck-b-title">Upcoming track...</h3>
+              <h3 id="deck-b-title">Vitberget</h3>
             </div>
-            <p id="deck-b-artist">Waiting for cue...</p>
+            <p id="deck-b-artist">Varg</p>
           </div>
 
+          <!-- Waveform with Times -->
           <div class="screen-waveform-area">
             <div class="waveform-canvas-wrap" id="deck-b-waveform-wrap" title="Click to seek track">
-              <canvas class="deck-waveform-canvas" id="deck-b-canvas" width="400" height="28"></canvas>
+              <canvas class="deck-waveform-canvas" id="deck-b-canvas" width="440" height="32"></canvas>
             </div>
             <div class="waveform-times">
               <span id="deck-b-time-cur">0:00</span>
-              <span id="deck-b-time-rem">-0:00</span>
+              <span id="deck-b-time-rem">READY</span>
             </div>
           </div>
         </div>
 
-        <div class="deck-lower-controls">
-          <!-- Left: Big 140px CDJ Jog Wheel & Transport -->
-          <div class="deck-left-block">
-            <div class="cdj-jog-housing">
-              <div class="cdj-jog-platter platter-b" id="deck-b-jog">
-                <div class="jog-outer-rim"></div>
-                <div class="jog-ring">
-                  <div class="jog-led-dot"></div>
-                  <div class="jog-led-chase"></div>
+        <!-- Middle Section: Jog Wheel & Performance Grid -->
+        <div class="deck-middle-controls">
+          <!-- Big CDJ Jog Wheel with Center LCD -->
+          <div class="cdj-jog-housing">
+            <div class="cdj-jog-platter platter-b" id="deck-b-jog">
+              <div class="jog-knurled-rim"></div>
+              <div class="jog-led-ring">
+                <div class="jog-needle-dot"></div>
+              </div>
+              <div class="jog-center-lcd-screen">
+                <div class="jog-lcd-bpm" id="deck-b-jog-bpm">128.0</div>
+                <div class="jog-lcd-label">BPM</div>
+                <div class="jog-lcd-pitch" id="deck-b-jog-pitch">0.0%</div>
+                <div class="jog-lcd-key" id="deck-b-jog-key">8A</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance Pads & Pitch Slider -->
+          <div class="deck-perf-container">
+            <div class="perf-buttons-section">
+              <!-- HOT CUES -->
+              <div class="perf-group">
+                <span class="perf-group-title magenta-text">HOT CUES</span>
+                <div class="perf-grid-2x2">
+                  <button class="btn-cue-pad pad-b active" id="deck-b-pad-1">1</button>
+                  <button class="btn-cue-pad pad-b" id="deck-b-pad-2">2</button>
+                  <button class="btn-cue-pad pad-b" id="deck-b-pad-3">3</button>
+                  <button class="btn-cue-pad pad-b" id="deck-b-pad-4">4</button>
                 </div>
-                <div class="jog-vinyl-surface">
-                  <div class="jog-center-lcd">
-                    <span class="jog-deck-tag magenta-text">DECK B</span>
-                    <span class="jog-cue-marker" id="deck-b-jog-state">CUE / NEXT</span>
-                  </div>
+              </div>
+
+              <!-- LOOPS -->
+              <div class="perf-group">
+                <span class="perf-group-title">LOOPS</span>
+                <div class="perf-row-2">
+                  <button class="btn-loop-pad" id="deck-b-loop-4">4</button>
+                  <button class="btn-loop-pad" id="deck-b-loop-8">8</button>
+                </div>
+              </div>
+
+              <!-- FX PADS -->
+              <div class="perf-group">
+                <span class="perf-group-title">FX</span>
+                <div class="perf-row-2">
+                  <button class="btn-fx-pad" id="deck-b-fx-1">FX 1</button>
+                  <button class="btn-fx-pad" id="deck-b-fx-2">FX 2</button>
                 </div>
               </div>
             </div>
 
-            <!-- Iconic Pioneer Round Transport Buttons under Jog -->
-            <div class="jog-transport-row">
-              <button class="btn-pioneer-cue" id="deck-b-cue" title="Cue Point">CUE</button>
-              <button class="btn-pioneer-play" id="deck-b-play" title="Play / Pause Deck B">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-              </button>
-              <button class="btn-sync" id="deck-b-sync" title="Beat Sync">SYNC</button>
+            <!-- Pitch / Tempo Slider Strip -->
+            <div class="deck-tempo-section">
+              <div class="tempo-header-tag">
+                <span>TEMPO</span>
+                <span class="tempo-range">±8%</span>
+              </div>
+              <button class="btn-tempo-step" id="deck-b-tempo-plus">+</button>
+              <div class="tempo-slider-track">
+                <input type="range" class="vertical-pitch-slider slider-magenta" id="deck-b-pitch" min="-8" max="8" step="0.1" value="0">
+                <span class="tempo-zero-mark" id="deck-b-pitch-reset" title="Click to Reset Tempo">0%</span>
+              </div>
+              <button class="btn-tempo-step" id="deck-b-tempo-minus">-</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transport Row -->
+        <div class="deck-transport-row">
+          <button class="btn-pioneer-cue" id="deck-b-cue" title="Cue Point">CUE</button>
+          <button class="btn-pioneer-play" id="deck-b-play" title="Play / Pause Deck B">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+          </button>
+          <button class="btn-sync-master" id="deck-b-sync" title="Beat Sync">
+            <span>SYNC</span>
+            <small>MASTER</small>
+          </button>
+          <button class="btn-deck-dark" id="deck-b-grid" title="Beat Grid">BEAT<br>GRID</button>
+          <button class="btn-deck-dark btn-gear" id="deck-b-gear" title="Deck Settings">⚙</button>
+        </div>
+
+        <!-- Effects Strip -->
+        <div class="deck-fx-strip">
+          <div class="fx-header-left">
+            <span class="fx-label magenta-text">EFFECTS</span>
+            <select class="fx-dropdown" id="deck-b-fx-type">
+              <option value="filter">FILTER ⌵</option>
+              <option value="echo">ECHO ⌵</option>
+              <option value="reverb">REVERB ⌵</option>
+              <option value="flanger">FLANGER ⌵</option>
+            </select>
+          </div>
+
+          <div class="fx-knobs-row">
+            <div class="rotary-knob-component knob-compact" data-param="fx-b-lpf" data-min="0" data-max="1" data-val="0.5" data-default="0.5">
+              <div class="knob-dial dial-compact">
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-pink"></div>
+                </div>
+              </div>
+              <span class="knob-label">LPF</span>
+            </div>
+
+            <div class="rotary-knob-component knob-compact" data-param="fx-b-res" data-min="0" data-max="1" data-val="0.3" data-default="0.3">
+              <div class="knob-dial dial-compact">
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-pink"></div>
+                </div>
+              </div>
+              <span class="knob-label">RES</span>
+            </div>
+
+            <div class="rotary-knob-component knob-compact" data-param="fx-b-drywet" data-min="0" data-max="1" data-val="0.4" data-default="0.4">
+              <div class="knob-dial dial-compact">
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-pink"></div>
+                </div>
+              </div>
+              <span class="knob-label">DRY / WET</span>
             </div>
           </div>
 
-          <!-- Middle: Performance Hot Cues & Loops -->
-          <div class="deck-pads-column">
-            <button class="btn-pad pad-b" id="deck-b-pad-1">HOT CUE 1</button>
-            <button class="btn-pad pad-b" id="deck-b-pad-2">HOT CUE 2</button>
-            <button class="btn-pad loop-pad" id="deck-b-loop-4">LOOP 4</button>
-            <button class="btn-pad loop-pad" id="deck-b-loop-8">LOOP 8</button>
-          </div>
+          <button class="btn-fx-on" id="deck-b-fx-toggle">ON</button>
+        </div>
 
-          <!-- Right: Slim Narrow Pioneer Tempo Strip -->
-          <div class="deck-tempo-strip">
-            <div class="tempo-header">
-              <span class="pitch-label-title">TEMPO</span>
-              <button class="btn-micro" id="deck-b-pitch-reset" title="Reset Tempo">0%</button>
-            </div>
-            <div class="tempo-slider-housing">
-              <span class="pitch-label">+</span>
-              <input type="range" class="vertical-pitch-slider" id="deck-b-pitch" min="-8" max="8" step="0.1" value="0">
-              <span class="pitch-label">-</span>
-            </div>
-          </div>
+        <!-- Deck Bottom Navigation Bar -->
+        <div class="deck-bottom-navbar">
+          <button class="btn-nav-tab nav-tab-pink" id="deck-b-tab-info">🎵 TRACK INFO</button>
+          <button class="btn-nav-tab" id="deck-b-tab-browser">📁 BROWSER</button>
+          <button class="btn-nav-tab" id="deck-b-tab-playlist">📑 PLAYLIST</button>
+          <button class="btn-nav-tab btn-nav-arrow">⌃</button>
         </div>
       </div>
 
     </footer>
+
+    <!-- ======================================================== -->
+    <!-- 🎚️ BOTTOM MASTER UTILITY & HEADPHONES BAR -->
+    <!-- ======================================================== -->
+    <div class="bottom-utility-bar">
+      <!-- Left: Headphones & Cue Level -->
+      <div class="util-section util-left">
+        <div class="util-headphones-group">
+          <span class="util-icon">🎧</span>
+          <span class="util-title">HEADPHONES</span>
+          <div class="rotary-knob-component knob-mini" data-param="hp-vol" data-min="0" data-max="1" data-val="0.7" data-default="0.7" title="Headphones Volume">
+            <div class="knob-dial dial-mini">
+              <div class="knob-cap">
+                <div class="knob-pointer pointer-cyan"></div>
+              </div>
+            </div>
+          </div>
+          <div class="hp-vu-meter-horiz" id="hp-meter">
+            <div class="meter-bar-fill" style="width: 65%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Record, Split, Auto DJ -->
+      <div class="util-section util-center">
+        <button class="btn-util-pill" id="btn-record">
+          <span>RECORD</span>
+          <span class="rec-dot"></span>
+        </button>
+        <button class="btn-util-pill" id="btn-split">SPLIT</button>
+        <button class="btn-util-pill active" id="btn-auto-dj">AUTO DJ</button>
+      </div>
+
+      <!-- Right: Master Volume & Settings -->
+      <div class="util-section util-right">
+        <div class="master-vol-horiz-group">
+          <div class="master-vol-labels">
+            <span>MASTER</span>
+            <span>VOLUME</span>
+          </div>
+          <div class="master-horiz-vu" id="master-horiz-vu">
+            <div class="horiz-vu-bar l-bar"></div>
+            <div class="horiz-vu-bar r-bar"></div>
+          </div>
+          <div class="rotary-knob-component knob-mini" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Volume">
+            <div class="knob-dial dial-mini">
+              <div class="knob-cap">
+                <div class="knob-pointer pointer-cyan"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-util-settings" id="btn-settings-open">
+          <span>⚙ SETTINGS</span>
+        </button>
+      </div>
+    </div>
+
   </div>
 
   <!-- Start Audio Overlay (for browser Autoplay Policy) -->
