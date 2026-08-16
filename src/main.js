@@ -37,9 +37,9 @@ function initApp() {
     // Analyze current audio frequencies & beats
     const audioAnalysis = audioEngine.update();
 
-    // Update UI track progress
-    if (audioEngine.isPlaying) {
-      uiController.updateProgress(audioEngine.elapsedTime, audioEngine.duration);
+    // Update UI track progress, dual deck waveforms & VU meters
+    if (audioEngine.isPlaying || audioEngine.isCrossfading) {
+      uiController.updateProgress(audioEngine.elapsedTime, audioEngine.duration, audioAnalysis);
     }
 
     // Update 3D Scene elements (DJ movements, speakers, neons, lights)

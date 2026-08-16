@@ -97,61 +97,160 @@
       <span id="transition-text">🎛️ DJ MIXING: CROSSFADING TO NEXT TRACK...</span>
     </div>
 
-    <!-- Bottom Player Control Bar -->
-    <footer class="player-bar">
-      <!-- Left: Track Info & Album Art -->
-      <div class="now-playing-section">
-        <div class="album-art-wrap">
-          <img id="track-cover" src="/cover-placeholder.svg" alt="Album Cover" class="cover-img">
-          <div class="cover-vinyl-ring"></div>
-        </div>
-        <div class="track-meta">
-          <div class="track-title-wrap">
-            <h2 class="track-title" id="track-title">Connecting to radio stream...</h2>
+    <!-- NI Traktor Style Dual-Deck DJ Console HUD -->
+    <footer class="dj-console-bar">
+      <!-- DECK A (Channel 1 - Left) -->
+      <div class="deck-panel deck-a" id="deck-a-panel">
+        <div class="deck-header">
+          <div class="deck-badge deck-a-badge">
+            <span class="deck-tag">DECK A</span>
+            <span class="deck-status status-on-air" id="deck-a-status">ON AIR</span>
           </div>
-          <p class="track-artist" id="track-artist">JMF Radio 24/7</p>
+          <div class="deck-bpm-badge">
+            <span>BPM</span>
+            <strong id="deck-a-bpm">128.0</strong>
+          </div>
+        </div>
+
+        <div class="deck-body">
+          <div class="jog-wheel-wrap">
+            <div class="jog-wheel" id="deck-a-jog">
+              <div class="jog-inner-vinyl">
+                <div class="jog-center-dot"></div>
+                <div class="jog-needle"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="deck-meta">
+            <div class="deck-title-wrap">
+              <h3 class="deck-title" id="deck-a-title">Connecting to radio stream...</h3>
+            </div>
+            <p class="deck-artist" id="deck-a-artist">JMF Radio</p>
+            
+            <div class="deck-waveform-wrap">
+              <div class="waveform-bg" id="deck-a-waveform">
+                <div class="waveform-progress" id="deck-a-progress"></div>
+              </div>
+              <div class="deck-time-row">
+                <span id="deck-a-time-cur">0:00</span>
+                <span id="deck-a-time-rem">-0:00</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Center: Main Playback Controls -->
-      <div class="playback-controls">
-        <div class="control-buttons">
-          <button class="ctrl-btn icon-small" id="btn-prev" title="Previous Track">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
-          </button>
+      <!-- CENTRAL DJ MIXER CONSOLE -->
+      <div class="mixer-panel">
+        <div class="mixer-top">
+          <!-- Deck A VU Meter -->
+          <div class="vu-meter" id="vu-meter-a">
+            <div class="vu-led red"></div>
+            <div class="vu-led orange"></div>
+            <div class="vu-led yellow"></div>
+            <div class="vu-led green"></div>
+            <div class="vu-led green"></div>
+            <div class="vu-led green"></div>
+          </div>
 
-          <button class="ctrl-btn play-main" id="btn-play-pause" title="Play / Pause">
-            <svg id="icon-play" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-            <svg id="icon-pause" class="hidden" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
-          </button>
+          <!-- Center Transport & Crossfade Trigger -->
+          <div class="mixer-center-controls">
+            <div class="main-transport">
+              <button class="ctrl-btn icon-small" id="btn-prev" title="Previous Track">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
+              </button>
 
-          <button class="ctrl-btn icon-small" id="btn-next" title="Next Track">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
-          </button>
+              <button class="ctrl-btn play-main" id="btn-play-pause" title="Master Play / Pause">
+                <svg id="icon-play" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                <svg id="icon-pause" class="hidden" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+              </button>
+
+              <button class="ctrl-btn icon-small" id="btn-next" title="Next Track / Skip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
+              </button>
+            </div>
+
+            <button class="btn-mix-trigger" id="btn-mix-now" title="Trigger Instant 8s DJ Crossfade Transition">
+              <span>⚡ MIX NOW</span>
+            </button>
+          </div>
+
+          <!-- Deck B VU Meter -->
+          <div class="vu-meter" id="vu-meter-b">
+            <div class="vu-led red"></div>
+            <div class="vu-led orange"></div>
+            <div class="vu-led yellow"></div>
+            <div class="vu-led green"></div>
+            <div class="vu-led green"></div>
+            <div class="vu-led green"></div>
+          </div>
         </div>
 
-        <div class="progress-container">
-          <span class="time-label" id="time-current">0:00</span>
-          <div class="progress-bar-bg" id="progress-bar">
-            <div class="progress-bar-fill" id="progress-fill"></div>
+        <!-- Animated Physical Crossfader -->
+        <div class="crossfader-section">
+          <span class="fader-label">CH 1</span>
+          <div class="crossfader-track" id="crossfader-track">
+            <div class="crossfader-cap" id="crossfader-cap"></div>
           </div>
-          <span class="time-label" id="time-total">0:00</span>
+          <span class="fader-label">CH 2</span>
+        </div>
+
+        <!-- Master Volume & Tools -->
+        <div class="mixer-bottom">
+          <div class="volume-slider-wrap">
+            <button class="icon-btn-ghost" id="btn-mute" title="Mute / Unmute">
+              <svg id="icon-vol" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+              <svg id="icon-mute" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
+            </button>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" class="custom-slider" title="Master Volume">
+          </div>
+          <button class="icon-btn-ghost" id="btn-fullscreen" title="Toggle Fullscreen">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+          </button>
         </div>
       </div>
 
-      <!-- Right: Volume & Audio FX -->
-      <div class="extra-controls">
-        <div class="volume-slider-wrap">
-          <button class="icon-btn-ghost" id="btn-mute" title="Mute / Unmute">
-            <svg id="icon-vol" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-            <svg id="icon-mute" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>
-          </button>
-          <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8" class="custom-slider" title="Volume">
+      <!-- DECK B (Channel 2 - Right) -->
+      <div class="deck-panel deck-b" id="deck-b-panel">
+        <div class="deck-header">
+          <div class="deck-badge deck-b-badge">
+            <span class="deck-tag">DECK B</span>
+            <span class="deck-status status-standby" id="deck-b-status">CUE / NEXT</span>
+          </div>
+          <div class="deck-bpm-badge">
+            <span>BPM</span>
+            <strong id="deck-b-bpm">128.0</strong>
+          </div>
         </div>
 
-        <button class="icon-btn-ghost" id="btn-fullscreen" title="Toggle Fullscreen">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-        </button>
+        <div class="deck-body">
+          <div class="jog-wheel-wrap">
+            <div class="jog-wheel jog-wheel-b" id="deck-b-jog">
+              <div class="jog-inner-vinyl">
+                <div class="jog-center-dot"></div>
+                <div class="jog-needle"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="deck-meta">
+            <div class="deck-title-wrap">
+              <h3 class="deck-title" id="deck-b-title">Upcoming track...</h3>
+            </div>
+            <p class="deck-artist" id="deck-b-artist">Waiting for cue...</p>
+            
+            <div class="deck-waveform-wrap">
+              <div class="waveform-bg waveform-bg-b" id="deck-b-waveform">
+                <div class="waveform-progress waveform-progress-b" id="deck-b-progress"></div>
+              </div>
+              <div class="deck-time-row">
+                <span id="deck-b-time-cur">0:00</span>
+                <span id="deck-b-time-rem">-0:00</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </footer>
   </div>
