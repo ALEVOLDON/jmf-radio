@@ -760,6 +760,87 @@ export class UIController {
       this.queueCloseBtn.addEventListener('click', () => this.queueDrawer.classList.add('hidden'));
     }
 
+    // ========================================================
+    // 💡 CLUB LIGHTING & VISUAL FX CONTROLS
+    // ========================================================
+    this.lightingModal = document.getElementById('lighting-modal');
+    this.btnLightsToggle = document.getElementById('btn-lights-toggle');
+    this.btnLightsClose = document.getElementById('btn-lights-close');
+    this.btnSettingsOpen = document.getElementById('btn-settings-open');
+    this.btnRadioSettings = document.getElementById('btn-radio-settings');
+
+    const openLightingModal = () => {
+      if (this.lightingModal) this.lightingModal.classList.remove('hidden');
+    };
+    const closeLightingModal = () => {
+      if (this.lightingModal) this.lightingModal.classList.add('hidden');
+    };
+
+    if (this.btnLightsToggle) this.btnLightsToggle.addEventListener('click', openLightingModal);
+    if (this.btnSettingsOpen) this.btnSettingsOpen.addEventListener('click', openLightingModal);
+    if (this.btnRadioSettings) this.btnRadioSettings.addEventListener('click', openLightingModal);
+    if (this.btnLightsClose) this.btnLightsClose.addEventListener('click', closeLightingModal);
+
+    if (this.lightingModal) {
+      this.lightingModal.addEventListener('click', (e) => {
+        if (e.target === this.lightingModal) closeLightingModal();
+      });
+    }
+
+    // Color Theme Buttons
+    const themeButtons = document.querySelectorAll('.l-theme-btn');
+    themeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        themeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const theme = btn.getAttribute('data-theme');
+        this.djScene.setTheme(theme);
+      });
+    });
+
+    // Strobe, Lasers, Fog Toggles
+    const toggleStrobe = document.getElementById('toggle-strobe');
+    if (toggleStrobe) {
+      toggleStrobe.addEventListener('change', (e) => {
+        this.djScene.lighting.setStrobeEnabled(e.target.checked);
+      });
+    }
+
+    const toggleLasers = document.getElementById('toggle-lasers');
+    if (toggleLasers) {
+      toggleLasers.addEventListener('change', (e) => {
+        this.djScene.lighting.setLasersEnabled(e.target.checked);
+      });
+    }
+
+    const toggleFog = document.getElementById('toggle-fog');
+    if (toggleFog) {
+      toggleFog.addEventListener('change', (e) => {
+        this.djScene.lighting.setFogEnabled(e.target.checked);
+      });
+    }
+
+    // Sliders: Intensity & Speed
+    const sliderIntensity = document.getElementById('slider-light-intensity');
+    const valIntensity = document.getElementById('val-light-intensity');
+    if (sliderIntensity && valIntensity) {
+      sliderIntensity.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        valIntensity.textContent = `${Math.round(val * 100)}%`;
+        this.djScene.lighting.setIntensityMultiplier(val);
+      });
+    }
+
+    const sliderSpeed = document.getElementById('slider-laser-speed');
+    const valSpeed = document.getElementById('val-laser-speed');
+    if (sliderSpeed && valSpeed) {
+      sliderSpeed.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        valSpeed.textContent = `${val.toFixed(1)}x`;
+        this.djScene.lighting.setLaserSpeed(val);
+      });
+    }
+
     // Mobile Deck / Mixer Switcher Tabs
     const mobileTabs = document.querySelectorAll('.m-tab-btn');
     const deckAUnit = document.getElementById('deck-a-unit');

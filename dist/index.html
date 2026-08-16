@@ -7,8 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-jV-N2ny7.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-4dBvbJR5.css">
+  <script type="module" crossorigin src="/assets/index-ByBhtsc9.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-Dfhc7Kth.css">
 </head>
 <body>
   <!-- 3D Canvas Container -->
@@ -67,6 +67,11 @@
           <span class="wave-bar"></span>
         </div>
         
+        <!-- Club Lights & Visual FX Button -->
+        <button class="icon-btn" id="btn-lights-toggle" title="Club Lighting & Visual FX">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path><circle cx="12" cy="12" r="4"></circle></svg>
+        </button>
+
         <button class="icon-btn" id="btn-queue-toggle" title="Upcoming Queue">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
         </button>
@@ -846,6 +851,84 @@
       </div>
     </div>
     </div> <!-- .bottom-console-wrapper -->
+
+    <!-- Club Lighting & Visual FX Control Modal -->
+    <div id="lighting-modal" class="lighting-modal-backdrop hidden">
+      <div class="lighting-modal-card">
+        <div class="lighting-modal-header">
+          <div class="l-modal-title">
+            <span class="l-dot"></span>
+            <h3>💡 CLUB LIGHTING & VISUAL FX</h3>
+          </div>
+          <button class="l-modal-close" id="btn-lights-close">&times;</button>
+        </div>
+
+        <div class="lighting-modal-body">
+          <!-- 1. Color Themes -->
+          <div class="l-section">
+            <label class="l-section-label">🎨 LIGHTING COLOR THEME</label>
+            <div class="l-theme-grid">
+              <button class="l-theme-btn active" data-theme="cyber">
+                <span class="theme-color-pill cyan-pink"></span>
+                <span>Cyberpunk Neon</span>
+              </button>
+              <button class="l-theme-btn" data-theme="sunset">
+                <span class="theme-color-pill orange-red"></span>
+                <span>Sunset Lo-Fi</span>
+              </button>
+              <button class="l-theme-btn" data-theme="matrix">
+                <span class="theme-color-pill green-lime"></span>
+                <span>Emerald Matrix</span>
+              </button>
+              <button class="l-theme-btn" data-theme="acid">
+                <span class="theme-color-pill blue-purple"></span>
+                <span>Electric Blue</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Interactive FX Toggles -->
+          <div class="l-section">
+            <label class="l-section-label">⚡ STAGE FX TOGGLES</label>
+            <div class="l-toggles-grid">
+              <label class="l-toggle-item">
+                <input type="checkbox" id="toggle-strobe" checked>
+                <span class="toggle-switch"></span>
+                <span class="toggle-text">⚡ Bass Strobe Flash</span>
+              </label>
+
+              <label class="l-toggle-item">
+                <input type="checkbox" id="toggle-lasers" checked>
+                <span class="toggle-switch"></span>
+                <span class="toggle-text">🛸 Moving Head Lasers</span>
+              </label>
+
+              <label class="l-toggle-item">
+                <input type="checkbox" id="toggle-fog" checked>
+                <span class="toggle-switch"></span>
+                <span class="toggle-text">🌫️ Volumetric Club Fog</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- 3. Sliders: Brightness & Laser Speed -->
+          <div class="l-section">
+            <label class="l-section-label">🎚️ INTENSITY & SPEED</label>
+            <div class="l-slider-row">
+              <span class="l-slider-label">Light Brightness:</span>
+              <input type="range" id="slider-light-intensity" min="0.3" max="2.5" step="0.1" value="1.0" class="l-range-slider">
+              <span class="l-slider-val" id="val-light-intensity">100%</span>
+            </div>
+
+            <div class="l-slider-row">
+              <span class="l-slider-label">Laser Scanner Speed:</span>
+              <input type="range" id="slider-laser-speed" min="0.3" max="3.0" step="0.1" value="1.0" class="l-range-slider">
+              <span class="l-slider-val" id="val-laser-speed">1.0x</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 

@@ -51,6 +51,12 @@ export class Lighting {
     this.strobeLight = null;
     this.particles = null;
 
+    this.intensityMultiplier = 1.0;
+    this.strobeEnabled = true;
+    this.lasersEnabled = true;
+    this.fogEnabled = true;
+    this.laserSpeed = 1.0;
+
     this.init();
     this.scene.add(this.group);
   }
@@ -103,6 +109,32 @@ export class Lighting {
     this.createAtmosphereParticles();
   }
 
+  setIntensityMultiplier(val) {
+    this.intensityMultiplier = Math.max(0.1, Math.min(3.0, val));
+  }
+
+  setLaserSpeed(val) {
+    this.laserSpeed = Math.max(0.2, Math.min(4.0, val));
+  }
+
+  setStrobeEnabled(enabled) {
+    this.strobeEnabled = enabled;
+  }
+
+  setLasersEnabled(enabled) {
+    this.lasersEnabled = enabled;
+    if (this.danceFloorSpot) {
+      this.danceFloorSpot.visible = enabled;
+    }
+  }
+
+  setFogEnabled(enabled) {
+    this.fogEnabled = enabled;
+    if (this.particles) {
+      this.particles.visible = enabled;
+    }
+  }
+
   createAtmosphereParticles() {
     const count = 450;
     const geometry = new THREE.BufferGeometry();
@@ -132,41 +164,49 @@ export class Lighting {
     if (!THEMES[themeKey]) return;
     this.currentTheme = THEMES[themeKey];
 
-    this.ambientLight.color.setHex(this.currentTheme.ambient);
-    this.djSpotlight.color.setHex(this.currentTheme.spotlight);
-    this.danceFloorSpot.color.setHex(this.currentTheme.secondary);
-    this.barLight.color.setHex(this.currentTheme.secondary);
-    this.vipLight.color.setHex(this.currentTheme.accent);
-    this.leftFillPoint.color.setHex(this.currentTheme.primary);
-    this.rightFillPoint.color.setHex(this.currentTheme.secondary);
-    this.particles.material.color.setHex(this.currentTheme.primary);
+    if (this.ambientLight) this.ambientLight.color.setHex(this.currentTheme.ambient);
+    if (this.djSpotlight) this.djSpotlight.color.setHex(this.currentTheme.spotlight);
+    if (this.danceFloorSpot) this.danceFloorSpot.color.setHex(this.currentTheme.secondary);
+    if (this.barLight) this.barLight.color.setHex(this.currentTheme.secondary);
+    if (this.vipLight) this.vipLight.color.setHex(this.currentTheme.accent);
+    if (this.leftFillPoint) this.leftFillPoint.color.setHex(this.currentTheme.primary);
+    if (this.rightFillPoint) this.rightFillPoint.color.setHex(this.currentTheme.secondary);
+    if (this.particles) this.particles.material.color.setHex(this.currentTheme.primary);
   }
 
   update(audioAnalysis) {
     const bass = audioAnalysis.bass;
     const beat = audioAnalysis.beat;
     const treble = audioAnalysis.treble;
-    const time = performance.now() * 0.001;
+    const time = performance.now() * 0.001 * this.laserSpeed;
+    const mult = this.intensityMultiplier;
 
     // Pulse spotlights with audio
-    this.djSpotlight.intensity = 4.0 + bass * 6.0 + beat * 4.0;
-    this.danceFloorSpot.intensity = 3.0 + bass * 5.0 + beat * 5.0;
-    this.danceFloorSpot.position.x = Math.sin(time * 1.2) * 2.0; // Moving club scanner beam
+    if (this.djSpotlight) {
+      this.djSpotlight.intensity = (4.0 + bass * 6.0 + beat * 4.0) * mult;
+    }
 
-    this.leftFillPoint.intensity = 2.0 + bass * 4.0;
-    this.rightFillPoint.intensity = 2.0 + treble * 4.0;
-    this.barLight.intensity = 2.5 + bass * 2.0;
-    this.vipLight.intensity = 2.0 + beat * 2.0;
+    if (this.danceFloorSpot && this.lasersEnabled) {
+      this.danceFloorSpot.intensity = (3.0 + bass * 5.0 + beat * 5.0) * mult;
+      this.danceFloorSpot.position.x = Math.sin(time * 1.5) * 2.5; // Moving club scanner beam
+    }
+
+    if (this.leftFillPoint) this.leftFillPoint.intensity = (2.0 + bass * 4.0) * mult;
+    if (this.rightFillPoint) this.rightFillPoint.intensity = (2.0 + treble * 4.0) * mult;
+    if (this.barLight) this.barLight.intensity = (2.5 + bass * 2.0) * mult;
+    if (this.vipLight) this.vipLight.intensity = (2.0 + beat * 2.0) * mult;
 
     // Strobe flash on heavy beat hits
-    if (beat > 0.8 && bass > 0.55) {
-      this.strobeLight.intensity = 9.0;
-    } else {
-      this.strobeLight.intensity *= 0.7; // Fast decay
+    if (this.strobeLight) {
+      if (this.strobeEnabled && beat > 0.8 && bass > 0.55) {
+        this.strobeLight.intensity = 9.0 * mult;
+      } else {
+        this.strobeLight.intensity *= 0.7; // Fast decay
+      }
     }
 
     // Animate floating dust particles
-    if (this.particles) {
+    if (this.particles && this.fogEnabled) {
       const positions = this.particles.geometry.attributes.position.array;
       for (let i = 0; i < positions.length; i += 3) {
         positions[i + 1] += 0.003 + bass * 0.008;
