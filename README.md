@@ -49,7 +49,13 @@
 * **JMF Cocktail Bar & Bartender**: Modeled bartender in vest and bowtie actively shaking cocktail shakers to the music's rhythm.
 * **Sound System**: Double 18-inch subwoofer stacks with bass-reactive physical cone displacement.
 * **Lighting & Rigging**: Parametric quad aluminum trusses with moving-head scanner beam lasers and a faceted chrome mirror disco ball.
-* **7 Camera Director Presets**: `🎧 DJ Focus`, `🕺 Dance Floor`, `🍸 Bar Lounge`, `👑 VIP Lounge`, `🎛️ Decks`, `🛋️ Full Club`, `🛸 Cinema Cam` (continuous orbit).
+* **8 Camera Director Presets**: `🎧 DJ Focus`, `👀 DJ POV` (1st-person view behind decks), `🕺 Dance Floor`, `🍸 Bar Lounge`, `👑 VIP Lounge`, `🎛️ Decks`, `🛋️ Full Club`, `🛸 Cinema Cam`.
+
+<br/>
+
+![DJ Booth POV Perspective](public/dj-booth-pov.jpg)
+
+<br/>
 
 ### 4. 💡 Real-Time Club Lighting & Visual FX Controller
 * **4 Color Palettes**: `🔵 Cyberpunk Neon`, `🌅 Sunset Lo-Fi`, `🟢 Emerald Matrix`, `🟣 Electric Blue`.
