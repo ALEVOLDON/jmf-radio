@@ -3,22 +3,12 @@ export class UIController {
     this.audioEngine = audioEngine;
     this.djScene = djScene;
 
-    // Overlay & Transport
+    // Overlay
     this.overlay = document.getElementById('start-overlay');
     this.btnStart = document.getElementById('btn-start-stream');
-    this.btnPlayPause = document.getElementById('btn-play-pause');
-    this.iconPlay = document.getElementById('icon-play');
-    this.iconPause = document.getElementById('icon-pause');
-    this.btnNext = document.getElementById('btn-next');
-    this.btnPrev = document.getElementById('btn-prev');
-    this.btnMute = document.getElementById('btn-mute');
-    this.iconVol = document.getElementById('icon-vol');
-    this.iconMute = document.getElementById('icon-mute');
-    this.volSlider = document.getElementById('volume-slider');
-    this.btnFullscreen = document.getElementById('btn-fullscreen');
-    this.waveIndicator = document.getElementById('wave-indicator');
 
-    // Queue & Mode Switchers
+    // Header tools
+    this.waveIndicator = document.getElementById('wave-indicator');
     this.queueDrawer = document.getElementById('queue-drawer');
     this.btnQueueToggle = document.getElementById('btn-queue-toggle');
     this.queueCloseBtn = document.getElementById('queue-close-btn');
@@ -27,48 +17,88 @@ export class UIController {
     this.btnModeRadio = document.getElementById('btn-mode-radio');
     this.transitionBanner = document.getElementById('transition-banner');
     this.transitionText = document.getElementById('transition-text');
-    this.btnMixNow = document.getElementById('btn-mix-now');
-
-    // Deck A Elements
-    this.deckAPanel = document.getElementById('deck-a-panel');
-    this.deckATitle = document.getElementById('deck-a-title');
-    this.deckAArtist = document.getElementById('deck-a-artist');
-    this.deckAStatus = document.getElementById('deck-a-status');
-    this.deckABpm = document.getElementById('deck-a-bpm');
-    this.deckAProgress = document.getElementById('deck-a-progress');
-    this.deckATimeCur = document.getElementById('deck-a-time-cur');
-    this.deckATimeRem = document.getElementById('deck-a-time-rem');
-    this.deckAJog = document.getElementById('deck-a-jog');
-
-    // Deck B Elements
-    this.deckBPanel = document.getElementById('deck-b-panel');
-    this.deckBTitle = document.getElementById('deck-b-title');
-    this.deckBArtist = document.getElementById('deck-b-artist');
-    this.deckBStatus = document.getElementById('deck-b-status');
-    this.deckBBpm = document.getElementById('deck-b-bpm');
-    this.deckBProgress = document.getElementById('deck-b-progress');
-    this.deckBTimeCur = document.getElementById('deck-b-time-cur');
-    this.deckBTimeRem = document.getElementById('deck-b-time-rem');
-    this.deckBJog = document.getElementById('deck-b-jog');
-
-    // Mixer Elements
-    this.crossfaderCap = document.getElementById('crossfader-cap');
-    this.crossfaderTrack = document.getElementById('crossfader-track');
-    this.vuLedsA = document.querySelectorAll('#vu-meter-a .vu-led');
-    this.vuLedsB = document.querySelectorAll('#vu-meter-b .vu-led');
 
     // Toolbars
     this.camButtons = document.querySelectorAll('.cam-btn');
     this.themeButtons = document.querySelectorAll('.theme-btn');
 
-    // Jog wheel rotation angles
+    // --- DECK A CONTROLS ---
+    this.deckAUnit = document.getElementById('deck-a-unit');
+    this.deckATitle = document.getElementById('deck-a-title');
+    this.deckAArtist = document.getElementById('deck-a-artist');
+    this.deckAState = document.getElementById('deck-a-state');
+    this.deckABpm = document.getElementById('deck-a-bpm');
+    this.deckAPitchVal = document.getElementById('deck-a-pitch-val');
+    this.deckAPitch = document.getElementById('deck-a-pitch');
+    this.deckAPitchReset = document.getElementById('deck-a-pitch-reset');
+    this.deckAProgress = document.getElementById('deck-a-progress');
+    this.deckATimeCur = document.getElementById('deck-a-time-cur');
+    this.deckATimeRem = document.getElementById('deck-a-time-rem');
+    this.deckAJog = document.getElementById('deck-a-jog');
+    this.deckACue = document.getElementById('deck-a-cue');
+    this.deckAPlay = document.getElementById('deck-a-play');
+    this.deckASync = document.getElementById('deck-a-sync');
+    this.deckALoop4 = document.getElementById('deck-a-loop-4');
+    this.deckALoop8 = document.getElementById('deck-a-loop-8');
+
+    // --- DECK B CONTROLS ---
+    this.deckBUnit = document.getElementById('deck-b-unit');
+    this.deckBTitle = document.getElementById('deck-b-title');
+    this.deckBArtist = document.getElementById('deck-b-artist');
+    this.deckBState = document.getElementById('deck-b-state');
+    this.deckBBpm = document.getElementById('deck-b-bpm');
+    this.deckBPitchVal = document.getElementById('deck-b-pitch-val');
+    this.deckBPitch = document.getElementById('deck-b-pitch');
+    this.deckBPitchReset = document.getElementById('deck-b-pitch-reset');
+    this.deckBProgress = document.getElementById('deck-b-progress');
+    this.deckBTimeCur = document.getElementById('deck-b-time-cur');
+    this.deckBTimeRem = document.getElementById('deck-b-time-rem');
+    this.deckBJog = document.getElementById('deck-b-jog');
+    this.deckBCue = document.getElementById('deck-b-cue');
+    this.deckBPlay = document.getElementById('deck-b-play');
+    this.deckBSync = document.getElementById('deck-b-sync');
+    this.deckBLoop4 = document.getElementById('deck-b-loop-4');
+    this.deckBLoop8 = document.getElementById('deck-b-loop-8');
+
+    // --- PIONEER DJM MIXER CONTROLS ---
+    this.knobCh1Trim = document.getElementById('knob-ch1-trim');
+    this.knobCh1Hi = document.getElementById('knob-ch1-hi');
+    this.knobCh1Mid = document.getElementById('knob-ch1-mid');
+    this.knobCh1Low = document.getElementById('knob-ch1-low');
+    this.knobCh1Filter = document.getElementById('knob-ch1-filter');
+    this.faderCh1 = document.getElementById('fader-ch1');
+    this.vuMeterCh1Leds = document.querySelectorAll('#vu-meter-ch1 .led');
+
+    this.knobCh2Trim = document.getElementById('knob-ch2-trim');
+    this.knobCh2Hi = document.getElementById('knob-ch2-hi');
+    this.knobCh2Mid = document.getElementById('knob-ch2-mid');
+    this.knobCh2Low = document.getElementById('knob-ch2-low');
+    this.knobCh2Filter = document.getElementById('knob-ch2-filter');
+    this.faderCh2 = document.getElementById('fader-ch2');
+    this.vuMeterCh2Leds = document.querySelectorAll('#vu-meter-ch2 .led');
+
+    this.masterVuL = document.querySelectorAll('#master-vu-l .led');
+    this.masterVuR = document.querySelectorAll('#master-vu-r .led');
+    this.knobMasterVol = document.getElementById('knob-master-vol');
+    this.btnMixNow = document.getElementById('btn-mix-now');
+    this.btnPrev = document.getElementById('btn-prev');
+    this.btnNext = document.getElementById('btn-next');
+    this.btnMute = document.getElementById('btn-mute');
+    this.iconVol = document.getElementById('icon-vol');
+    this.iconMute = document.getElementById('icon-mute');
+    this.btnFullscreen = document.getElementById('btn-fullscreen');
+
+    this.crossfaderTrack = document.getElementById('crossfader-track');
+    this.crossfaderCap = document.getElementById('crossfader-cap');
+
     this.jogAngleA = 0;
     this.jogAngleB = 0;
 
-    this.initEvents();
+    this.initHardwareEvents();
   }
 
-  initEvents() {
+  initHardwareEvents() {
+    // Start Overlay
     if (this.btnStart) {
       this.btnStart.addEventListener('click', async () => {
         if (this.overlay) this.overlay.classList.add('hidden');
@@ -77,64 +107,160 @@ export class UIController {
       });
     }
 
-    if (this.btnPlayPause) {
-      this.btnPlayPause.addEventListener('click', () => {
-        const isPlaying = this.audioEngine.togglePlay();
+    // --- DECK A Hardware Events ---
+    if (this.deckAPlay) {
+      this.deckAPlay.addEventListener('click', () => {
+        const isPlaying = this.audioEngine.togglePlayDeck('A');
+        this.deckAPlay.classList.toggle('active-play', isPlaying);
         this.updatePlayState(isPlaying);
       });
     }
+    if (this.deckACue) {
+      this.deckACue.addEventListener('click', () => {
+        this.audioEngine.cueDeck('A');
+        if (this.deckAPlay) this.deckAPlay.classList.remove('active-play');
+        this.updatePlayState(false);
+      });
+    }
+    if (this.deckAPitch) {
+      this.deckAPitch.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        this.audioEngine.setPitch('A', val);
+        if (this.deckAPitchVal) this.deckAPitchVal.textContent = `${val >= 0 ? '+' : ''}${val.toFixed(1)}%`;
+      });
+    }
+    if (this.deckAPitchReset) {
+      this.deckAPitchReset.addEventListener('click', () => {
+        if (this.deckAPitch) this.deckAPitch.value = 0;
+        this.audioEngine.setPitch('A', 0);
+        if (this.deckAPitchVal) this.deckAPitchVal.textContent = '+0.0%';
+      });
+    }
+    if (this.deckALoop4) {
+      this.deckALoop4.addEventListener('click', () => {
+        const active = this.audioEngine.toggleLoop('A', 4);
+        this.deckALoop4.classList.toggle('active', active);
+        if (this.deckALoop8) this.deckALoop8.classList.remove('active');
+      });
+    }
+    if (this.deckALoop8) {
+      this.deckALoop8.addEventListener('click', () => {
+        const active = this.audioEngine.toggleLoop('A', 8);
+        this.deckALoop8.classList.toggle('active', active);
+        if (this.deckALoop4) this.deckALoop4.classList.remove('active');
+      });
+    }
 
+    // --- DECK B Hardware Events ---
+    if (this.deckBPlay) {
+      this.deckBPlay.addEventListener('click', () => {
+        const isPlaying = this.audioEngine.togglePlayDeck('B');
+        this.deckBPlay.classList.toggle('active-play', isPlaying);
+        this.updatePlayState(isPlaying);
+      });
+    }
+    if (this.deckBCue) {
+      this.deckBCue.addEventListener('click', () => {
+        this.audioEngine.cueDeck('B');
+        if (this.deckBPlay) this.deckBPlay.classList.remove('active-play');
+        this.updatePlayState(false);
+      });
+    }
+    if (this.deckBPitch) {
+      this.deckBPitch.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        this.audioEngine.setPitch('B', val);
+        if (this.deckBPitchVal) this.deckBPitchVal.textContent = `${val >= 0 ? '+' : ''}${val.toFixed(1)}%`;
+      });
+    }
+    if (this.deckBPitchReset) {
+      this.deckBPitchReset.addEventListener('click', () => {
+        if (this.deckBPitch) this.deckBPitch.value = 0;
+        this.audioEngine.setPitch('B', 0);
+        if (this.deckBPitchVal) this.deckBPitchVal.textContent = '+0.0%';
+      });
+    }
+    if (this.deckBLoop4) {
+      this.deckBLoop4.addEventListener('click', () => {
+        const active = this.audioEngine.toggleLoop('B', 4);
+        this.deckBLoop4.classList.toggle('active', active);
+        if (this.deckBLoop8) this.deckBLoop8.classList.remove('active');
+      });
+    }
+    if (this.deckBLoop8) {
+      this.deckBLoop8.addEventListener('click', () => {
+        const active = this.audioEngine.toggleLoop('B', 8);
+        this.deckBLoop8.classList.toggle('active', active);
+        if (this.deckBLoop4) this.deckBLoop4.classList.remove('active');
+      });
+    }
+
+    // --- PIONEER DJM MIXER Knobs & Faders ---
+    if (this.knobCh1Hi) {
+      this.knobCh1Hi.addEventListener('input', (e) => this.audioEngine.setEQ('A', 'high', parseFloat(e.target.value)));
+    }
+    if (this.knobCh1Mid) {
+      this.knobCh1Mid.addEventListener('input', (e) => this.audioEngine.setEQ('A', 'mid', parseFloat(e.target.value)));
+    }
+    if (this.knobCh1Low) {
+      this.knobCh1Low.addEventListener('input', (e) => this.audioEngine.setEQ('A', 'low', parseFloat(e.target.value)));
+    }
+    if (this.knobCh1Filter) {
+      this.knobCh1Filter.addEventListener('input', (e) => this.audioEngine.setFilterSweep('A', parseFloat(e.target.value)));
+    }
+    if (this.faderCh1) {
+      this.faderCh1.addEventListener('input', (e) => this.audioEngine.setChannelGain('A', parseFloat(e.target.value)));
+    }
+
+    if (this.knobCh2Hi) {
+      this.knobCh2Hi.addEventListener('input', (e) => this.audioEngine.setEQ('B', 'high', parseFloat(e.target.value)));
+    }
+    if (this.knobCh2Mid) {
+      this.knobCh2Mid.addEventListener('input', (e) => this.audioEngine.setEQ('B', 'mid', parseFloat(e.target.value)));
+    }
+    if (this.knobCh2Low) {
+      this.knobCh2Low.addEventListener('input', (e) => this.audioEngine.setEQ('B', 'low', parseFloat(e.target.value)));
+    }
+    if (this.knobCh2Filter) {
+      this.knobCh2Filter.addEventListener('input', (e) => this.audioEngine.setFilterSweep('B', parseFloat(e.target.value)));
+    }
+    if (this.faderCh2) {
+      this.faderCh2.addEventListener('input', (e) => this.audioEngine.setChannelGain('B', parseFloat(e.target.value)));
+    }
+
+    // Master Controls
+    if (this.knobMasterVol) {
+      this.knobMasterVol.addEventListener('input', (e) => this.audioEngine.setVolume(parseFloat(e.target.value)));
+    }
+    if (this.btnMixNow) {
+      this.btnMixNow.addEventListener('click', () => this.audioEngine.triggerDJCrossfade());
+    }
     if (this.btnNext) {
       this.btnNext.addEventListener('click', () => this.audioEngine.skipNext());
     }
     if (this.btnPrev) {
       this.btnPrev.addEventListener('click', () => this.audioEngine.skipPrev());
     }
-
-    // Instant Mix Now Button
-    if (this.btnMixNow) {
-      this.btnMixNow.addEventListener('click', () => {
-        this.audioEngine.triggerDJCrossfade();
-      });
-    }
-
-    // Interactive Crossfader Click / Drag
-    if (this.crossfaderTrack) {
-      this.crossfaderTrack.addEventListener('click', (e) => {
-        const rect = this.crossfaderTrack.getBoundingClientRect();
-        const clickX = e.clientX - rect.left;
-        const pct = Math.max(0, Math.min(1, clickX / rect.width));
-        if (pct > 0.5 && this.audioEngine.activeDeck === 'A') {
-          this.audioEngine.triggerDJCrossfade();
-        } else if (pct <= 0.5 && this.audioEngine.activeDeck === 'B') {
-          this.audioEngine.triggerDJCrossfade();
-        }
-      });
-    }
-
-    // Volume & Mute
-    if (this.volSlider) {
-      this.volSlider.addEventListener('input', (e) => {
-        this.audioEngine.setVolume(parseFloat(e.target.value));
-        this.updateVolumeIcons(false);
-      });
-    }
-
     if (this.btnMute) {
       this.btnMute.addEventListener('click', () => {
         const isMuted = this.audioEngine.toggleMute();
         this.updateVolumeIcons(isMuted);
       });
     }
-
-    // Fullscreen
     if (this.btnFullscreen) {
       this.btnFullscreen.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(() => {});
-        } else {
-          document.exitFullscreen().catch(() => {});
-        }
+        if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+        else document.exitFullscreen().catch(() => {});
+      });
+    }
+
+    // Crossfader Click / Drag
+    if (this.crossfaderTrack) {
+      this.crossfaderTrack.addEventListener('click', (e) => {
+        const rect = this.crossfaderTrack.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const pct = Math.max(0, Math.min(1, clickX / rect.width));
+        this.audioEngine.setCrossfader(pct);
       });
     }
 
@@ -145,7 +271,6 @@ export class UIController {
         this.btnModeDj.classList.add('active');
         this.btnModeRadio.classList.remove('active');
       });
-
       this.btnModeRadio.addEventListener('click', () => {
         this.audioEngine.setMixMode('radio');
         this.btnModeRadio.classList.add('active');
@@ -154,47 +279,36 @@ export class UIController {
       });
     }
 
-    // Camera Switchers
+    // Cameras & Themes
     this.camButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         this.camButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const cam = btn.getAttribute('data-cam');
-        this.djScene.setCameraPreset(cam);
+        this.djScene.setCameraPreset(btn.getAttribute('data-cam'));
       });
     });
 
-    // Theme Switchers
     this.themeButtons.forEach(btn => {
       btn.addEventListener('click', () => {
         this.themeButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        const theme = btn.getAttribute('data-theme');
-        this.djScene.setTheme(theme);
+        this.djScene.setTheme(btn.getAttribute('data-theme'));
       });
     });
 
     // Queue Toggle
     if (this.btnQueueToggle && this.queueDrawer) {
-      this.btnQueueToggle.addEventListener('click', () => {
-        this.queueDrawer.classList.toggle('hidden');
-      });
+      this.btnQueueToggle.addEventListener('click', () => this.queueDrawer.classList.toggle('hidden'));
     }
     if (this.queueCloseBtn && this.queueDrawer) {
-      this.queueCloseBtn.addEventListener('click', () => {
-        this.queueDrawer.classList.add('hidden');
-      });
+      this.queueCloseBtn.addEventListener('click', () => this.queueDrawer.classList.add('hidden'));
     }
   }
 
   updatePlayState(isPlaying) {
     if (isPlaying) {
-      if (this.iconPlay) this.iconPlay.classList.add('hidden');
-      if (this.iconPause) this.iconPause.classList.remove('hidden');
       if (this.waveIndicator) this.waveIndicator.classList.add('wave-playing');
     } else {
-      if (this.iconPlay) this.iconPlay.classList.remove('hidden');
-      if (this.iconPause) this.iconPause.classList.add('hidden');
       if (this.waveIndicator) this.waveIndicator.classList.remove('wave-playing');
     }
   }
@@ -218,46 +332,35 @@ export class UIController {
 
   onTrackChanged(track, queue, totalTracks) {
     if (!track) return;
-
     const nextTrack = queue && queue.length > 0 ? queue[0] : null;
     const activeDeck = this.audioEngine.activeDeck;
 
-    // Update Active Deck & Standby Deck Info
     if (activeDeck === 'A') {
       if (this.deckATitle) this.deckATitle.textContent = track.title || 'Unknown Track';
       if (this.deckAArtist) this.deckAArtist.textContent = track.artist || 'JMF Radio';
-      if (this.deckAStatus) {
-        this.deckAStatus.textContent = 'ON AIR';
-        this.deckAStatus.className = 'deck-status status-on-air';
-      }
+      if (this.deckAState) this.deckAState.textContent = 'ON AIR';
+      if (this.deckAPlay) this.deckAPlay.classList.add('active-play');
 
       if (nextTrack) {
         if (this.deckBTitle) this.deckBTitle.textContent = nextTrack.title || 'Upcoming Track';
         if (this.deckBArtist) this.deckBArtist.textContent = nextTrack.artist || 'Next on Deck';
-        if (this.deckBStatus) {
-          this.deckBStatus.textContent = 'CUE / NEXT';
-          this.deckBStatus.className = 'deck-status status-standby';
-        }
+        if (this.deckBState) this.deckBState.textContent = 'CUE / NEXT';
+        if (this.deckBPlay) this.deckBPlay.classList.remove('active-play');
       }
     } else {
       if (this.deckBTitle) this.deckBTitle.textContent = track.title || 'Unknown Track';
       if (this.deckBArtist) this.deckBArtist.textContent = track.artist || 'JMF Radio';
-      if (this.deckBStatus) {
-        this.deckBStatus.textContent = 'ON AIR';
-        this.deckBStatus.className = 'deck-status status-on-air';
-      }
+      if (this.deckBState) this.deckBState.textContent = 'ON AIR';
+      if (this.deckBPlay) this.deckBPlay.classList.add('active-play');
 
       if (nextTrack) {
         if (this.deckATitle) this.deckATitle.textContent = nextTrack.title || 'Upcoming Track';
         if (this.deckAArtist) this.deckAArtist.textContent = nextTrack.artist || 'Next on Deck';
-        if (this.deckAStatus) {
-          this.deckAStatus.textContent = 'CUE / NEXT';
-          this.deckAStatus.className = 'deck-status status-standby';
-        }
+        if (this.deckAState) this.deckAState.textContent = 'CUE / NEXT';
+        if (this.deckAPlay) this.deckAPlay.classList.remove('active-play');
       }
     }
 
-    // Populate Queue Drawer
     if (queue && queue.length > 0 && this.queueList) {
       this.queueList.innerHTML = queue.map((item, idx) => `
         <div class="queue-item">
@@ -267,9 +370,7 @@ export class UIController {
       `).join('');
     }
 
-    if (this.transitionBanner) {
-      this.transitionBanner.classList.add('hidden');
-    }
+    if (this.transitionBanner) this.transitionBanner.classList.add('hidden');
   }
 
   onTransition(isTransitioning, fromDeck, toDeck, nextTrack) {
@@ -279,13 +380,8 @@ export class UIController {
       }
       if (this.transitionBanner) this.transitionBanner.classList.remove('hidden');
 
-      if (toDeck === 'B' && this.deckBStatus) {
-        this.deckBStatus.textContent = 'MIXING IN';
-        this.deckBStatus.className = 'deck-status status-mixing';
-      } else if (toDeck === 'A' && this.deckAStatus) {
-        this.deckAStatus.textContent = 'MIXING IN';
-        this.deckAStatus.className = 'deck-status status-mixing';
-      }
+      if (toDeck === 'B' && this.deckBState) this.deckBState.textContent = 'MIXING IN';
+      else if (toDeck === 'A' && this.deckAState) this.deckAState.textContent = 'MIXING IN';
     } else {
       if (this.transitionBanner) this.transitionBanner.classList.add('hidden');
     }
@@ -297,13 +393,12 @@ export class UIController {
     const rem = Math.max(0, duration - elapsedTime);
     const pct = duration > 0 ? Math.min(100, (elapsedTime / duration) * 100) : 0;
 
-    // 1. Update Active Deck progress bar & times
+    // 1. Deck Waveform Progress
     if (activeDeck === 'A') {
       if (this.deckAProgress) this.deckAProgress.style.width = `${pct}%`;
       if (this.deckATimeCur) this.deckATimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckATimeRem) this.deckATimeRem.textContent = `-${this.formatTime(rem)}`;
-      
-      // Standby Deck B
+
       if (this.deckBTimeCur && !this.audioEngine.isCrossfading) {
         this.deckBProgress.style.width = '0%';
         this.deckBTimeCur.textContent = '0:00';
@@ -314,7 +409,6 @@ export class UIController {
       if (this.deckBTimeCur) this.deckBTimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckBTimeRem) this.deckBTimeRem.textContent = `-${this.formatTime(rem)}`;
 
-      // Standby Deck A
       if (this.deckATimeCur && !this.audioEngine.isCrossfading) {
         this.deckAProgress.style.width = '0%';
         this.deckATimeCur.textContent = '0:00';
@@ -322,46 +416,45 @@ export class UIController {
       }
     }
 
-    // 2. Spin Jog Wheels
+    // 2. Spin CDJ Jog Platters
     if (isPlaying) {
       if (activeDeck === 'A' || this.audioEngine.isCrossfading) {
-        this.jogAngleA = (this.jogAngleA + 2.5) % 360;
+        this.jogAngleA = (this.jogAngleA + 3.0) % 360;
         if (this.deckAJog) this.deckAJog.style.transform = `rotate(${this.jogAngleA}deg)`;
       }
       if (activeDeck === 'B' || this.audioEngine.isCrossfading) {
-        this.jogAngleB = (this.jogAngleB + 2.5) % 360;
-        if (this.deckBJog) this.deckBJog.style.transform = `rotate(${this.deckBJog}deg)`;
+        this.jogAngleB = (this.jogAngleB + 3.0) % 360;
+        if (this.deckBJog) this.deckBJog.style.transform = `rotate(${this.jogAngleB}deg)`;
       }
     }
 
-    // 3. Update Crossfader Position Slider (0% Deck A -> 100% Deck B)
+    // 3. Crossfader Position Slider
     if (this.crossfaderCap && audioAnalysis) {
       const faderPct = audioAnalysis.crossfadeProgress * 100;
       this.crossfaderCap.style.left = `${faderPct}%`;
     }
 
-    // 4. Update Live Stereo VU Meters
+    // 4. Multi-Segment VU-Meters
     if (audioAnalysis && isPlaying) {
-      const bass = audioAnalysis.bass;
-      const volume = audioAnalysis.volume;
-      const levelA = activeDeck === 'A' ? volume * 1.5 + bass * 0.4 : (this.audioEngine.isCrossfading ? (1 - audioAnalysis.crossfadeProgress) * volume : 0.05);
-      const levelB = activeDeck === 'B' ? volume * 1.5 + bass * 0.4 : (this.audioEngine.isCrossfading ? audioAnalysis.crossfadeProgress * volume : 0.05);
-
-      this.updateVUMeter(this.vuLedsA, levelA);
-      this.updateVUMeter(this.vuLedsB, levelB);
+      this.updateLEDs(this.vuMeterCh1Leds, audioAnalysis.deckALevel);
+      this.updateLEDs(this.vuMeterCh2Leds, audioAnalysis.deckBLevel);
+      this.updateLEDs(this.masterVuL, audioAnalysis.volume * 1.3 + audioAnalysis.bass * 0.3);
+      this.updateLEDs(this.masterVuR, audioAnalysis.volume * 1.3 + audioAnalysis.treble * 0.3);
     } else {
-      this.updateVUMeter(this.vuLedsA, 0);
-      this.updateVUMeter(this.vuLedsB, 0);
+      this.updateLEDs(this.vuMeterCh1Leds, 0);
+      this.updateLEDs(this.vuMeterCh2Leds, 0);
+      this.updateLEDs(this.masterVuL, 0);
+      this.updateLEDs(this.masterVuR, 0);
     }
   }
 
-  updateVUMeter(leds, level) {
+  updateLEDs(leds, level) {
     if (!leds) return;
     const total = leds.length;
     for (let i = 0; i < total; i++) {
       const threshold = (total - 1 - i) / total;
       const isLit = level >= threshold;
-      leds[i].className = 'vu-led ' + (isLit ? (i === 0 ? 'lit-red' : i === 1 ? 'lit-orange' : i === 2 ? 'lit-yellow' : 'lit-green') : '');
+      leds[i].className = 'led ' + (isLit ? (i <= 1 ? 'lit-red' : i <= 2 ? 'lit-orange' : i <= 3 ? 'lit-yellow' : 'lit-green') : '');
     }
   }
 }

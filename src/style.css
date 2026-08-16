@@ -409,136 +409,171 @@ html, body {
   color: var(--text-muted);
 }
 
-/* --- NI Traktor / Rekordbox Style Dual-Deck DJ Console HUD --- */
-.dj-console-bar {
+/* ======================================================== */
+/* HARDWARE DJ STATION (PIONEER CDJ DECKS + DJM MIXER CONSOLE) */
+/* ======================================================== */
+.hardware-dj-station {
   display: grid;
-  grid-template-columns: 1fr 280px 1fr;
+  grid-template-columns: 1fr 340px 1fr;
   align-items: stretch;
-  background: rgba(10, 11, 18, 0.85);
+  background: rgba(12, 13, 20, 0.92);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 10px 16px;
-  border-radius: 20px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  max-width: 1440px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 10px 14px;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  max-width: 1480px;
   margin: 0 auto;
   width: 100%;
-  gap: 16px;
+  gap: 12px;
 }
 
-/* --- Deck Panels (Deck A & Deck B) --- */
-.deck-panel {
-  background: rgba(18, 20, 32, 0.7);
+/* --- Pioneer CDJ Deck Units (Deck A & Deck B) --- */
+.cdj-deck-unit {
+  background: linear-gradient(180deg, #181a27 0%, #0e1019 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 10px 14px;
+  border-radius: 12px;
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  transition: all 0.3s ease;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
   position: relative;
-  overflow: hidden;
 }
 
-.deck-panel.deck-a {
-  border-left: 3px solid var(--accent-cyan);
+.cdj-deck-unit.deck-a { border-left: 3px solid var(--accent-cyan); }
+.cdj-deck-unit.deck-b { border-right: 3px solid var(--accent-magenta); }
+
+/* Deck Top Screen (CDJ LCD Display) */
+.deck-top-screen {
+  background: #07080e;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-.deck-panel.deck-b {
-  border-right: 3px solid var(--accent-magenta);
-}
-
-.deck-panel.active-deck {
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-  border-color: rgba(0, 240, 255, 0.3);
-}
-
-.deck-header {
+.screen-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.deck-badge {
+.deck-indicator-badge {
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.deck-tag {
-  font-family: var(--font-display);
   font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 1px;
+  font-family: var(--font-display);
 }
 
-.deck-a-badge .deck-tag { color: var(--accent-cyan); }
-.deck-b-badge .deck-tag { color: var(--accent-magenta); }
+.deck-indicator-badge .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
 
-.deck-status {
-  font-size: 9px;
+.badge-a .dot { background: var(--accent-cyan); box-shadow: 0 0 6px var(--accent-cyan); }
+.badge-b .dot { background: var(--accent-magenta); box-shadow: 0 0 6px var(--accent-magenta); }
+.badge-a strong { color: var(--accent-cyan); }
+.badge-b strong { color: var(--accent-magenta); }
+
+.deck-state {
+  font-size: 8px;
   font-weight: 800;
-  padding: 2px 6px;
-  border-radius: 10px;
-  letter-spacing: 0.5px;
+  padding: 1px 5px;
+  border-radius: 4px;
   text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.status-on-air {
-  background: rgba(0, 240, 255, 0.15);
-  color: var(--accent-cyan);
-  border: 1px solid rgba(0, 240, 255, 0.4);
-}
-
-.status-standby {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-muted);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.status-mixing {
-  background: rgba(255, 0, 127, 0.2);
-  color: var(--accent-magenta);
-  border: 1px solid rgba(255, 0, 127, 0.5);
-  animation: pulse-red 1s infinite alternate;
-}
-
-.deck-bpm-badge {
+.screen-stats {
   display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
+  gap: 8px;
+  font-size: 9px;
   color: var(--text-muted);
-  background: rgba(0, 0, 0, 0.4);
-  padding: 2px 8px;
-  border-radius: 10px;
-}
-
-.deck-bpm-badge strong {
-  color: #fff;
   font-family: monospace;
 }
 
-/* Deck Body */
-.deck-body {
+.screen-stats strong { color: #fff; }
+
+.screen-track-info {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  overflow: hidden;
 }
 
-/* Spinning Traktor Jog Wheel */
-.jog-wheel-wrap {
+.track-title-scroller h3 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.screen-track-info p {
+  font-size: 10px;
+  color: var(--accent-cyan);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deck-b .screen-track-info p { color: var(--accent-magenta); }
+
+.screen-waveform-area {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.waveform-track {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.waveform-fill {
+  height: 100%;
+  width: 0%;
+  transition: width 0.2s linear;
+}
+
+.fill-cyan { background: linear-gradient(90deg, var(--accent-cyan), #9d4edd); box-shadow: 0 0 6px var(--accent-cyan); }
+.fill-magenta { background: linear-gradient(90deg, var(--accent-magenta), #ffd000); box-shadow: 0 0 6px var(--accent-magenta); }
+
+.waveform-times {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+
+/* Deck Lower Controls (Jog + Controls) */
+.deck-lower-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Pioneer CDJ Jog Platter */
+.cdj-jog-housing {
   flex-shrink: 0;
 }
 
-.jog-wheel {
-  width: 58px;
-  height: 58px;
+.cdj-jog-platter {
+  width: 88px;
+  height: 88px;
   border-radius: 50%;
-  background: radial-gradient(circle, #25283b 0%, #0c0d15 70%);
-  border: 2px solid rgba(0, 240, 255, 0.5);
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2), inset 0 0 8px #000;
+  background: radial-gradient(circle, #202436 0%, #0a0b12 70%);
+  border: 3px solid #33374a;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6), inset 0 0 10px #000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -546,252 +581,421 @@ html, body {
   transition: transform 0.05s linear;
 }
 
-.jog-wheel-b {
-  border-color: rgba(255, 0, 127, 0.5);
-  box-shadow: 0 0 12px rgba(255, 0, 127, 0.2), inset 0 0 8px #000;
+.platter-a { border-color: rgba(0, 240, 255, 0.4); }
+.platter-b { border-color: rgba(255, 0, 127, 0.4); }
+
+.jog-ring {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  position: relative;
 }
 
-.jog-inner-vinyl {
+.jog-led-dot {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #fff;
+}
+
+.jog-vinyl-surface {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: #0a0b12;
-  border: 1px dashed rgba(255, 255, 255, 0.15);
-  position: relative;
+  background: #090a10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 6px #000;
 }
 
-.jog-center-dot {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 12px;
-  height: 12px;
-  background: var(--accent-cyan);
-  border-radius: 50%;
+.jog-brand {
+  font-size: 7px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--text-muted);
 }
 
-.jog-wheel-b .jog-center-dot {
-  background: var(--accent-magenta);
-}
-
-.jog-needle {
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 2px;
-  height: 12px;
-  background: #ffffff;
-  border-radius: 1px;
-}
-
-/* Deck Meta & Waveform */
-.deck-meta {
+/* Side Column (Pitch + Pads + Transport) */
+.deck-side-column {
   flex-grow: 1;
-  overflow: hidden;
+  display: flex;
+  gap: 8px;
+}
+
+.pitch-slider-housing {
   display: flex;
   flex-direction: column;
-  gap: 3px;
-}
-
-.deck-title-wrap {
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.deck-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 0.3px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.deck-artist {
-  font-size: 11px;
-  color: var(--accent-cyan);
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.deck-panel.deck-b .deck-artist {
-  color: var(--accent-magenta);
-}
-
-.deck-waveform-wrap {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
+  background: #0a0b12;
+  border-radius: 6px;
+  padding: 4px 2px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   gap: 2px;
-  margin-top: 4px;
 }
 
-.waveform-bg {
-  width: 100%;
-  height: 6px;
+.pitch-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
+
+.vertical-pitch-slider {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 14px;
+  height: 52px;
+  accent-color: var(--accent-cyan);
+  cursor: pointer;
+}
+
+.btn-micro {
+  font-size: 7px;
+  padding: 2px 4px;
   background: rgba(255, 255, 255, 0.08);
-  border-radius: 3px;
-  overflow: hidden;
-  position: relative;
+  border: none;
+  border-radius: 2px;
+  color: #fff;
+  cursor: pointer;
 }
 
-.waveform-progress {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+.deck-buttons-grid {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.pads-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.btn-pad {
+  background: #1c2032;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--accent-cyan);
+  font-size: 8px;
+  font-weight: 800;
+  padding: 4px 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.btn-pad.pad-b { color: var(--accent-magenta); }
+.btn-pad:hover, .btn-pad.active {
+  background: var(--accent-cyan);
+  color: #000;
   box-shadow: 0 0 8px var(--accent-cyan);
-  transition: width 0.2s linear;
 }
-
-.waveform-bg-b .waveform-progress-b {
-  background: linear-gradient(90deg, var(--accent-magenta), var(--accent-gold));
+.btn-pad.pad-b:hover, .btn-pad.pad-b.active {
+  background: var(--accent-magenta);
+  color: #fff;
   box-shadow: 0 0 8px var(--accent-magenta);
 }
 
-.deck-time-row {
+.transport-row {
   display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  color: var(--text-muted);
-  font-family: monospace;
-}
-
-/* --- Central DJ Mixer Panel --- */
-.mixer-panel {
-  background: rgba(14, 15, 24, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.mixer-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-/* VU Meter LEDs */
-.vu-meter {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  background: #080910;
-  padding: 4px 3px;
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.vu-led {
-  width: 8px;
-  height: 4px;
-  border-radius: 1px;
-  background: #151620;
-  transition: background 0.05s ease;
-}
-
-.vu-led.lit-green { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
-.vu-led.lit-yellow { background: #ffd000; box-shadow: 0 0 6px #ffd000; }
-.vu-led.lit-orange { background: #ff7700; box-shadow: 0 0 6px #ff7700; }
-.vu-led.lit-red { background: #ff0044; box-shadow: 0 0 6px #ff0044; }
-
-.mixer-center-controls {
-  display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 6px;
 }
 
-.main-transport {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.ctrl-btn.play-main {
-  width: 40px;
-  height: 40px;
-  background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
-  color: #07070b;
+.btn-pioneer-cue {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  box-shadow: 0 0 16px rgba(0, 240, 255, 0.4);
-}
-
-.btn-mix-trigger {
-  background: linear-gradient(135deg, rgba(255, 0, 127, 0.2), rgba(157, 78, 221, 0.3));
-  border: 1px solid rgba(255, 0, 127, 0.5);
-  color: #fff;
+  background: #251d10;
+  border: 2px solid #ffaa00;
+  color: #ffaa00;
   font-family: var(--font-display);
-  font-size: 9px;
-  font-weight: 800;
-  letter-spacing: 1px;
-  padding: 4px 10px;
-  border-radius: 12px;
+  font-size: 8px;
+  font-weight: 900;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-mix-trigger:hover {
-  background: linear-gradient(135deg, var(--accent-magenta), var(--accent-purple));
-  box-shadow: 0 0 14px rgba(255, 0, 127, 0.6);
-  transform: scale(1.05);
-}
-
-/* Crossfader Section */
-.crossfader-section {
+  transition: all 0.1s ease;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 0 4px;
+  justify-content: center;
 }
 
-.fader-label {
-  font-size: 9px;
+.btn-pioneer-cue:hover, .btn-pioneer-cue:active {
+  background: #ffaa00;
+  color: #000;
+  box-shadow: 0 0 10px #ffaa00;
+}
+
+.btn-pioneer-play {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #0f2617;
+  border: 2px solid #00ff88;
+  color: #00ff88;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-pioneer-play.active-play {
+  background: #00ff88;
+  color: #05140b;
+  box-shadow: 0 0 12px #00ff88;
+}
+
+.btn-sync {
+  background: #111a2e;
+  border: 1px solid #00aaff;
+  color: #00aaff;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 4px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* ======================================================== */
+/* 🎛️ CENTRAL PIONEER DJM MIXER CONSOLE */
+/* ======================================================== */
+.djm-mixer-unit {
+  background: linear-gradient(180deg, #141520 0%, #0c0d15 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+}
+
+.mixer-ch-columns {
+  display: grid;
+  grid-template-columns: 1fr 100px 1fr;
+  gap: 6px;
+}
+
+.mixer-ch-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #0a0b12;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 4px 2px;
+  gap: 3px;
+}
+
+.ch-title {
   font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.cyan-text { color: var(--accent-cyan); }
+.magenta-text { color: var(--accent-magenta); }
+.gold-text { color: #ffd000; }
+
+/* Rotary DJ Knobs */
+.rotary-knob-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+
+.knob-label {
+  font-size: 7px;
   font-weight: 800;
   color: var(--text-muted);
 }
 
-.crossfader-track {
+.dj-knob {
+  width: 32px;
+  height: 12px;
+  accent-color: #777c9c;
+  cursor: pointer;
+}
+
+.dj-knob.filter-color { accent-color: #ff007f; }
+.dj-knob.master-knob { accent-color: #ffd000; width: 44px; }
+
+.btn-ch-cue {
+  font-size: 8px;
+  font-weight: 800;
+  background: #1e1c18;
+  border: 1px solid #ffaa00;
+  color: #ffaa00;
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn-ch-cue.active {
+  background: #ffaa00;
+  color: #000;
+  box-shadow: 0 0 6px #ffaa00;
+}
+
+/* Channel Fader & Meter Row */
+.fader-meter-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.channel-vu-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: #040508;
+  padding: 2px 1px;
+  border-radius: 2px;
+}
+
+.channel-vu-meter .led, .master-vu-column .led {
+  width: 5px;
+  height: 3px;
+  border-radius: 1px;
+  background: #151824;
+  transition: background 0.04s ease;
+}
+
+.led.lit-green { background: #00ff88; box-shadow: 0 0 4px #00ff88; }
+.led.lit-yellow { background: #ffd000; box-shadow: 0 0 4px #ffd000; }
+.led.lit-orange { background: #ff7700; box-shadow: 0 0 4px #ff7700; }
+.led.lit-red { background: #ff0044; box-shadow: 0 0 4px #ff0044; }
+
+.fader-housing {
+  background: #05060a;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+.vertical-ch-fader {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 14px;
+  height: 48px;
+  accent-color: #dddddd;
+  cursor: pointer;
+}
+
+/* Mixer Center Strip */
+.mixer-center-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: #080910;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 4px 2px;
+}
+
+.master-stereo-vu {
+  display: flex;
+  gap: 3px;
+  background: #040508;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.master-vu-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.btn-mix-flash {
+  background: linear-gradient(135deg, #ff007f, #9d4edd);
+  border: 1px solid #ff007f;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 0, 127, 0.4);
+  transition: all 0.15s ease;
+}
+
+.btn-mix-flash:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 14px rgba(255, 0, 127, 0.8);
+}
+
+.mixer-nav-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-nav-prev, .btn-nav-next {
+  background: #181a28;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-radius: 4px;
+  padding: 3px 6px;
+  cursor: pointer;
+}
+
+.headphones-tools {
+  display: flex;
+  gap: 6px;
+}
+
+/* Pioneer Crossfader Unit */
+.pioneer-crossfader-unit {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #07080e;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 3px 8px;
+}
+
+.cf-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.cf-track-groove {
   flex-grow: 1;
   height: 12px;
-  background: #080910;
+  background: #020305;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  border-radius: 4px;
   position: relative;
   cursor: pointer;
 }
 
-.crossfader-cap {
+.cf-slider-cap {
   position: absolute;
   top: 50%;
   left: 0%;
   transform: translate(-50%, -50%);
   width: 14px;
   height: 20px;
-  background: linear-gradient(180deg, #dddddd, #777788);
-  border-radius: 3px;
+  background: linear-gradient(180deg, #eeeeee, #666677);
   border: 1px solid #ffffff;
+  border-radius: 2px;
   box-shadow: 0 0 8px rgba(0, 240, 255, 0.5);
   transition: left 0.1s linear;
-}
-
-/* Mixer Bottom Tools */
-.mixer-bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.mixer-bottom .custom-slider {
-  width: 65px;
 }
 
 .volume-slider-wrap {
