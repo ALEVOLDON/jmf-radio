@@ -573,11 +573,6 @@ app.get('/api/cover/:id', async (req, res) => {
   res.status(404).send('No cover art found');
 });
 
-app.post('/api/skip', async (req, res) => {
-  if (playlist.length === 0) return res.json({ success: false });
-  await playTrack((currentIndex + 1) % playlist.length);
-  res.json({ success: true, currentIndex, currentTrack: playlist[currentIndex] });
-});
 
 app.post('/api/prev', async (req, res) => {
   if (playlist.length === 0) return res.json({ success: false });

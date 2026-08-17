@@ -11,6 +11,9 @@ pnpm-debug.log*
 .env.development
 .env.production
 
+# Runtime Generated Files (local paths — do NOT commit)
+genre_library_cache.json
+
 # Binaries & Executables
 *.exe
 cloudflared.exe
