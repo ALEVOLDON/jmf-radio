@@ -281,9 +281,13 @@ export class AudioEngine {
   }
 
   async start() {
-    await this.initAudioContext();
-    if (this.audioContext.state === 'suspended') {
-      await this.audioContext.resume();
+    try {
+      await this.initAudioContext();
+      if (this.audioContext && this.audioContext.state === 'suspended') {
+        await this.audioContext.resume();
+      }
+    } catch (e) {
+      console.warn('AudioContext initialization note:', e);
     }
     await this.fetchInitialData();
   }

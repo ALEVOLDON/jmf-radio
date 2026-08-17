@@ -129,6 +129,7 @@ export class UIController {
     this.initWaveformSeeking();
     this.initJogWheelMouseControl();
     this.initGenreControls();
+    this.initMobileMenu();
   }
 
   // Generate 120-slice realistic song waveform structure
@@ -466,11 +467,30 @@ export class UIController {
   }
 
   initHardwareEvents() {
-    if (this.btnStart) {
-      this.btnStart.addEventListener('click', async () => {
-        if (this.overlay) this.overlay.classList.add('hidden');
+    const handleStart = async (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (this.overlay) {
+        this.overlay.classList.add('hidden');
+        this.overlay.style.display = 'none';
+      }
+      try {
         await this.audioEngine.start();
-        this.updatePlayState(true);
+      } catch (err) {
+        console.warn('Audio start error:', err);
+      }
+      this.updatePlayState(true);
+    };
+
+    if (this.btnStart) {
+      this.btnStart.addEventListener('click', handleStart);
+      this.btnStart.addEventListener('touchend', handleStart);
+    }
+    if (this.overlay) {
+      this.overlay.addEventListener('click', (e) => {
+        if (e.target === this.overlay) handleStart(e);
       });
     }
 
@@ -674,10 +694,15 @@ export class UIController {
 
     // Mode Switcher (DJ Workstation vs Minimalist Radio Mode)
     this.setMode = (mode) => {
+      const mBtnDj = document.getElementById('m-btn-mode-dj');
+      const mBtnRadio = document.getElementById('m-btn-mode-radio');
+
       if (mode === 'radio') {
         this.audioEngine.setMixMode('radio');
         if (this.btnModeRadio) this.btnModeRadio.classList.add('active');
         if (this.btnModeDj) this.btnModeDj.classList.remove('active');
+        if (mBtnRadio) mBtnRadio.classList.add('active');
+        if (mBtnDj) mBtnDj.classList.remove('active');
 
         document.body.classList.add('mode-radio');
         document.body.classList.remove('mode-dj');
@@ -691,6 +716,8 @@ export class UIController {
         this.audioEngine.setMixMode('dj');
         if (this.btnModeDj) this.btnModeDj.classList.add('active');
         if (this.btnModeRadio) this.btnModeRadio.classList.remove('active');
+        if (mBtnDj) mBtnDj.classList.add('active');
+        if (mBtnRadio) mBtnRadio.classList.remove('active');
 
         document.body.classList.add('mode-dj');
         document.body.classList.remove('mode-radio');
@@ -882,6 +909,188 @@ export class UIController {
     });
   }
 
+  initMobileMenu() {
+    this.btnMobileMenu = document.getElementById('btn-mobile-menu');
+    this.btnMobileMenuClose = document.getElementById('btn-mobile-menu-close');
+    this.mobileMenuDrawer = document.getElementById('mobile-menu-drawer');
+    this.mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+
+    const openDrawer = () => {
+      if (this.mobileMenuDrawer) this.mobileMenuDrawer.classList.remove('hidden');
+      if (this.mobileMenuBackdrop) this.mobileMenuBackdrop.classList.remove('hidden');
+
+      // Update current track info in mobile drawer
+      if (this.currentTrack) {
+        const mTrackTitle = document.getElementById('m-menu-track-title');
+        const mTrackArtist = document.getElementById('m-menu-track-artist');
+        if (mTrackTitle) mTrackTitle.textContent = this.currentTrack.title || 'Unknown Track';
+        if (mTrackArtist) {
+          const gBadge = this.currentTrack.genre ? ` • ${this.currentTrack.genre.name}` : '';
+          mTrackArtist.textContent = (this.currentTrack.artist || 'JMF Live Station') + gBadge;
+        }
+      }
+    };
+
+    const closeDrawer = () => {
+      if (this.mobileMenuDrawer) this.mobileMenuDrawer.classList.add('hidden');
+      if (this.mobileMenuBackdrop) this.mobileMenuBackdrop.classList.add('hidden');
+    };
+
+    if (this.btnMobileMenu) this.btnMobileMenu.addEventListener('click', openDrawer);
+    if (this.btnMobileMenuClose) this.btnMobileMenuClose.addEventListener('click', closeDrawer);
+    if (this.mobileMenuBackdrop) this.mobileMenuBackdrop.addEventListener('click', closeDrawer);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
+
+    // 1. Playback Modes in Mobile Menu
+    const mBtnModeDj = document.getElementById('m-btn-mode-dj');
+    const mBtnModeRadio = document.getElementById('m-btn-mode-radio');
+    if (mBtnModeDj) {
+      mBtnModeDj.addEventListener('click', () => {
+        this.setMode('dj');
+      });
+    }
+    if (mBtnModeRadio) {
+      mBtnModeRadio.addEventListener('click', () => {
+        this.setMode('radio');
+      });
+    }
+
+    // 2. 3D Club Cameras
+    const mCamItems = document.querySelectorAll('.m-cam-item');
+    mCamItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const camPreset = item.getAttribute('data-cam');
+        mCamItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        // Sync with desktop camera toolbar
+        this.camButtons.forEach(btn => {
+          if (btn.getAttribute('data-cam') === camPreset) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        this.djScene.setCameraPreset(camPreset);
+      });
+    });
+
+    // 3. Open All Genres Modal
+    const mBtnOpenAllGenres = document.getElementById('m-btn-open-all-genres');
+    if (mBtnOpenAllGenres) {
+      mBtnOpenAllGenres.addEventListener('click', () => {
+        closeDrawer();
+        if (this.genreModal) this.genreModal.classList.remove('hidden');
+      });
+    }
+
+    // 4. Open Lighting Modal
+    const mBtnOpenLightingModal = document.getElementById('m-btn-open-lighting-modal');
+    if (mBtnOpenLightingModal) {
+      mBtnOpenLightingModal.addEventListener('click', () => {
+        closeDrawer();
+        if (this.lightingModal) this.lightingModal.classList.remove('hidden');
+      });
+    }
+
+    // 5. Lighting Themes in Mobile Menu
+    const mThemePills = document.querySelectorAll('.m-theme-pill');
+    mThemePills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        mThemePills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const theme = pill.getAttribute('data-theme');
+
+        // Sync with modal theme buttons
+        const modalThemeButtons = document.querySelectorAll('.l-theme-btn');
+        modalThemeButtons.forEach(b => {
+          if (b.getAttribute('data-theme') === theme) b.classList.add('active');
+          else b.classList.remove('active');
+        });
+
+        this.djScene.setTheme(theme);
+      });
+    });
+
+    // 6. Lighting Toggles
+    const mToggleStrobe = document.getElementById('m-toggle-strobe');
+    const mToggleLasers = document.getElementById('m-toggle-lasers');
+    const mToggleFog = document.getElementById('m-toggle-fog');
+    const toggleStrobe = document.getElementById('toggle-strobe');
+    const toggleLasers = document.getElementById('toggle-lasers');
+    const toggleFog = document.getElementById('toggle-fog');
+
+    if (mToggleStrobe) {
+      mToggleStrobe.addEventListener('change', (e) => {
+        if (toggleStrobe) toggleStrobe.checked = e.target.checked;
+        this.djScene.lighting.setStrobeEnabled(e.target.checked);
+      });
+    }
+    if (mToggleLasers) {
+      mToggleLasers.addEventListener('change', (e) => {
+        if (toggleLasers) toggleLasers.checked = e.target.checked;
+        this.djScene.lighting.setLasersEnabled(e.target.checked);
+      });
+    }
+    if (mToggleFog) {
+      mToggleFog.addEventListener('change', (e) => {
+        if (toggleFog) toggleFog.checked = e.target.checked;
+        this.djScene.lighting.setFogEnabled(e.target.checked);
+      });
+    }
+
+    // 7. Light Intensity Slider
+    const mSliderIntensity = document.getElementById('m-slider-light-intensity');
+    const mValIntensity = document.getElementById('m-val-light-intensity');
+    const sliderIntensity = document.getElementById('slider-light-intensity');
+    const valIntensity = document.getElementById('val-light-intensity');
+
+    if (mSliderIntensity && mValIntensity) {
+      mSliderIntensity.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        const text = `${Math.round(val * 100)}%`;
+        mValIntensity.textContent = text;
+        if (sliderIntensity) sliderIntensity.value = val;
+        if (valIntensity) valIntensity.textContent = text;
+        this.djScene.lighting.setIntensityMultiplier(val);
+      });
+    }
+
+    // 8. Sound & EQ Preset
+    const mRadioEqPreset = document.getElementById('m-radio-eq-preset');
+    if (mRadioEqPreset) {
+      mRadioEqPreset.addEventListener('change', (e) => {
+        const val = e.target.value;
+        if (this.radioEqPreset) this.radioEqPreset.value = val;
+        this.audioEngine.setEQPreset(val);
+      });
+    }
+
+    // 9. Quick Actions
+    const mBtnOpenQueue = document.getElementById('m-btn-open-queue');
+    if (mBtnOpenQueue) {
+      mBtnOpenQueue.addEventListener('click', () => {
+        closeDrawer();
+        if (this.queueDrawer) this.queueDrawer.classList.remove('hidden');
+      });
+    }
+
+    const mBtnFullscreen = document.getElementById('m-btn-fullscreen');
+    if (mBtnFullscreen) {
+      mBtnFullscreen.addEventListener('click', () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      });
+    }
+  }
+
   updatePlayState(isPlaying) {
     if (isPlaying) {
       if (this.waveIndicator) this.waveIndicator.classList.add('wave-playing');
@@ -991,6 +1200,29 @@ export class UIController {
             });
           });
         }
+
+        // 3. Populate Mobile Menu Genre Chips
+        const mGenreChips = document.getElementById('m-genre-chips');
+        if (mGenreChips && genres) {
+          mGenreChips.innerHTML = genres.map(g => `
+            <button class="m-genre-chip ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}">
+              <span class="m-genre-chip-icon">${g.icon}</span>
+              <span class="m-genre-chip-name" style="color: ${g.color};">${g.name}</span>
+            </button>
+          `).join('');
+
+          mGenreChips.querySelectorAll('.m-genre-chip').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const genreId = btn.getAttribute('data-genre');
+              this.activeGenre = genreId;
+              const chosen = genres.find(x => x.id === genreId);
+              if (this.headerGenreIcon && chosen) this.headerGenreIcon.textContent = chosen.icon;
+              if (this.headerGenreLabel && chosen) this.headerGenreLabel.textContent = chosen.name.replace(/^[^\s]+\s/, '');
+              renderGenreButtons();
+              await this.audioEngine.setGenre(genreId);
+            });
+          });
+        }
       };
 
       renderGenreButtons();
@@ -999,10 +1231,23 @@ export class UIController {
     }
   }
 
+  onTrackChanged(track, queue, totalTracks) {
+    this.updateTrackInfo(track, this.audioEngine.nextTrack, queue);
+  }
+
   updateTrackInfo(track, nextTrack, queue) {
     if (!track) return;
     this.currentTrack = track;
     const activeDeck = this.audioEngine.activeDeck;
+
+    // Mobile Menu Track Info
+    const mTrackTitle = document.getElementById('m-menu-track-title');
+    const mTrackArtist = document.getElementById('m-menu-track-artist');
+    if (mTrackTitle) mTrackTitle.textContent = track.title || 'Unknown Track';
+    if (mTrackArtist) {
+      const gBadge = track.genre ? ` • ${track.genre.name}` : '';
+      mTrackArtist.textContent = (track.artist || 'JMF Live Station') + gBadge;
+    }
 
     // Radio Mode Displays
     if (this.radioTrackTitle) this.radioTrackTitle.textContent = track.title || 'Unknown Track';

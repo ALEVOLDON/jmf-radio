@@ -12,5 +12,33 @@
       "color": "#ff6b35",
       "bpm": 124
     }
+  },
+  "D:\\Soundcloud\\DJ Rolando - Jaguar.mp3": {
+    "title": "Jaguar",
+    "artist": "DJ Rolando",
+    "album": "SoundCloud Collection",
+    "duration": 396.9,
+    "bpm": 123,
+    "genre": {
+      "id": "house",
+      "name": "🌴 HOUSE & DEEP",
+      "icon": "🌴",
+      "color": "#ff6b35",
+      "bpm": 123
+    }
+  },
+  "D:\\Soundcloud\\PREMIERE： DJ Different - Permission 2 Dance [Lobster Theremin].mp3": {
+    "title": "Permission 2 Dance [Lobster Theremin]",
+    "artist": "PREMIERE： DJ Different",
+    "album": "SoundCloud Collection",
+    "duration": 214.2,
+    "bpm": 125,
+    "genre": {
+      "id": "house",
+      "name": "🌴 HOUSE & DEEP",
+      "icon": "🌴",
+      "color": "#ff6b35",
+      "bpm": 125
+    }
   }
 }
