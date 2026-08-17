@@ -77,34 +77,36 @@ html, body {
   align-items: center;
   justify-content: space-between;
   background: var(--panel-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--panel-border);
-  padding: 5px 12px;
-  border-radius: 10px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  padding: 6px 14px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
   z-index: 20;
 }
 
 .station-brand {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .on-air-badge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(255, 0, 85, 0.15);
-  border: 1px solid rgba(255, 0, 85, 0.4);
-  padding: 2px 6px;
-  border-radius: 10px;
+  background: rgba(255, 0, 85, 0.12);
+  border: 1px solid rgba(255, 0, 85, 0.45);
+  padding: 3px 8px;
+  border-radius: 14px;
   font-family: var(--font-display);
   font-size: 8px;
   font-weight: 800;
   letter-spacing: 1px;
   color: #ff0055;
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.2);
 }
 
 .live-dot {
@@ -114,6 +116,7 @@ html, body {
   border-radius: 50%;
   box-shadow: 0 0 6px #ff0055;
   animation: pulseDot 1.4s infinite alternate;
+  flex-shrink: 0;
 }
 
 @keyframes pulseDot {
@@ -125,12 +128,60 @@ html, body {
   font-family: var(--font-display);
   font-size: 13px;
   font-weight: 900;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   color: #ffffff;
+  line-height: 1;
 }
 
 .station-title span {
   color: var(--deck-a-cyan);
+}
+
+/* Mobile Center Pill */
+.mobile-header-center {
+  display: none;
+}
+
+.m-center-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: 16px;
+  padding: 4px 10px;
+  cursor: pointer;
+  max-width: 140px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.06);
+}
+
+.m-center-pill:hover,
+.m-center-pill:active {
+  background: rgba(0, 240, 255, 0.16);
+  border-color: var(--deck-a-cyan);
+  box-shadow: 0 0 14px rgba(0, 240, 255, 0.25);
+  transform: scale(1.02);
+}
+
+.m-center-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--deck-a-cyan);
+  box-shadow: 0 0 6px var(--deck-a-cyan);
+  flex-shrink: 0;
+}
+
+.m-center-label {
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Camera Switcher Pills */
@@ -205,15 +256,21 @@ html, body {
 .audio-wave-indicator {
   display: flex;
   align-items: flex-end;
-  gap: 2px;
-  height: 12px;
+  gap: 2.5px;
+  height: 18px;
+  padding: 4px 7px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.22);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.08);
 }
 
 .wave-bar {
-  width: 2px;
+  width: 2.5px;
   height: 3px;
   background: var(--deck-a-cyan);
   border-radius: 1px;
+  box-shadow: 0 0 4px rgba(0, 240, 255, 0.6);
 }
 
 .wave-playing .wave-bar:nth-child(1) { animation: barDance 0.6s infinite ease-in-out alternate; }
@@ -223,8 +280,8 @@ html, body {
 .wave-playing .wave-bar:nth-child(5) { animation: barDance 0.9s 0.05s infinite ease-in-out alternate; }
 
 @keyframes barDance {
-  0% { height: 2px; }
-  100% { height: 12px; }
+  0% { height: 3px; }
+  100% { height: 13px; }
 }
 
 .icon-btn {
@@ -2227,30 +2284,57 @@ body.mode-dj .radio-mode-console,
     padding: 6px 8px 4px 8px;
   }
 
-  .mobile-menu-btn {
-    display: flex;
-  }
-
   .top-bar {
     display: flex;
-    padding: 6px 10px;
+    padding: 6px 12px;
+    height: 46px;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .station-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
+  }
+
+  .mobile-header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    padding: 0 4px;
+    overflow: hidden;
   }
 
   .header-right {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
     justify-content: flex-end;
+    flex-shrink: 0;
   }
 
-  /* On tablets and mobile, camera toolbar can be hidden from top bar or compact */
+  .mobile-menu-btn {
+    display: flex;
+    width: 34px;
+    height: 34px;
+    padding: 6px;
+    gap: 3.5px;
+    flex-shrink: 0;
+  }
+
+  .audio-wave-indicator {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  /* On tablets and mobile, camera toolbar is in the mobile drawer */
   .camera-toolbar {
     display: none;
   }
@@ -2331,16 +2415,43 @@ body.mode-dj .radio-mode-console,
 /* --- Small Mobile Phones (<= 480px) --- */
 @media (max-width: 480px) {
   .top-bar {
-    padding: 4px 8px;
+    padding: 5px 10px;
+    height: 44px;
+    gap: 6px;
     max-width: 100%;
     box-sizing: border-box;
   }
 
-  .station-title {
-    font-size: 11px;
+  .station-brand {
+    gap: 6px;
   }
 
-  /* Hide crammed header buttons on small phones in favor of clean mobile menu */
+  .station-title {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+  }
+
+  .mobile-header-center {
+    display: none;
+  }
+
+  .header-right {
+    gap: 10px;
+    align-items: center;
+  }
+
+  .audio-wave-indicator {
+    padding: 3px 6px;
+    height: 16px;
+    gap: 2.5px;
+  }
+
+  .mobile-menu-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Hide crammed desktop header buttons on small phones in favor of clean mobile menu */
   .mode-switch-group,
   .genre-quick-btn,
   #btn-lights-toggle,

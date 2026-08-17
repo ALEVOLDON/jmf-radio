@@ -1126,10 +1126,12 @@ export class UIController {
 
   async initGenreControls() {
     this.btnGenresToggle = document.getElementById('btn-genres-toggle');
+    this.btnCenterGenres = document.getElementById('m-btn-center-genres');
     this.genreModal = document.getElementById('genre-modal');
     this.btnGenresClose = document.getElementById('btn-genres-close');
     this.headerGenreIcon = document.getElementById('header-genre-icon');
     this.headerGenreLabel = document.getElementById('header-genre-label');
+    this.mHeaderGenreLabel = document.getElementById('m-header-genre-label');
     this.genreModalGrid = document.getElementById('genre-modal-grid');
     this.queueGenreFilter = document.getElementById('queue-genre-filter');
 
@@ -1141,12 +1143,22 @@ export class UIController {
     };
 
     if (this.btnGenresToggle) this.btnGenresToggle.addEventListener('click', openGenreModal);
+    if (this.btnCenterGenres) this.btnCenterGenres.addEventListener('click', openGenreModal);
     if (this.btnGenresClose) this.btnGenresClose.addEventListener('click', closeGenreModal);
     if (this.genreModal) {
       this.genreModal.addEventListener('click', (e) => {
         if (e.target === this.genreModal) closeGenreModal();
       });
     }
+
+    const updateAllGenreLabels = (chosen) => {
+      if (chosen) {
+        if (this.headerGenreIcon) this.headerGenreIcon.textContent = chosen.icon;
+        const shortName = chosen.name.replace(/^[^\s]+\s/, '');
+        if (this.headerGenreLabel) this.headerGenreLabel.textContent = shortName;
+        if (this.mHeaderGenreLabel) this.mHeaderGenreLabel.textContent = `${chosen.icon} ${shortName}`;
+      }
+    };
 
     try {
       const { genres, activeGenre } = await this.audioEngine.fetchGenres();
@@ -1170,8 +1182,7 @@ export class UIController {
               const genreId = btn.getAttribute('data-genre');
               this.activeGenre = genreId;
               const chosen = genres.find(x => x.id === genreId);
-              if (this.headerGenreIcon && chosen) this.headerGenreIcon.textContent = chosen.icon;
-              if (this.headerGenreLabel && chosen) this.headerGenreLabel.textContent = chosen.name.replace(/^[^\s]+\s/, '');
+              updateAllGenreLabels(chosen);
               renderGenreButtons();
               closeGenreModal();
               await this.audioEngine.setGenre(genreId);
@@ -1193,8 +1204,7 @@ export class UIController {
               const genreId = btn.getAttribute('data-genre');
               this.activeGenre = genreId;
               const chosen = genres.find(x => x.id === genreId);
-              if (this.headerGenreIcon && chosen) this.headerGenreIcon.textContent = chosen.icon;
-              if (this.headerGenreLabel && chosen) this.headerGenreLabel.textContent = chosen.name.replace(/^[^\s]+\s/, '');
+              updateAllGenreLabels(chosen);
               renderGenreButtons();
               await this.audioEngine.setGenre(genreId);
             });
@@ -1216,8 +1226,7 @@ export class UIController {
               const genreId = btn.getAttribute('data-genre');
               this.activeGenre = genreId;
               const chosen = genres.find(x => x.id === genreId);
-              if (this.headerGenreIcon && chosen) this.headerGenreIcon.textContent = chosen.icon;
-              if (this.headerGenreLabel && chosen) this.headerGenreLabel.textContent = chosen.name.replace(/^[^\s]+\s/, '');
+              updateAllGenreLabels(chosen);
               renderGenreButtons();
               await this.audioEngine.setGenre(genreId);
             });
