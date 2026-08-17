@@ -21,6 +21,11 @@ Thumbs.db
 Desktop.ini
 *.tmp
 
+# IDEs and Tooling
+.vscode/
+.idea/
+.qodo/
+
 # Blender Backups & Autosaves
 *.blend1
 *.blend@
