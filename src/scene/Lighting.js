@@ -105,8 +105,40 @@ export class Lighting {
     this.strobeLight.position.set(0, 7.5, 4.0);
     this.group.add(this.strobeLight);
 
-    // 8. Floating Atmosphere Dust / Haze Particles
+    // 8. 3D Scanning Laser Beams (Multi-beam fan from stage truss)
+    this.laserBeams = [];
+    this.createLaserBeams();
+
+    // 9. Floating Atmosphere Dust / Haze Particles
     this.createAtmosphereParticles();
+  }
+
+  createLaserBeams() {
+    this.laserGroup = new THREE.Group();
+    this.laserGroup.position.set(0, 7.5, -2.0);
+
+    const laserColors = [0x00f0ff, 0xff007f, 0x00ff88, 0x9d4edd, 0xff0055, 0x00f0ff];
+    const laserMatTemplate = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.65,
+      blending: THREE.AdditiveBlending
+    });
+
+    const beamGeo = new THREE.CylinderGeometry(0.015, 0.06, 18, 8);
+    beamGeo.translate(0, 9, 0);
+    beamGeo.rotateX(Math.PI / 2);
+
+    for (let i = 0; i < 6; i++) {
+      const mat = laserMatTemplate.clone();
+      mat.color.setHex(laserColors[i % laserColors.length]);
+      const beam = new THREE.Mesh(beamGeo, mat);
+      beam.position.set((i - 2.5) * 1.4, 0, 0);
+      this.laserBeams.push(beam);
+      this.laserGroup.add(beam);
+    }
+
+    this.group.add(this.laserGroup);
   }
 
   setIntensityMultiplier(val) {
@@ -189,6 +221,19 @@ export class Lighting {
     if (this.danceFloorSpot && this.lasersEnabled) {
       this.danceFloorSpot.intensity = (3.0 + bass * 5.0 + beat * 5.0) * mult;
       this.danceFloorSpot.position.x = Math.sin(time * 1.5) * 2.5; // Moving club scanner beam
+    }
+
+    // 3D Laser Fan Scanning Animation
+    if (this.laserBeams && this.lasersEnabled) {
+      const laserSpread = 0.35 + bass * 0.25;
+      for (let i = 0; i < this.laserBeams.length; i++) {
+        const beam = this.laserBeams[i];
+        const angleOffset = (i - 2.5) * laserSpread;
+        const wave = Math.sin(time * 2.2 + i * 0.6) * 0.28;
+        beam.rotation.x = Math.PI / 4 + Math.sin(time * 1.8) * 0.22 + wave;
+        beam.rotation.y = angleOffset + Math.cos(time * 1.2 + i * 0.4) * 0.15;
+        beam.material.opacity = (0.35 + bass * 0.45 + beat * 0.3) * mult;
+      }
     }
 
     if (this.leftFillPoint) this.leftFillPoint.intensity = (2.0 + bass * 4.0) * mult;
