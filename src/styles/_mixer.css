@@ -1,0 +1,334 @@
+/* ======================================================== */
+/* 🎛️ CENTRAL PIONEER DJM MIXER CONSOLE */
+/* ======================================================== */
+.djm-mixer-unit {
+  background: linear-gradient(180deg, #0d0f19 0%, #06070c 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 6px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+}
+
+.mixer-ch-columns {
+  display: grid;
+  grid-template-columns: 1fr 76px 1fr;
+  gap: 4px;
+}
+
+.mixer-ch-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #080911;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 4px 2px;
+  gap: 3px;
+}
+
+.ch-title {
+  font-family: var(--font-display);
+  font-size: 7.5px;
+  font-weight: 900;
+}
+
+.btn-ch-cue {
+  font-size: 7px;
+  font-weight: 900;
+  background: #1f1b10;
+  border: 1px solid #ffaa00;
+  color: #ffaa00;
+  padding: 2px 6px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.btn-ch-cue.active {
+  background: #ffaa00;
+  color: #000;
+  box-shadow: 0 0 6px #ffaa00;
+}
+
+.fader-meter-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 100%;
+}
+
+.channel-vu-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+  background: #030407;
+  padding: 1.5px;
+  border-radius: 2px;
+}
+
+.channel-vu-meter .led {
+  width: 4px;
+  height: 3px;
+  background: #11141f;
+  border-radius: 1px;
+}
+
+.vertical-ch-fader {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 14px;
+  height: 56px;
+  cursor: pointer;
+}
+
+.fader-cyan-cap { accent-color: var(--deck-a-cyan); }
+.fader-magenta-cap { accent-color: var(--deck-b-pink); }
+
+/* Center Strip */
+.mixer-center-strip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background: #080911;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 4px 2px;
+  gap: 4px;
+}
+
+.master-stereo-vu-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  background: #020306;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
+  padding: 3px 2px;
+}
+
+.vu-scale-labels {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 5px;
+  color: #686c82;
+  font-family: monospace;
+  height: 54px;
+}
+
+.master-vu-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+}
+
+.master-vu-column .led {
+  width: 5px;
+  height: 3px;
+  background: #0d0f18;
+  border-radius: 1px;
+}
+
+.led.lit-red { background: #ff0044; box-shadow: 0 0 4px #ff0044; }
+.led.lit-orange { background: #ff8800; box-shadow: 0 0 4px #ff8800; }
+.led.lit-yellow { background: #ffd000; box-shadow: 0 0 4px #ffd000; }
+.led.lit-green { background: #00ff88; box-shadow: 0 0 4px #00ff88; }
+
+.meter-cyan .led.lit-green { background: #00f0ff; box-shadow: 0 0 4px #00f0ff; }
+.meter-magenta .led.lit-green { background: #ff007f; box-shadow: 0 0 4px #ff007f; }
+
+.btn-mix-flash {
+  background: linear-gradient(135deg, #ff007f 0%, #9d4edd 100%);
+  border: none;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 7px;
+  font-weight: 900;
+  padding: 3px 6px;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(255, 0, 127, 0.5);
+}
+
+.mixer-nav-controls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.btn-nav-prev, .btn-nav-next, .btn-nav-play {
+  background: #111422;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-nav-play { width: 22px; height: 20px; color: #00ff88; }
+
+.headphones-tools {
+  display: flex;
+  gap: 3px;
+}
+
+.icon-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  width: 18px;
+  height: 18px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Crossfader */
+.pioneer-crossfader-unit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #040509;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 4px 8px;
+  gap: 6px;
+}
+
+.btn-cf-channel {
+  background: #0d101a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  padding: 3px 6px;
+  font-family: var(--font-display);
+  font-size: 7.5px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-cf-channel:hover {
+  transform: scale(1.06);
+}
+
+.cf-btn-ch1:hover, .cf-btn-ch1:active {
+  background: var(--deck-a-cyan);
+  color: #000 !important;
+  box-shadow: 0 0 10px var(--deck-a-cyan);
+  border-color: var(--deck-a-cyan);
+}
+
+.cf-btn-ch2:hover, .cf-btn-ch2:active {
+  background: var(--deck-b-pink);
+  color: #fff !important;
+  box-shadow: 0 0 10px var(--deck-b-pink);
+  border-color: var(--deck-b-pink);
+}
+
+.cf-label {
+  font-family: var(--font-display);
+  font-size: 7px;
+  font-weight: 900;
+}
+
+.cf-track-groove {
+  flex-grow: 1;
+  height: 10px;
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  position: relative;
+  cursor: pointer;
+}
+
+.cf-slider-cap {
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 16px;
+  background: linear-gradient(180deg, #ffffff 0%, #a2a6b8 100%);
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  cursor: grab;
+}
+
+/* ======================================================== */
+/* 🎛️ CIRCULAR ROTARY DJ KNOBS / DIALS */
+/* ======================================================== */
+.rotary-knob-component {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  cursor: ns-resize;
+}
+
+.knob-dial {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #25293d 0%, #0d0f17 80%);
+  border: 1.2px solid #363b52;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.knob-dial.dial-large { width: 26px; height: 26px; border-color: rgba(255, 0, 127, 0.4); }
+.knob-dial.dial-master { width: 24px; height: 24px; border-color: rgba(0, 240, 255, 0.4); }
+.knob-dial.dial-compact { width: 18px; height: 18px; }
+.knob-dial.dial-mini { width: 16px; height: 16px; }
+
+.rotary-knob-component:hover .knob-dial, .rotary-knob-component.is-dragging .knob-dial {
+  border-color: var(--deck-a-cyan);
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+}
+
+.knob-cap {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  position: relative;
+  transform: rotate(0deg);
+  transition: transform 0.04s linear;
+}
+
+.knob-pointer {
+  position: absolute;
+  top: 1.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1.5px;
+  height: 5px;
+  background: #ffffff;
+  border-radius: 1px;
+}
+
+.pointer-cyan { background: var(--deck-a-cyan); box-shadow: 0 0 4px var(--deck-a-cyan); }
+.pointer-pink { background: var(--deck-b-pink); box-shadow: 0 0 4px var(--deck-b-pink); }
+.pointer-gold { background: #ffd000; box-shadow: 0 0 4px #ffd000; }
+
+.knob-label {
+  font-size: 5.5px;
+  font-weight: 800;
+  color: var(--text-muted);
+}
