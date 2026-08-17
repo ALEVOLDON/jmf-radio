@@ -17,7 +17,7 @@
 
 <br/>
 
-[**Live Demo**](https://possibly-singh-sam-tions.trycloudflare.com) • [**Features**](#-key-features) • [**Quick Start**](#-quick-start) • [**Architecture**](#-architecture) • [**Deployment**](#-deployment-options)
+[**Live Demo**](https://remake-landfall-riches.ngrok-free.dev) • [**Features**](#-key-features) • [**Quick Start**](#-quick-start) • [**Architecture**](#-architecture) • [**Deployment**](#-deployment-options)
 
 </div>
 
