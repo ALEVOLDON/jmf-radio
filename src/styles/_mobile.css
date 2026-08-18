@@ -512,6 +512,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
+}
+
 /* Light Theme Pills */
 .m-light-theme-grid {
   display: grid;
@@ -525,15 +527,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  background: rgba(10, 13, 22, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  gap: 5px;
+  background: rgba(12, 16, 28, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  padding: 8px 4px;
-  color: #abb2bf;
-  font-family: var(--font-body);
+  padding: 9px 4px;
+  color: #c0c6db;
+  font-family: var(--font-display);
   font-size: 8.5px;
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: 0.5px;
   cursor: pointer;
   min-width: 0;
   box-sizing: border-box;
@@ -543,25 +546,32 @@
   transition: all 0.2s ease;
 }
 
+.m-theme-pill:hover,
+.m-theme-pill:active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
 .m-theme-pill.active {
   background: rgba(0, 240, 255, 0.2);
   border-color: var(--deck-a-cyan);
   color: #fff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
 }
 
 .pill-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
 }
 
-.dot-cyan-pink { background: linear-gradient(135deg, #00f0ff, #ff007f); }
-.dot-orange-red { background: linear-gradient(135deg, #ff9900, #ff0055); }
-.dot-green-lime { background: linear-gradient(135deg, #00ff88, #88ff00); }
-.dot-blue-purple { background: linear-gradient(135deg, #0088ff, #9900ff); }
+.dot-cyan-pink { background: linear-gradient(135deg, #00f0ff, #ff007f); box-shadow: 0 0 5px #00f0ff; }
+.dot-orange-red { background: linear-gradient(135deg, #ff9900, #ff0055); box-shadow: 0 0 5px #ff9900; }
+.dot-green-lime { background: linear-gradient(135deg, #00ff88, #88ff00); box-shadow: 0 0 5px #00ff88; }
+.dot-blue-purple { background: linear-gradient(135deg, #0088ff, #9900ff); box-shadow: 0 0 5px #0088ff; }
 
 /* FX Checkboxes */
 .m-fx-toggles-row {
@@ -577,14 +587,16 @@
 .m-fx-toggle-item {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  background: rgba(10, 13, 22, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(12, 16, 28, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   padding: 8px 10px;
-  font-size: 9.5px;
+  font-family: var(--font-body);
+  font-size: 10px;
   font-weight: 700;
-  color: #c0c6db;
+  color: #fff;
   cursor: pointer;
   flex: 1;
   min-width: 0;
@@ -596,14 +608,15 @@
 }
 
 .m-fx-toggle-item input {
-  display: none;
+  display: none !important;
 }
 
 .m-fx-check {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(0, 240, 255, 0.4);
+  background: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -622,6 +635,7 @@
   font-size: 10px;
   color: #000;
   font-weight: 900;
+  line-height: 1;
 }
 
 /* Range Slider Container */
@@ -637,18 +651,28 @@
 .m-slider-label-row {
   display: flex;
   justify-content: space-between;
-  font-size: 9.5px;
-  font-weight: 700;
-  color: var(--text-muted);
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #a3b0cc;
+}
+
+.m-slider-label-row #m-val-light-intensity {
+  color: var(--deck-a-cyan);
+  font-weight: 900;
 }
 
 .m-range-slider {
   width: 100%;
   accent-color: var(--deck-a-cyan);
   height: 6px;
+  margin: 6px 0 2px 0;
   cursor: pointer;
 }
 
+/* Sound & EQ Dropdown */
 .m-eq-select-wrap {
   position: relative;
   width: 100%;
@@ -657,41 +681,26 @@
 
 .m-eq-dropdown {
   width: 100%;
-  background: rgba(10, 13, 22, 0.95);
-  border: 1px solid rgba(0, 240, 255, 0.3);
+  background: rgba(10, 14, 26, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.35);
   color: #00f0ff;
   font-family: var(--font-display);
-  font-size: 10px;
+  font-size: 10.5px;
   font-weight: 800;
+  letter-spacing: 0.5px;
   border-radius: 8px;
   padding: 10px 14px;
   outline: none;
   cursor: pointer;
   box-sizing: border-box;
-}
-  box-sizing: border-box;
-}
-
-.m-eq-dropdown {
-  width: 100%;
-  background: rgba(10, 13, 22, 0.9);
-  border: 1px solid rgba(0, 240, 255, 0.3);
-  color: #00f0ff;
-  font-family: var(--font-display);
-  font-size: 9px;
-  font-weight: 700;
-  border-radius: 6px;
-  padding: 6px 10px;
-  outline: none;
-  cursor: pointer;
-  box-sizing: border-box;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
 /* Quick Actions Grid */
 .m-quick-actions-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -700,60 +709,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  background: rgba(10, 13, 22, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  padding: 8px 6px;
-  color: #fff;
-  font-family: var(--font-body);
-  font-size: 9px;
-  font-weight: 600;
-  cursor: pointer;
-  min-width: 0;
-  box-sizing: border-box;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  transition: all 0.2s ease;
-}
-
-.m-quick-btn:hover,
-.m-quick-btn:active {
-  background: rgba(0, 240, 255, 0.1);
-  border-color: var(--deck-a-cyan);
-  color: var(--deck-a-cyan);
-}
-
-/* Quick Actions Grid */
-.m-quick-actions-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 8px;
-}
-
-.m-quick-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: rgba(10, 13, 22, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(12, 16, 28, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 10px 8px;
   color: #fff;
   font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .m-quick-btn:hover,
 .m-quick-btn:active {
-  background: rgba(0, 240, 255, 0.1);
+  background: rgba(0, 240, 255, 0.15);
   border-color: var(--deck-a-cyan);
   color: var(--deck-a-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
 }
 
 /* --- Mobile Breakpoint (<= 820px Tablets & Phones) --- */
