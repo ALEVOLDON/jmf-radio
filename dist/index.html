@@ -35,8 +35,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Styles -->
-  <script type="module" crossorigin src="/assets/index-BNswEHxC.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-Dpfi3BUk.css">
+  <script type="module" crossorigin src="/assets/index-DXsHXWIi.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-CCAy6Bcn.css">
 </head>
 <body>
   <!-- 3D Canvas Container -->
@@ -937,16 +937,22 @@
         <div class="lighting-modal-header">
           <div class="l-modal-title">
             <span class="l-dot" style="background: #00f0ff; box-shadow: 0 0 8px #00f0ff;"></span>
-            <h3>🎧 JMF RESIDENT DJ BOOTH</h3>
+            <h3 id="dj-auth-title">🎧 JMF RESIDENT DJ BOOTH</h3>
           </div>
-          <button class="l-modal-close" id="btn-dj-auth-close">&times;</button>
+          <div class="dj-modal-header-right">
+            <div class="dj-lang-switcher">
+              <button type="button" class="btn-lang-pill active" id="btn-dj-lang-ru" data-lang="ru">RU</button>
+              <button type="button" class="btn-lang-pill" id="btn-dj-lang-en" data-lang="en">EN</button>
+            </div>
+            <button class="l-modal-close" id="btn-dj-auth-close">&times;</button>
+          </div>
         </div>
 
         <div class="lighting-modal-body dj-auth-body">
           <div class="dj-auth-hero">
             <div class="dj-avatar-badge">🎛️</div>
-            <h4 class="dj-auth-heading">ДОСТУП К ПУЛЬТУ ОГРАНИЧЕН</h4>
-            <p class="dj-auth-desc">
+            <h4 class="dj-auth-heading" id="dj-auth-heading">ДОСТУП К ПУЛЬТУ ОГРАНИЧЕН</h4>
+            <p class="dj-auth-desc" id="dj-auth-desc">
               Сейчас за пультом играют резиденты <strong>JMF Radio</strong>.
               <br><br>
               Чтобы встать за вертушки, управлять треками эфира или заказать свой сет — 
@@ -955,7 +961,7 @@
           </div>
 
           <div class="dj-key-box">
-            <label class="l-section-label">🔑 ЕСТЬ DJ-КЛЮЧ ДОСТУПА?</label>
+            <label class="l-section-label" id="dj-auth-label">🔑 ЕСТЬ DJ-КЛЮЧ ДОСТУПА?</label>
             <div class="dj-key-row">
               <input type="password" id="input-dj-key" class="dj-key-input" placeholder="Введите ключ..." autocomplete="off">
               <button id="btn-submit-dj-key" class="btn-dj-action">Встать за пульт</button>
@@ -964,7 +970,7 @@
           </div>
 
           <button id="btn-dj-enjoy" class="btn-enjoy-stream">
-            <span>🍸 Наслаждаться музыкой и атмосферой</span>
+            <span id="dj-auth-enjoy-text">🍸 Наслаждаться музыкой и атмосферой</span>
           </button>
         </div>
       </div>

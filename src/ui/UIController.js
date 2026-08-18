@@ -666,7 +666,7 @@ export class UIController {
     });
 
     // ========================================================
-    // 🎧 RESIDENT DJ BOOTH ACCESS MODAL
+    // 🎧 RESIDENT DJ BOOTH ACCESS MODAL (BILINGUAL RU / EN)
     // ========================================================
     const djAuthModal = document.getElementById('dj-auth-modal');
     const btnDjAuthClose = document.getElementById('btn-dj-auth-close');
@@ -674,9 +674,66 @@ export class UIController {
     const inputDjKey = document.getElementById('input-dj-key');
     const btnSubmitDjKey = document.getElementById('btn-submit-dj-key');
     const djAuthError = document.getElementById('dj-auth-error');
+    const btnDjLangRu = document.getElementById('btn-dj-lang-ru');
+    const btnDjLangEn = document.getElementById('btn-dj-lang-en');
+
+    const djAuthDict = {
+      ru: {
+        title: '🎧 JMF RESIDENT DJ BOOTH',
+        heading: 'ДОСТУП К ПУЛЬТУ ОГРАНИЧЕН',
+        desc: 'Сейчас за пультом играют резиденты <strong>JMF Radio</strong>.<br><br>Чтобы встать за вертушки, управлять треками эфира или заказать свой сет — обратитесь к <strong>администратору клуба</strong> за персональным DJ-ключом.',
+        label: '🔑 ЕСТЬ DJ-КЛЮЧ ДОСТУПА?',
+        placeholder: 'Введите ключ...',
+        submit: 'Встать за пульт',
+        enjoy: '🍸 Наслаждаться музыкой и атмосферой',
+        success: '🎉 DJ-ключ сохранён! Пробуем войти за пульт...'
+      },
+      en: {
+        title: '🎧 JMF RESIDENT DJ BOOTH',
+        heading: 'DJ BOOTH ACCESS RESTRICTED',
+        desc: 'Resident DJs are currently performing live on <strong>JMF Radio</strong>.<br><br>To take over the decks, control the broadcast, or request a set — please contact the <strong>club administrator</strong> for a personal DJ access key.',
+        label: '🔑 HAVE A DJ ACCESS KEY?',
+        placeholder: 'Enter access key...',
+        submit: 'Take the Decks',
+        enjoy: '🍸 Enjoy the music & club vibes',
+        success: '🎉 DJ Key saved! Taking over the decks...'
+      }
+    };
+
+    let currentDjLang = localStorage.getItem('jmf_ui_lang') || (navigator.language?.startsWith('ru') ? 'ru' : 'en');
+
+    const updateDjModalLang = (lang) => {
+      currentDjLang = lang;
+      localStorage.setItem('jmf_ui_lang', lang);
+      const dict = djAuthDict[lang] || djAuthDict.ru;
+
+      const titleEl = document.getElementById('dj-auth-title');
+      const headingEl = document.getElementById('dj-auth-heading');
+      const descEl = document.getElementById('dj-auth-desc');
+      const labelEl = document.getElementById('dj-auth-label');
+      const enjoyEl = document.getElementById('dj-auth-enjoy-text');
+
+      if (titleEl) titleEl.textContent = dict.title;
+      if (headingEl) headingEl.textContent = dict.heading;
+      if (descEl) descEl.innerHTML = dict.desc;
+      if (labelEl) labelEl.textContent = dict.label;
+      if (inputDjKey) inputDjKey.placeholder = dict.placeholder;
+      if (btnSubmitDjKey) btnSubmitDjKey.textContent = dict.submit;
+      if (enjoyEl) enjoyEl.textContent = dict.enjoy;
+
+      if (btnDjLangRu) btnDjLangRu.classList.toggle('active', lang === 'ru');
+      if (btnDjLangEn) btnDjLangEn.classList.toggle('active', lang === 'en');
+    };
+
+    if (btnDjLangRu) btnDjLangRu.addEventListener('click', () => updateDjModalLang('ru'));
+    if (btnDjLangEn) btnDjLangEn.addEventListener('click', () => updateDjModalLang('en'));
+
+    // Apply initial language
+    updateDjModalLang(currentDjLang);
 
     this.showDjAuthModal = () => {
       if (djAuthModal) {
+        updateDjModalLang(currentDjLang);
         djAuthModal.classList.remove('hidden');
         if (djAuthError) djAuthError.classList.add('hidden');
         if (inputDjKey) {
@@ -699,10 +756,11 @@ export class UIController {
         if (!key) return;
 
         localStorage.setItem('jmf_dj_key', key);
+        const dict = djAuthDict[currentDjLang] || djAuthDict.ru;
         if (djAuthError) {
           djAuthError.classList.remove('hidden');
           djAuthError.style.color = '#00ff88';
-          djAuthError.textContent = '🎉 DJ-ключ сохранён! Пробуем войти за пульт...';
+          djAuthError.textContent = dict.success;
         }
 
         setTimeout(() => {

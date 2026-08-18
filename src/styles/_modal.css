@@ -519,6 +519,44 @@
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(0, 240, 255, 0.15);
 }
 
+.dj-modal-header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dj-lang-switcher {
+  display: flex;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.btn-lang-pill {
+  background: transparent;
+  border: none;
+  color: #8c97ad;
+  font-family: var(--font-display);
+  font-size: 8px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-lang-pill:hover {
+  color: #fff;
+}
+
+.btn-lang-pill.active {
+  background: var(--deck-a-cyan);
+  color: #000;
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
+}
+
 .dj-auth-body {
   text-align: center;
   align-items: center;
