@@ -249,8 +249,13 @@ export class DJCharacter {
     // Materials
     const hoodieMat = new THREE.MeshStandardMaterial({
       color: 0x181928,
-      roughness: 0.7,
-      metalness: 0.1
+      roughness: 0.65,
+      metalness: 0.2
+    });
+    const pantsMat = new THREE.MeshStandardMaterial({
+      color: 0x0c0d16,
+      roughness: 0.75,
+      metalness: 0.2
     });
     const skinMat = new THREE.MeshStandardMaterial({
       color: 0xdfb190,
@@ -259,75 +264,156 @@ export class DJCharacter {
     const headphoneMat = new THREE.MeshStandardMaterial({
       color: 0x00f0ff,
       emissive: 0x00f0ff,
-      emissiveIntensity: 0.6,
+      emissiveIntensity: 0.7,
       metalness: 0.8
     });
+    const shoeMat = new THREE.MeshStandardMaterial({
+      color: 0x141520,
+      roughness: 0.4,
+      metalness: 0.6
+    });
+    const cyanGlowMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
 
-    // Legs / Pants
-    const pantsMat = new THREE.MeshStandardMaterial({ color: 0x0a0b12, roughness: 0.8 });
-    const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, 0.9, 16), pantsMat);
-    legL.position.set(-0.22, 0.45, 0);
-    const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.1, 0.9, 16), pantsMat);
-    legR.position.set(0.22, 0.45, 0);
-    djGroup.add(legL, legR);
+    // ==========================================
+    // 1. PELVIS, LEGS & HIGH-TOP SNEAKERS
+    // ==========================================
+    const pelvis = new THREE.Group();
+    pelvis.position.set(0, 0.9, 0);
 
-    // Torso (Hoodie with slight groove sway)
+    const pelvisMesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.22, 0.32), pantsMat);
+    pelvisMesh.position.y = -0.06;
+    pelvis.add(pelvisMesh);
+
+    // Techwear Belt & Side Straps
+    const belt = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.05, 0.34), cyanGlowMat);
+    belt.position.y = 0.02;
+    pelvis.add(belt);
+
+    const buildDJLeg = (isLeft) => {
+      const side = isLeft ? -1 : 1;
+      const hip = new THREE.Group();
+      hip.position.set(side * 0.16, -0.12, 0);
+
+      // Thigh with Cargo Pocket
+      const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.08, 0.38, 14), pantsMat);
+      thigh.position.y = -0.18;
+      hip.add(thigh);
+
+      const cargoPocket = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.12, 0.1), pantsMat);
+      cargoPocket.position.set(side * 0.09, -0.18, 0);
+      hip.add(cargoPocket);
+
+      // Knee Joint
+      const knee = new THREE.Group();
+      knee.position.set(0, -0.38, 0);
+
+      const kneeBall = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), pantsMat);
+      knee.add(kneeBall);
+
+      // Shin / Calf
+      const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.065, 0.34, 14), pantsMat);
+      shin.position.y = -0.16;
+      knee.add(shin);
+
+      // High-Top DJ Kicks
+      const shoeGroup = new THREE.Group();
+      shoeGroup.position.set(0, -0.34, 0);
+
+      const shoeUpper = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.12, 0.25), shoeMat);
+      shoeUpper.position.set(0, 0.06, 0.04);
+
+      const shoeSole = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.035, 0.27), cyanGlowMat);
+      shoeSole.position.set(0, 0.018, 0.04);
+
+      shoeGroup.add(shoeUpper, shoeSole);
+      knee.add(shoeGroup);
+
+      hip.add(knee);
+      pelvis.add(hip);
+      return { hip, knee };
+    };
+
+    this.djLegL = buildDJLeg(true);
+    this.djLegR = buildDJLeg(false);
+    djGroup.add(pelvis);
+
+    // ==========================================
+    // 2. TORSO & OVERSIZED HOODIE
+    // ==========================================
     this.djTorso = new THREE.Group();
     this.djTorso.position.set(0, 0.9, 0);
 
-    const torsoMesh = new THREE.Mesh(new THREE.BoxGeometry(0.65, 0.75, 0.4), hoodieMat);
-    torsoMesh.position.y = 0.38;
+    const torsoMesh = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.78, 0.44), hoodieMat);
+    torsoMesh.position.y = 0.4;
     torsoMesh.castShadow = true;
     this.djTorso.add(torsoMesh);
 
-    // Glowing DJ Logo on hoodie chest
+    // Kangaroo Pouch Pocket
+    const pouch = new THREE.Mesh(new THREE.BoxGeometry(0.48, 0.22, 0.06), hoodieMat);
+    pouch.position.set(0, 0.26, 0.23);
+    this.djTorso.add(pouch);
+
+    // 3D Draped Hood Collar around neck
+    const hoodCollar = new THREE.Mesh(new THREE.TorusGeometry(0.22, 0.06, 12, 24), hoodieMat);
+    hoodCollar.position.set(0, 0.76, -0.04);
+    hoodCollar.rotation.x = Math.PI / 4;
+    this.djTorso.add(hoodCollar);
+
+    // Glowing DJ Waveform on chest
     const logoMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.25, 0.25),
-      new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.85 })
+      new THREE.PlaneGeometry(0.3, 0.2),
+      new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.9 })
     );
-    logoMesh.position.set(0, 0.45, 0.21);
+    logoMesh.position.set(0, 0.52, 0.23);
     this.djTorso.add(logoMesh);
 
-    // Head & Neck
+    // ==========================================
+    // 3. HEAD, JAWLINE, SNAPBACK & VISOR
+    // ==========================================
     this.djHead = new THREE.Group();
     this.djHead.position.set(0, 0.82, 0);
 
     // Neck
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.09, 0.15, 16), skinMat);
-    neck.position.y = 0.05;
+    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.09, 0.16, 16), skinMat);
+    neck.position.y = 0.06;
     this.djHead.add(neck);
 
-    // Head
-    const headGeo = new THREE.BoxGeometry(0.36, 0.4, 0.36);
-    const headMesh = new THREE.Mesh(headGeo, skinMat);
-    headMesh.position.y = 0.25;
-    this.djHead.add(headMesh);
+    // Cranium & Jaw
+    const cranium = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.32, 0.32), skinMat);
+    cranium.position.y = 0.26;
 
-    // DJ Cap (Turned backwards style)
+    const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.16, 0.26), skinMat);
+    jaw.position.set(0, 0.14, 0.04);
+
+    const nose = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.07, 0.06), skinMat);
+    nose.position.set(0, 0.24, 0.18);
+
+    this.djHead.add(cranium, jaw, nose);
+
+    // DJ Snapback Cap (Turned backwards)
     const capMat = new THREE.MeshStandardMaterial({ color: 0x00f0ff, roughness: 0.4 });
-    const capDome = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), capMat);
-    capDome.position.y = 0.4;
-    const capBrim = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.03, 0.2), capMat);
-    capBrim.position.set(0, 0.4, -0.22);
+    const capDome = new THREE.Mesh(new THREE.SphereGeometry(0.21, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), capMat);
+    capDome.position.y = 0.41;
+    const capBrim = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.03, 0.22), capMat);
+    capBrim.position.set(0, 0.41, -0.23);
     capBrim.rotation.x = -Math.PI / 16;
     this.djHead.add(capDome, capBrim);
 
-    // DJ Headphones around ears
-    const hpBand = new THREE.Mesh(new THREE.TorusGeometry(0.24, 0.025, 16, 32, Math.PI), headphoneMat);
-    hpBand.position.set(0, 0.38, 0);
+    // DJ Studio Monitoring Headphones
+    const hpBand = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.025, 16, 32, Math.PI), headphoneMat);
+    hpBand.position.set(0, 0.4, 0);
     hpBand.rotation.z = Math.PI;
     this.djHead.add(hpBand);
 
-    // Glowing Earcups
-    const earCupL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.05, 16), headphoneMat);
+    const earCupL = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.05, 16), headphoneMat);
     earCupL.rotation.z = Math.PI / 2;
-    earCupL.position.set(-0.21, 0.25, 0);
-    const earCupR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.05, 16), headphoneMat);
+    earCupL.position.set(-0.21, 0.26, 0);
+    const earCupR = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.05, 16), headphoneMat);
     earCupR.rotation.z = Math.PI / 2;
-    earCupR.position.set(0.21, 0.25, 0);
+    earCupR.position.set(0.21, 0.26, 0);
     this.djHead.add(earCupL, earCupR);
 
-    // Sleek Cyberpunk LED Visor Glasses for the DJ
+    // Cyberpunk Visor Shades
     const djGlassesGroup = new THREE.Group();
     djGlassesGroup.position.set(0, 0.27, 0.19);
 
@@ -353,7 +439,6 @@ export class DJCharacter {
     djGlassesGroup.add(frameTop, templeL, templeR);
 
     this.djHead.add(djGlassesGroup);
-
     this.djTorso.add(this.djHead);
 
     // 5. Left Arm (Scratching vinyl deck with articulated joints and DJ Glove)

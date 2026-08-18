@@ -223,45 +223,79 @@ export class BarArea {
     const pantsMat = new THREE.MeshStandardMaterial({ color: 0x0a0a10, roughness: 0.8 });
     const shakerMat = new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.95, roughness: 0.1 });
 
-    // Legs
-    const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.08, 0.9, 12), pantsMat);
-    legL.position.set(-0.16, 0.45, 0);
-    const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.08, 0.9, 12), pantsMat);
-    legR.position.set(0.16, 0.45, 0);
-    btGroup.add(legL, legR);
+    // 1. Tailored Trousers & Polished Dress Shoes
+    const shoeMat = new THREE.MeshStandardMaterial({ color: 0x07070a, roughness: 0.2, metalness: 0.8 });
+    const goldMat = new THREE.MeshStandardMaterial({ color: 0xffd700, roughness: 0.2, metalness: 0.9 });
 
-    // Torso (Shirt + Vest)
+    const buildBTLeg = (isLeft) => {
+      const side = isLeft ? -1 : 1;
+      const legGroup = new THREE.Group();
+      legGroup.position.set(side * 0.14, 0.9, 0);
+
+      // Thigh
+      const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.4, 14), pantsMat);
+      thigh.position.y = -0.2;
+      legGroup.add(thigh);
+
+      // Knee & Shin
+      const shin = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.38, 14), pantsMat);
+      shin.position.y = -0.56;
+      legGroup.add(shin);
+
+      // Polished Club Oxford Shoe
+      const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.08, 0.22), shoeMat);
+      shoe.position.set(0, -0.76, 0.04);
+      legGroup.add(shoe);
+
+      return legGroup;
+    };
+
+    btGroup.add(buildBTLeg(true), buildBTLeg(false));
+
+    // 2. Torso (Formal White Shirt + Tailored Vest + Gold Pocket Chain)
     const torso = new THREE.Group();
     torso.position.set(0, 0.9, 0);
 
-    const torsoMesh = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.72, 0.32), shirtMat);
-    torsoMesh.position.y = 0.36;
+    const torsoMesh = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.74, 0.32), shirtMat);
+    torsoMesh.position.y = 0.37;
     torso.add(torsoMesh);
 
-    // Black Vest on top
-    const vest = new THREE.Mesh(new THREE.BoxGeometry(0.56, 0.68, 0.33), vestMat);
-    vest.position.y = 0.34;
+    // Black Waistcoat / Vest
+    const vest = new THREE.Mesh(new THREE.BoxGeometry(0.58, 0.7, 0.33), vestMat);
+    vest.position.y = 0.35;
     torso.add(vest);
 
-    // Bowtie
-    const bowTie = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.04), bowTieMat);
-    bowTie.position.set(0, 0.68, 0.18);
-    torso.add(bowTie);
+    // Gold Pocket Watch Chain across vest
+    const chain = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.01, 8, 16, Math.PI), goldMat);
+    chain.position.set(0.1, 0.22, 0.18);
+    chain.rotation.z = -Math.PI / 6;
+    torso.add(chain);
 
-    // Head
+    // Shirt Collar & Red Bowtie
+    const collar = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.08, 0.2), shirtMat);
+    collar.position.set(0, 0.72, 0.05);
+    const bowTie = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.06, 0.04), bowTieMat);
+    bowTie.position.set(0, 0.7, 0.18);
+    torso.add(collar, bowTie);
+
+    // 3. Head & Groomed Hairstyle
     const headGroup = new THREE.Group();
     headGroup.position.set(0, 0.78, 0);
 
-    const head = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.34, 0.3), skinMat);
-    head.position.y = 0.18;
-    headGroup.add(head);
+    const cranium = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.28, 0.26), skinMat);
+    cranium.position.y = 0.18;
+    const jaw = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.14, 0.22), skinMat);
+    jaw.position.set(0, 0.08, 0.02);
+    const nose = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.06, 0.05), skinMat);
+    nose.position.set(0, 0.16, 0.14);
+    headGroup.add(cranium, jaw, nose);
 
-    // Sleek Hair
+    // Groomed Pompadour Hair
     const hair = new THREE.Mesh(
-      new THREE.BoxGeometry(0.32, 0.12, 0.32),
-      new THREE.MeshStandardMaterial({ color: 0x1f1510, roughness: 0.8 })
+      new THREE.BoxGeometry(0.31, 0.14, 0.3),
+      new THREE.MeshStandardMaterial({ color: 0x181008, roughness: 0.7 })
     );
-    hair.position.y = 0.32;
+    hair.position.set(0, 0.33, -0.01);
     headGroup.add(hair);
 
     // Stylish Club Sunglasses for Bartender
