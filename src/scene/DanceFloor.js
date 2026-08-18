@@ -143,6 +143,79 @@ export class DanceFloor {
     hair.position.y = 0.3;
     headGroup.add(hair);
 
+    // Stylish Club Sunglasses / Cyber Visors on every dancer
+    const dancerGlasses = new THREE.Group();
+    dancerGlasses.position.set(0, 0.18, 0.15);
+
+    const darkMat = new THREE.MeshStandardMaterial({
+      color: 0x05060a,
+      roughness: 0.15,
+      metalness: 0.9,
+      emissive: 0x100518,
+      emissiveIntensity: 0.3
+    });
+    const neonLensMat = new THREE.MeshStandardMaterial({
+      color: outfitColor,
+      emissive: outfitColor,
+      emissiveIntensity: 0.85,
+      roughness: 0.1,
+      metalness: 0.9,
+      transparent: true,
+      opacity: 0.9
+    });
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x11121a, roughness: 0.3, metalness: 0.9 });
+
+    const glassesStyle = seed % 4;
+
+    if (glassesStyle === 0) {
+      // 1. Cyberpunk Narrow Blade Shades (Matrix / Neo style)
+      const bladeL = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.045, 0.02), darkMat);
+      bladeL.position.x = -0.055;
+      const bladeR = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.045, 0.02), darkMat);
+      bladeR.position.x = 0.055;
+      const topBar = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.015, 0.03), frameMat);
+      topBar.position.y = 0.025;
+      const templeL = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.16), frameMat);
+      templeL.position.set(-0.13, 0.015, -0.07);
+      const templeR = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.16), frameMat);
+      templeR.position.set(0.13, 0.015, -0.07);
+      dancerGlasses.add(bladeL, bladeR, topBar, templeL, templeR);
+    } else if (glassesStyle === 1) {
+      // 2. Full Cyberpunk Glowing Visor Shield (Rave Visor)
+      const visor = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.075, 0.025), neonLensMat);
+      const visorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.018, 0.035), frameMat);
+      visorFrame.position.y = 0.04;
+      const templeL = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.16), frameMat);
+      templeL.position.set(-0.14, 0.02, -0.07);
+      const templeR = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.16), frameMat);
+      templeR.position.set(0.14, 0.02, -0.07);
+      dancerGlasses.add(visor, visorFrame, templeL, templeR);
+    } else if (glassesStyle === 2) {
+      // 3. Classic Dark Club Sunglasses (Ray-Ban Wayfarer style)
+      const lensL = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.065, 0.02), darkMat);
+      lensL.position.x = -0.055;
+      const lensR = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.065, 0.02), darkMat);
+      lensR.position.x = 0.055;
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.23, 0.02, 0.03), frameMat);
+      bridge.position.y = 0.035;
+      const templeL = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.16), frameMat);
+      templeL.position.set(-0.125, 0.02, -0.07);
+      const templeR = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.16), frameMat);
+      templeR.position.set(0.125, 0.02, -0.07);
+      dancerGlasses.add(lensL, lensR, bridge, templeL, templeR);
+    } else {
+      // 4. Futuristic Sport Wrap-around Sunglasses (90s Techno Rave)
+      const wrapLens = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.055, 16, 1, true, 0, Math.PI), neonLensMat);
+      wrapLens.rotation.x = Math.PI / 2;
+      wrapLens.rotation.z = Math.PI / 2;
+      wrapLens.scale.set(0.9, 1.1, 0.5);
+      const browBar = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.018, 0.03), frameMat);
+      browBar.position.y = 0.03;
+      dancerGlasses.add(wrapLens, browBar);
+    }
+
+    headGroup.add(dancerGlasses);
+
     torsoGroup.add(headGroup);
 
     // Left Arm

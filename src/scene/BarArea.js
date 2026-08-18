@@ -264,6 +264,41 @@ export class BarArea {
     hair.position.y = 0.32;
     headGroup.add(hair);
 
+    // Stylish Club Sunglasses for Bartender
+    const glasses = new THREE.Group();
+    glasses.position.set(0, 0.20, 0.16);
+
+    const darkLensMat = new THREE.MeshStandardMaterial({
+      color: 0x050508,
+      roughness: 0.1,
+      metalness: 0.95,
+      emissive: 0x1a0525,
+      emissiveIntensity: 0.4
+    });
+    const goldFrameMat = new THREE.MeshStandardMaterial({
+      color: 0xffd700,
+      roughness: 0.2,
+      metalness: 0.9
+    });
+
+    // Left & Right Lenses
+    const lensL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.07, 0.02), darkLensMat);
+    lensL.position.x = -0.065;
+    const lensR = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.07, 0.02), darkLensMat);
+    lensR.position.x = 0.065;
+    glasses.add(lensL, lensR);
+
+    // Frame Bridge & Browline
+    const bridge = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.02, 0.03), goldFrameMat);
+    bridge.position.y = 0.035;
+    const templeL = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.18), goldFrameMat);
+    templeL.position.set(-0.14, 0.02, -0.08);
+    const templeR = new THREE.Mesh(new THREE.BoxGeometry(0.015, 0.015, 0.18), goldFrameMat);
+    templeR.position.set(0.14, 0.02, -0.08);
+    glasses.add(bridge, templeL, templeR);
+
+    headGroup.add(glasses);
+
     torso.add(headGroup);
 
     // Left & Right Arms holding Cocktail Shaker

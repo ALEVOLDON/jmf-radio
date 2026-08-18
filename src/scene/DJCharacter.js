@@ -327,6 +327,33 @@ export class DJCharacter {
     earCupR.position.set(0.21, 0.25, 0);
     this.djHead.add(earCupL, earCupR);
 
+    // Sleek Cyberpunk LED Visor Glasses for the DJ
+    const djGlassesGroup = new THREE.Group();
+    djGlassesGroup.position.set(0, 0.27, 0.19);
+
+    const visorMat = new THREE.MeshStandardMaterial({
+      color: 0x00f0ff,
+      emissive: 0x00f0ff,
+      emissiveIntensity: 0.9,
+      roughness: 0.1,
+      metalness: 0.9,
+      transparent: true,
+      opacity: 0.92
+    });
+    const visorLens = new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.09, 0.03), visorMat);
+    djGlassesGroup.add(visorLens);
+
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x080910, roughness: 0.2, metalness: 0.95 });
+    const frameTop = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.025, 0.04), frameMat);
+    frameTop.position.set(0, 0.05, 0);
+    const templeL = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.2), frameMat);
+    templeL.position.set(-0.18, 0.02, -0.09);
+    const templeR = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.02, 0.2), frameMat);
+    templeR.position.set(0.18, 0.02, -0.09);
+    djGlassesGroup.add(frameTop, templeL, templeR);
+
+    this.djHead.add(djGlassesGroup);
+
     this.djTorso.add(this.djHead);
 
     // Left Arm (Scratching vinyl deck)
