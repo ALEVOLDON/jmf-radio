@@ -583,6 +583,66 @@ export class UIController {
         }
       });
     });
+
+    // ========================================================
+    // 🎛️ HOT CUES & PERFORMANCE PADS
+    // ========================================================
+    for (let i = 1; i <= 4; i++) {
+      const padA = document.getElementById(`deck-a-pad-${i}`);
+      if (padA) {
+        padA.addEventListener('click', (e) => {
+          const res = this.audioEngine.triggerHotCue('A', i - 1, e.shiftKey);
+          if (res) {
+            padA.classList.add('active');
+            padA.style.transform = 'scale(0.92)';
+            setTimeout(() => { padA.style.transform = ''; }, 120);
+          }
+        });
+      }
+
+      const padB = document.getElementById(`deck-b-pad-${i}`);
+      if (padB) {
+        padB.addEventListener('click', (e) => {
+          const res = this.audioEngine.triggerHotCue('B', i - 1, e.shiftKey);
+          if (res) {
+            padB.classList.add('active');
+            padB.style.transform = 'scale(0.92)';
+            setTimeout(() => { padB.style.transform = ''; }, 120);
+          }
+        });
+      }
+    }
+
+    // Auto DJ toggle button
+    const btnAutoDj = document.getElementById('btn-auto-dj');
+    if (btnAutoDj) {
+      btnAutoDj.addEventListener('click', () => {
+        const enabled = this.audioEngine.toggleAutoDj();
+        btnAutoDj.classList.toggle('active', enabled);
+      });
+    }
+
+    // Global Keyboard Shortcuts (Space: Play/Pause, Escape: Close Modals)
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+        return;
+      }
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        const isPlaying = this.audioEngine.togglePlay();
+        this.updatePlayState(isPlaying);
+      } else if (e.code === 'Escape') {
+        if (this.queueDrawer) this.queueDrawer.classList.add('hidden');
+        if (this.lightingModal) this.lightingModal.classList.add('hidden');
+        const genreModal = document.getElementById('genre-modal');
+        if (genreModal) genreModal.classList.add('hidden');
+        const mDrawer = document.getElementById('mobile-menu-drawer');
+        const mBackdrop = document.getElementById('mobile-menu-backdrop');
+        if (mDrawer) mDrawer.classList.add('hidden');
+        if (mBackdrop) mBackdrop.classList.add('hidden');
+      }
+    });
   }
 
 

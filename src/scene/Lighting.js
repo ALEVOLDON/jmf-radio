@@ -159,8 +159,8 @@ export class Lighting {
 
   setLasersEnabled(enabled) {
     this.lasersEnabled = enabled;
-    if (this.danceFloorSpot) {
-      this.danceFloorSpot.visible = enabled;
+    if (this.laserGroup) {
+      this.laserGroup.visible = enabled;
     }
   }
 

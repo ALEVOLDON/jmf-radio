@@ -81,6 +81,11 @@ export class AudioEngine {
 
     this.prevBass = 0;
     this.isTransitionTriggered = false;
+    this.autoDjEnabled = true;
+    this.hotCues = {
+      A: [null, null, null, null],
+      B: [null, null, null, null]
+    };
 
     this.setupAudioListeners();
   }
@@ -445,6 +450,31 @@ export class AudioEngine {
     this.setEQ('B', 'high', target.high);
   }
 
+  toggleAutoDj() {
+    this.autoDjEnabled = !this.autoDjEnabled;
+    return this.autoDjEnabled;
+  }
+
+  triggerHotCue(deck, padIndex, forceSet = false) {
+    const audio = deck === 'A' ? this.audioA : this.audioB;
+    if (!audio) return null;
+
+    const currentCue = this.hotCues[deck][padIndex];
+    if (currentCue === null || forceSet) {
+      this.hotCues[deck][padIndex] = audio.currentTime || 0;
+      return { action: 'set', time: this.hotCues[deck][padIndex] };
+    } else {
+      audio.currentTime = currentCue;
+      if (audio.paused) {
+        audio.play().then(() => {
+          this.deckStates[deck].isPlaying = true;
+          this.isPlaying = true;
+        }).catch(() => {});
+      }
+      return { action: 'jump', time: currentCue };
+    }
+  }
+
   toggleLoop(deck, beats) {
     const audio = deck === 'A' ? this.audioA : this.audioB;
     const state = this.deckStates[deck];
@@ -546,6 +576,24 @@ export class AudioEngine {
       await this.fetchStatus();
     } catch (err) {
       console.warn('Error setting genre:', err);
+    }
+  }
+
+  async fetchStatus() {
+    try {
+      const res = await fetch('/api/track');
+      const data = await res.json();
+      if (data && data.track) {
+        this.currentTrack = data.track;
+        this.queue = data.queue || [];
+        this.totalTracks = data.totalTracks || 0;
+        this.nextTrack = this.queue[0] || null;
+        if (this.onTrackChange) {
+          this.onTrackChange(this.currentTrack, this.queue, this.totalTracks);
+        }
+      }
+    } catch (err) {
+      console.warn('Error fetching status:', err);
     }
   }
 
@@ -665,8 +713,8 @@ export class AudioEngine {
 
     const remaining = this.duration - this.elapsedTime;
 
-    // Auto DJ Crossfade Trigger (starts 8s before end)
-    if (this.mixMode === 'dj' && remaining <= this.crossfadeDuration && !this.isTransitionTriggered && this.elapsedTime > 5) {
+    // Auto DJ Crossfade Trigger (starts 8s before end if autoDjEnabled)
+    if (this.autoDjEnabled && this.mixMode === 'dj' && remaining <= this.crossfadeDuration && !this.isTransitionTriggered && this.elapsedTime > 5) {
       this.isTransitionTriggered = true;
       this.triggerDJCrossfade();
     }

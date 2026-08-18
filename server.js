@@ -8,6 +8,24 @@ import * as musicMetadata from 'music-metadata';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Zero-dependency .env loader
+const envFile = path.join(__dirname, '.env');
+if (fs.existsSync(envFile)) {
+  const envContent = fs.readFileSync(envFile, 'utf-8');
+  for (const line of envContent.split('\n')) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith('#')) continue;
+    const eqIdx = trimmed.indexOf('=');
+    if (eqIdx !== -1) {
+      const key = trimmed.slice(0, eqIdx).trim();
+      const val = trimmed.slice(eqIdx + 1).trim().replace(/^["'](.*)["']$/, '$1');
+      if (process.env[key] === undefined) {
+        process.env[key] = val;
+      }
+    }
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const MUSIC_DIR = process.env.MUSIC_DIR || 'D:\\Soundcloud';
@@ -105,6 +123,8 @@ let currentIndex = 0;
 let trackStartTime = Date.now();
 let trackDuration = 180;
 let isRadioRunning = false;
+let advancementTimer = null;
+let saveCacheDebounce = null;
 let history = [];
 
 // Helper: Format fallback title/artist from filename
@@ -213,6 +233,11 @@ function saveGenreCache() {
   }
 }
 
+function requestCacheSave() {
+  if (saveCacheDebounce) clearTimeout(saveCacheDebounce);
+  saveCacheDebounce = setTimeout(saveGenreCache, 1500);
+}
+
 // Extract metadata with strict timeout and fallback
 async function getTrackMetadata(filePath, id) {
   const fallback = parseFilename(path.basename(filePath));
@@ -245,8 +270,8 @@ async function getTrackMetadata(filePath, id) {
     return meta;
   }
 
-  const parsePromise = musicMetadata.parseFile(filePath, { duration: false, skipCovers: true });
-  const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 400));
+  const parsePromise = musicMetadata.parseFile(filePath, { duration: false, skipCovers: false });
+  const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 500));
 
   try {
     const mm = await Promise.race([parsePromise, timeoutPromise]);
@@ -257,6 +282,7 @@ async function getTrackMetadata(filePath, id) {
     if (mm.common.bpm) meta.bpm = Math.round(mm.common.bpm * 10) / 10;
     if (mm.format.duration) meta.duration = Math.round(mm.format.duration * 10) / 10;
     if (mm.format.bitrate) meta.bitrate = Math.round(mm.format.bitrate / 1000);
+    if (mm.common.picture && mm.common.picture.length > 0) meta.hasCover = true;
   } catch (err) {}
 
   // Smart Genre Assignment
@@ -311,14 +337,15 @@ async function initRadio() {
   }
 
   // Save cache asynchronously
-  setTimeout(saveGenreCache, 2000);
+  requestCacheSave();
 
   currentIndex = 0;
   await playTrack(currentIndex);
   isRadioRunning = true;
 
-  // Auto-advance check
-  setInterval(checkTrackAdvancement, 1000);
+  // Single advancement timer lifecycle
+  if (advancementTimer) clearInterval(advancementTimer);
+  advancementTimer = setInterval(checkTrackAdvancement, 1000);
 }
 
 // Filter playlist by active genre
