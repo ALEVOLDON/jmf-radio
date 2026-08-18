@@ -33,8 +33,8 @@ export const CAMERA_PRESETS = {
     target: new THREE.Vector3(0, 1.1, -0.2)
   },
   top: {
-    position: new THREE.Vector3(0, 11.2, 2.4),
-    target: new THREE.Vector3(0, 0.0, 2.4)
+    position: new THREE.Vector3(0, 7.5, 8.5),
+    target: new THREE.Vector3(0, 1.0, 2.5)
   },
   room: {
     position: new THREE.Vector3(7.5, 4.8, 9.5),
@@ -161,13 +161,13 @@ export class DJScene {
 
     // 1. Camera interpolation, cinematic orbit, or 360° top-down perimeter flyover
     if (this.isTopOrbit) {
-      this.topAngle += 0.0028;
-      const radiusX = 9.4;
-      const radiusZ = 8.6;
+      this.topAngle += 0.0025;
+      const radiusX = 7.5;
+      const radiusZ = 6.5;
       this.camera.position.x = Math.cos(this.topAngle) * radiusX;
       this.camera.position.z = 2.5 + Math.sin(this.topAngle) * radiusZ;
-      this.camera.position.y = 10.4 + Math.sin(this.topAngle * 2.0) * 0.4;
-      this.controls.target.set(0, 0.8, 2.5);
+      this.camera.position.y = 7.2 + Math.sin(this.topAngle * 2.0) * 0.3;
+      this.controls.target.set(0, 1.0, 2.5);
     } else if (this.isCinematicOrbit) {
       this.cinematicAngle += 0.0025;
       const radius = 8.5;
