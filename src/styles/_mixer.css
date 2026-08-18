@@ -78,15 +78,47 @@
 }
 
 .vertical-ch-fader {
+  -webkit-appearance: none;
+  appearance: none;
   writing-mode: vertical-lr;
   direction: rtl;
-  width: 14px;
-  height: 56px;
-  cursor: pointer;
+  width: 18px;
+  height: 58px;
+  background: linear-gradient(90deg, #05060b 0%, #0e121d 50%, #05060b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  outline: none;
+  cursor: grab;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.9), 0 1px 2px rgba(255, 255, 255, 0.05);
 }
 
-.fader-cyan-cap { accent-color: var(--deck-a-cyan); }
-.fader-magenta-cap { accent-color: var(--deck-b-pink); }
+.vertical-ch-fader:active {
+  cursor: grabbing;
+}
+
+.vertical-ch-fader::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 12px;
+  background: linear-gradient(180deg, #444d6a 0%, #1e2333 50%, #10131e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  box-shadow: 
+    0 3px 6px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  cursor: grab;
+}
+
+.vertical-ch-fader.fader-cyan-cap::-webkit-slider-thumb {
+  border-left: 3.5px solid #00f0ff;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0, 240, 255, 0.5);
+}
+
+.vertical-ch-fader.fader-magenta-cap::-webkit-slider-thumb {
+  border-left: 3.5px solid #ff007f;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 0, 127, 0.5);
+}
 
 /* Center Strip */
 .mixer-center-strip {
@@ -258,79 +290,171 @@
 
 .cf-slider-cap {
   position: absolute;
-  top: -3px;
+  top: -4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 12px;
-  height: 16px;
-  background: linear-gradient(180deg, #ffffff 0%, #a2a6b8 100%);
-  border-radius: 2px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  width: 16px;
+  height: 18px;
+  background: linear-gradient(180deg, #4a5472 0%, #202538 50%, #111420 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  box-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
   cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cf-slider-cap::after {
+  content: '';
+  width: 2px;
+  height: 10px;
+  background: #00f0ff;
+  border-radius: 1px;
+  box-shadow: 0 0 6px #00f0ff;
 }
 
 /* ======================================================== */
-/* 🎛️ CIRCULAR ROTARY DJ KNOBS / DIALS */
+/* 🎛️ PRO PIONEER ROTARY POTENTIOMETER DJ KNOBS */
 /* ======================================================== */
 .rotary-knob-component {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
   cursor: ns-resize;
+  user-select: none;
 }
 
 .knob-dial {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: radial-gradient(circle, #25293d 0%, #0d0f17 80%);
-  border: 1.2px solid #363b52;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  background: 
+    radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.15) 0%, transparent 60%),
+    conic-gradient(from 0deg, #1c2030 0deg, #0e111a 90deg, #24293e 180deg, #0e111a 270deg, #1c2030 360deg);
+  border: 1.5px solid #2d334a;
+  box-shadow: 
+    0 3px 6px rgba(0, 0, 0, 0.8),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.knob-dial.dial-large { width: 26px; height: 26px; border-color: rgba(255, 0, 127, 0.4); }
-.knob-dial.dial-master { width: 24px; height: 24px; border-color: rgba(0, 240, 255, 0.4); }
-.knob-dial.dial-compact { width: 18px; height: 18px; }
-.knob-dial.dial-mini { width: 16px; height: 16px; }
-
-.rotary-knob-component:hover .knob-dial, .rotary-knob-component.is-dragging .knob-dial {
-  border-color: var(--deck-a-cyan);
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.4);
+/* Metallic Knurled Rim Effect via pseudo-element */
+.knob-dial::before {
+  content: '';
+  position: absolute;
+  inset: 1.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #2a3048 0%, #121522 75%, #080a12 100%);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.15), 0 1px 2px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
 }
 
+/* Center Metallic Cap */
 .knob-cap {
   width: 100%;
   height: 100%;
   border-radius: 50%;
   position: relative;
+  z-index: 1;
   transform: rotate(0deg);
   transition: transform 0.04s linear;
 }
 
-.knob-pointer {
+/* Micro center rivet dot */
+.knob-cap::after {
+  content: '';
   position: absolute;
-  top: 1.5px;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
-  width: 1.5px;
-  height: 5px;
-  background: #ffffff;
-  border-radius: 1px;
+  transform: translate(-50%, -50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #3d4663 0%, #151824 100%);
+  box-shadow: inset 0 0.5px 1px rgba(255, 255, 255, 0.4), 0 1px 2px rgba(0, 0, 0, 0.9);
 }
 
-.pointer-cyan { background: var(--deck-a-cyan); box-shadow: 0 0 4px var(--deck-a-cyan); }
-.pointer-pink { background: var(--deck-b-pink); box-shadow: 0 0 4px var(--deck-b-pink); }
-.pointer-gold { background: #ffd000; box-shadow: 0 0 4px #ffd000; }
+/* Stylized Glowing Pointer Needle */
+.knob-pointer {
+  position: absolute;
+  top: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2.5px;
+  height: 6.5px;
+  background: #ffffff;
+  border-radius: 2px;
+  box-shadow: 0 0 4px #ffffff, 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.pointer-cyan { 
+  background: #00f0ff; 
+  box-shadow: 0 0 6px #00f0ff, 0 0 10px rgba(0, 240, 255, 0.6); 
+}
+
+.pointer-pink { 
+  background: #ff007f; 
+  box-shadow: 0 0 6px #ff007f, 0 0 10px rgba(255, 0, 127, 0.6); 
+}
+
+.pointer-gold { 
+  background: #ffd700; 
+  box-shadow: 0 0 6px #ffd700, 0 0 10px rgba(255, 215, 0, 0.6); 
+}
+
+/* Dial Sizes */
+.knob-dial.dial-large { 
+  width: 28px; 
+  height: 28px; 
+  border-color: rgba(255, 0, 127, 0.4); 
+}
+.knob-dial.dial-large .knob-pointer {
+  height: 8px;
+  width: 3px;
+}
+
+.knob-dial.dial-master { 
+  width: 26px; 
+  height: 26px; 
+  border-color: rgba(0, 240, 255, 0.4); 
+}
+.knob-dial.dial-master .knob-pointer {
+  height: 7.5px;
+  width: 2.5px;
+}
+
+.knob-dial.dial-compact { width: 20px; height: 20px; }
+.knob-dial.dial-compact .knob-pointer { height: 5.5px; width: 2px; }
+
+.knob-dial.dial-mini { width: 17px; height: 17px; }
+.knob-dial.dial-mini .knob-pointer { height: 4.5px; width: 1.5px; }
+
+/* Interactive Hover & Drag Glow */
+.rotary-knob-component:hover .knob-dial, 
+.rotary-knob-component.is-dragging .knob-dial {
+  border-color: #00f0ff;
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.9),
+    0 0 10px rgba(0, 240, 255, 0.5),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
 
 .knob-label {
-  font-size: 5.5px;
+  font-family: var(--font-display);
+  font-size: 6px;
   font-weight: 800;
-  color: var(--text-muted);
+  color: #8c97ad;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 /* ======================================================== */
