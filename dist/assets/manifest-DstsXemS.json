@@ -1,0 +1,41 @@
+{
+  "name": "JMF Radio",
+  "short_name": "JMF Radio",
+  "description": "24/7 live DJ radio station with immersive 3D virtual club",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#05060b",
+  "theme_color": "#00f0ff",
+  "orientation": "landscape-primary",
+  "icons": [
+    {
+      "src": "/public/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/public/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["music", "entertainment"],
+  "shortcuts": [
+    {
+      "name": "Radio Mode",
+      "short_name": "Radio",
+      "description": "Open in minimal radio player mode",
+      "url": "/?mode=radio",
+      "icons": [{ "src": "/public/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "DJ Mode",
+      "short_name": "DJ",
+      "description": "Open in full DJ workstation mode",
+      "url": "/?mode=dj",
+      "icons": [{ "src": "/public/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

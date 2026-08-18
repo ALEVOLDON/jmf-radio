@@ -332,3 +332,126 @@
   font-weight: 800;
   color: var(--text-muted);
 }
+
+/* ======================================================== */
+/* 🎚️ BOTTOM MASTER UTILITY & HEADPHONES BAR */
+/* ======================================================== */
+.bottom-utility-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #040509;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 4px 10px;
+  margin-top: 4px;
+  gap: 8px;
+  width: 100%;
+}
+
+.util-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.util-headphones-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.util-icon { font-size: 11px; }
+
+.util-title {
+  font-family: var(--font-display);
+  font-size: 7px;
+  font-weight: 900;
+  color: var(--text-muted);
+}
+
+.hp-vu-meter-horiz {
+  width: 60px;
+  height: 5px;
+  background: #0a0c16;
+  border-radius: 2px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.meter-bar-fill {
+  height: 100%;
+  background: var(--deck-a-cyan);
+  box-shadow: 0 0 4px var(--deck-a-cyan);
+}
+
+.btn-util-pill {
+  background: #0f121e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 7.5px;
+  font-weight: 900;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-util-pill.active {
+  background: #18223c;
+  border-color: var(--deck-a-cyan);
+  color: var(--deck-a-cyan);
+}
+
+.rec-dot {
+  width: 5px;
+  height: 5px;
+  background: #ff0044;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #ff0044;
+}
+
+.master-vol-horiz-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.master-vol-labels {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-size: 5.5px;
+  font-weight: 900;
+  color: var(--text-muted);
+}
+
+.master-horiz-vu {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+  width: 70px;
+}
+
+.horiz-vu-bar {
+  height: 3px;
+  background: linear-gradient(90deg, #00ff88 0%, #ffd000 70%, #ff0044 100%);
+  border-radius: 1.5px;
+  box-shadow: 0 0 4px #00ff88;
+}
+
+.btn-util-settings {
+  background: #0f121e;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 7.5px;
+  font-weight: 900;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
