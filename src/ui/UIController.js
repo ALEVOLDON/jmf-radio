@@ -877,133 +877,126 @@ export class UIController {
     }
 
     // ========================================================
-    // 🎛️ CYBERPUNK CUSTOM PICKER (ACTION SHEET / DROPDOWN)
+    // 🎛️ HARDWARE CONSOLE COMPACT POPOVERS (RADIO EQ & DECK FX)
     // ========================================================
-    const cyberPickerModal = document.getElementById('cyber-picker-modal');
-    const cyberPickerTitle = document.getElementById('cyber-picker-title');
-    const cyberPickerDot = document.getElementById('cyber-picker-dot');
-    const cyberPickerList = document.getElementById('cyber-picker-list');
-    const btnCyberPickerClose = document.getElementById('btn-cyber-picker-close');
+    const btnRadioEqToggle = document.getElementById('btn-radio-eq-toggle');
+    const radioEqPopover = document.getElementById('radio-eq-popover');
+    const radioEqVal = document.getElementById('radio-eq-val');
+    const radioEqOpts = document.querySelectorAll('#radio-eq-popover .popover-opt');
+    const mEqChips = document.querySelectorAll('#m-eq-chips-group .m-genre-chip');
 
-    const pickerConfigs = {
-      eq: {
-        title: '🎚️ SELECT EQUALIZER PRESET',
-        color: '#00f0ff',
-        options: [
-          { val: 'flat', icon: '🎚️', name: 'FLAT', desc: 'Balanced studio frequency response (Default)' },
-          { val: 'bass', icon: '🔊', name: 'BASS BOOST', desc: 'Deep low-end sub-bass & kick enhancement' },
-          { val: 'club', icon: '💥', name: 'CLUB PUNCH', desc: 'Enhanced punchy bass & crisp club highs' },
-          { val: 'vocal', icon: '🎤', name: 'VOCAL CLARITY', desc: 'Elevated mid-range for clear vocals' },
-          { val: 'electronic', icon: '⚡', name: 'ELECTRONIC DANCE', desc: 'Dynamic wide-spectrum electronic mastering' }
-        ],
-        getCurrent: () => this.audioEngine.currentEQPreset || 'flat',
-        onSelect: (val, opt) => {
-          this.audioEngine.setEQPreset(val);
-          const radioEqVal = document.getElementById('radio-eq-val');
-          const mEqVal = document.getElementById('m-eq-val');
-          if (radioEqVal) radioEqVal.textContent = `EQ: ${opt.name}`;
-          if (mEqVal) mEqVal.textContent = opt.name === 'FLAT' ? 'FLAT (Default)' : opt.name;
-        }
-      },
-      'fx-a': {
-        title: '⚡ DECK A EFFECTS',
-        color: '#00f0ff',
-        options: [
-          { val: 'filter', icon: '🎛️', name: 'FILTER', desc: 'Bi-directional resonant LPF / HPF sweep' },
-          { val: 'echo', icon: '🔁', name: 'ECHO', desc: 'Beat-synchronized delay with feedback' },
-          { val: 'reverb', icon: '🌌', name: 'REVERB', desc: 'Spatial nightclub reverberation' },
-          { val: 'flanger', icon: '🌊', name: 'FLANGER', desc: 'Sweeping harmonic comb modulation' }
-        ],
-        getCurrent: () => this.audioEngine.fxStates?.A?.type || 'filter',
-        onSelect: (val, opt) => {
-          this.audioEngine.setFXType('A', val);
-          const el = document.getElementById('deck-a-fx-val');
-          if (el) el.textContent = opt.name;
-        }
-      },
-      'fx-b': {
-        title: '⚡ DECK B EFFECTS',
-        color: '#ff007f',
-        options: [
-          { val: 'filter', icon: '🎛️', name: 'FILTER', desc: 'Bi-directional resonant LPF / HPF sweep' },
-          { val: 'echo', icon: '🔁', name: 'ECHO', desc: 'Beat-synchronized delay with feedback' },
-          { val: 'reverb', icon: '🌌', name: 'REVERB', desc: 'Spatial nightclub reverberation' },
-          { val: 'flanger', icon: '🌊', name: 'FLANGER', desc: 'Sweeping harmonic comb modulation' }
-        ],
-        getCurrent: () => this.audioEngine.fxStates?.B?.type || 'filter',
-        onSelect: (val, opt) => {
-          this.audioEngine.setFXType('B', val);
-          const el = document.getElementById('deck-b-fx-val');
-          if (el) el.textContent = opt.name;
-        }
-      }
+    const btnDeckAFxToggle = document.getElementById('btn-deck-a-fx-toggle');
+    const deckAFxPopover = document.getElementById('deck-a-fx-popover');
+    const deckAFxVal = document.getElementById('deck-a-fx-val');
+    const deckAFxOpts = document.querySelectorAll('#deck-a-fx-popover .popover-opt');
+
+    const btnDeckBFxToggle = document.getElementById('btn-deck-b-fx-toggle');
+    const deckBFxPopover = document.getElementById('deck-b-fx-popover');
+    const deckBFxVal = document.getElementById('deck-b-fx-val');
+    const deckBFxOpts = document.querySelectorAll('#deck-b-fx-popover .popover-opt');
+
+    const updateActiveEQ = (eqPreset) => {
+      this.audioEngine.setEQPreset(eqPreset);
+      const names = {
+        flat: 'FLAT',
+        bass: 'BASS BOOST',
+        club: 'CLUB PUNCH',
+        vocal: 'VOCAL',
+        electronic: 'ELECTRONIC'
+      };
+      if (radioEqVal) radioEqVal.textContent = `EQ: ${names[eqPreset] || eqPreset.toUpperCase()}`;
+      radioEqOpts.forEach(opt => {
+        opt.classList.toggle('active', opt.getAttribute('data-eq') === eqPreset);
+      });
+      mEqChips.forEach(chip => {
+        chip.classList.toggle('active', chip.getAttribute('data-eq') === eqPreset);
+      });
     };
 
-    const openCyberPicker = (type) => {
-      const config = pickerConfigs[type];
-      if (!config || !cyberPickerModal || !cyberPickerList) return;
+    // 1. Radio Console Master EQ Popover
+    if (btnRadioEqToggle && radioEqPopover) {
+      btnRadioEqToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = radioEqPopover.classList.contains('hidden');
+        if (deckAFxPopover) deckAFxPopover.classList.add('hidden');
+        if (deckBFxPopover) deckBFxPopover.classList.add('hidden');
+        radioEqPopover.classList.toggle('hidden', !isHidden);
+      });
 
-      if (cyberPickerTitle) cyberPickerTitle.textContent = config.title;
-      if (cyberPickerDot) {
-        cyberPickerDot.style.background = config.color;
-        cyberPickerDot.style.boxShadow = `0 0 8px ${config.color}`;
-      }
-
-      const currentVal = config.getCurrent();
-      cyberPickerList.innerHTML = '';
-
-      config.options.forEach(opt => {
-        const item = document.createElement('button');
-        item.type = 'button';
-        const isActive = opt.val === currentVal;
-        const activeClass = config.color === '#ff007f' ? 'active-pink' : 'active';
-        item.className = `cyber-picker-item ${isActive ? activeClass : ''}`;
-        item.setAttribute('data-val', opt.val);
-
-        item.innerHTML = `
-          <span class="cyber-picker-icon">${opt.icon}</span>
-          <div class="cyber-picker-meta">
-            <span class="cyber-picker-name">${opt.name}</span>
-            <span class="cyber-picker-desc">${opt.desc}</span>
-          </div>
-          <span class="cyber-picker-indicator"></span>
-        `;
-
-        item.addEventListener('click', () => {
-          config.onSelect(opt.val, opt);
-          cyberPickerModal.classList.add('hidden');
+      radioEqOpts.forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const preset = opt.getAttribute('data-eq');
+          updateActiveEQ(preset);
+          radioEqPopover.classList.add('hidden');
         });
-
-        cyberPickerList.appendChild(item);
-      });
-
-      cyberPickerModal.classList.remove('hidden');
-    };
-
-    const btnRadioEqPicker = document.getElementById('btn-radio-eq-picker');
-    const btnDeckAFxPicker = document.getElementById('btn-deck-a-fx-picker');
-    const btnDeckBFxPicker = document.getElementById('btn-deck-b-fx-picker');
-    const mBtnEqPicker = document.getElementById('m-btn-eq-picker');
-
-    if (btnRadioEqPicker) btnRadioEqPicker.addEventListener('click', () => openCyberPicker('eq'));
-    if (btnDeckAFxPicker) btnDeckAFxPicker.addEventListener('click', () => openCyberPicker('fx-a'));
-    if (btnDeckBFxPicker) btnDeckBFxPicker.addEventListener('click', () => openCyberPicker('fx-b'));
-    if (mBtnEqPicker) {
-      mBtnEqPicker.addEventListener('click', () => {
-        const mDrawer = document.getElementById('mobile-menu-drawer');
-        const mBackdrop = document.getElementById('mobile-menu-backdrop');
-        if (mDrawer) mDrawer.classList.add('hidden');
-        if (mBackdrop) mBackdrop.classList.add('hidden');
-        openCyberPicker('eq');
       });
     }
 
-    if (btnCyberPickerClose && cyberPickerModal) {
-      btnCyberPickerClose.addEventListener('click', () => cyberPickerModal.classList.add('hidden'));
-      cyberPickerModal.addEventListener('click', (e) => {
-        if (e.target === cyberPickerModal) cyberPickerModal.classList.add('hidden');
+    // Sync Mobile Drawer EQ Chips
+    mEqChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const preset = chip.getAttribute('data-eq');
+        updateActiveEQ(preset);
+      });
+    });
+
+    // 2. Deck A Hardware FX Popover
+    if (btnDeckAFxToggle && deckAFxPopover) {
+      btnDeckAFxToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = deckAFxPopover.classList.contains('hidden');
+        if (radioEqPopover) radioEqPopover.classList.add('hidden');
+        if (deckBFxPopover) deckBFxPopover.classList.add('hidden');
+        deckAFxPopover.classList.toggle('hidden', !isHidden);
+      });
+
+      deckAFxOpts.forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const fxType = opt.getAttribute('data-fx');
+          this.audioEngine.setFXType('A', fxType);
+          if (deckAFxVal) deckAFxVal.textContent = fxType.toUpperCase();
+          deckAFxOpts.forEach(o => o.classList.toggle('active', o === opt));
+          deckAFxPopover.classList.add('hidden');
+        });
       });
     }
+
+    // 3. Deck B Hardware FX Popover
+    if (btnDeckBFxToggle && deckBFxPopover) {
+      btnDeckBFxToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isHidden = deckBFxPopover.classList.contains('hidden');
+        if (radioEqPopover) radioEqPopover.classList.add('hidden');
+        if (deckAFxPopover) deckAFxPopover.classList.add('hidden');
+        deckBFxPopover.classList.toggle('hidden', !isHidden);
+      });
+
+      deckBFxOpts.forEach(opt => {
+        opt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const fxType = opt.getAttribute('data-fx');
+          this.audioEngine.setFXType('B', fxType);
+          if (deckBFxVal) deckBFxVal.textContent = fxType.toUpperCase();
+          deckBFxOpts.forEach(o => o.classList.toggle('active', o === opt));
+          deckBFxPopover.classList.add('hidden');
+        });
+      });
+    }
+
+    // Close all popovers when clicking anywhere outside
+    document.addEventListener('click', (e) => {
+      if (radioEqPopover && !radioEqPopover.contains(e.target) && !btnRadioEqToggle?.contains(e.target)) {
+        radioEqPopover.classList.add('hidden');
+      }
+      if (deckAFxPopover && !deckAFxPopover.contains(e.target) && !btnDeckAFxToggle?.contains(e.target)) {
+        deckAFxPopover.classList.add('hidden');
+      }
+      if (deckBFxPopover && !deckBFxPopover.contains(e.target) && !btnDeckBFxToggle?.contains(e.target)) {
+        deckBFxPopover.classList.add('hidden');
+      }
+    });
   }
 
 

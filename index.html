@@ -302,10 +302,16 @@
         <div class="deck-fx-strip">
           <div class="fx-header-left">
             <span class="fx-label cyan-text">EFFECTS</span>
-            <button type="button" class="fx-picker-btn" id="btn-deck-a-fx-picker" title="Select Deck A FX">
+            <button type="button" class="fx-picker-btn" id="btn-deck-a-fx-toggle" title="Select Deck A FX">
               <span id="deck-a-fx-val">FILTER</span>
-              <span class="fx-chevron">⌵</span>
+              <span class="fx-chevron" id="deck-a-fx-chevron">▲</span>
             </button>
+            <div class="console-popover-menu popover-cyan hidden" id="deck-a-fx-popover">
+              <button type="button" class="popover-opt active" data-fx="filter">FILTER</button>
+              <button type="button" class="popover-opt" data-fx="echo">ECHO</button>
+              <button type="button" class="popover-opt" data-fx="reverb">REVERB</button>
+              <button type="button" class="popover-opt" data-fx="flanger">FLANGER</button>
+            </div>
           </div>
 
           <div class="fx-knobs-row">
@@ -707,10 +713,16 @@
         <div class="deck-fx-strip">
           <div class="fx-header-left">
             <span class="fx-label magenta-text">EFFECTS</span>
-            <button type="button" class="fx-picker-btn" id="btn-deck-b-fx-picker" title="Select Deck B FX">
+            <button type="button" class="fx-picker-btn fx-picker-pink" id="btn-deck-b-fx-toggle" title="Select Deck B FX">
               <span id="deck-b-fx-val">FILTER</span>
-              <span class="fx-chevron">⌵</span>
+              <span class="fx-chevron" id="deck-b-fx-chevron">▲</span>
             </button>
+            <div class="console-popover-menu popover-pink hidden" id="deck-b-fx-popover">
+              <button type="button" class="popover-opt active" data-fx="filter">FILTER</button>
+              <button type="button" class="popover-opt" data-fx="echo">ECHO</button>
+              <button type="button" class="popover-opt" data-fx="reverb">REVERB</button>
+              <button type="button" class="popover-opt" data-fx="flanger">FLANGER</button>
+            </div>
           </div>
 
           <div class="fx-knobs-row">
@@ -875,33 +887,49 @@
           </div>
 
           <div class="r-actions-subgrid">
-            <button type="button" class="r-eq-pill-wrap" id="btn-radio-eq-picker" title="Select Equalizer Preset">
-              <span class="r-eq-icon">🎚️</span>
-              <span class="r-eq-val" id="radio-eq-val">EQ: FLAT</span>
-              <span class="r-eq-chevron">⌵</span>
-            </button>
+            <div class="r-eq-pill-wrap" id="radio-eq-container">
+              <button type="button" class="r-eq-toggle-btn" id="btn-radio-eq-toggle" title="Equalizer Preset">
+                <span class="r-eq-icon">🎚️</span>
+                <span class="r-eq-val" id="radio-eq-val">EQ: FLAT</span>
+                <span class="r-eq-chevron" id="radio-eq-chevron">▲</span>
+              </button>
+
+              <!-- Floating Cyber Deck Popover Menu -->
+              <div class="console-popover-menu hidden" id="radio-eq-popover">
+                <div class="popover-mini-header">
+                  <span class="popover-led led-cyan"></span>
+                  <span>MASTER EQ PRESET</span>
+                </div>
+                <div class="popover-options-group">
+                  <button type="button" class="popover-opt active" data-eq="flat">
+                    <span class="opt-label">FLAT</span>
+                    <span class="opt-tag">0dB</span>
+                  </button>
+                  <button type="button" class="popover-opt" data-eq="bass">
+                    <span class="opt-label">BASS BOOST</span>
+                    <span class="opt-tag">+6dB Low</span>
+                  </button>
+                  <button type="button" class="popover-opt" data-eq="club">
+                    <span class="opt-label">CLUB PUNCH</span>
+                    <span class="opt-tag">+4dB Kick</span>
+                  </button>
+                  <button type="button" class="popover-opt" data-eq="vocal">
+                    <span class="opt-label">VOCAL</span>
+                    <span class="opt-tag">+4dB Mid</span>
+                  </button>
+                  <button type="button" class="popover-opt" data-eq="electronic">
+                    <span class="opt-label">ELECTRONIC</span>
+                    <span class="opt-tag">V-Curve</span>
+                  </button>
+                </div>
+              </div>
+            </div>
 
             <button class="btn-radio-settings" id="btn-radio-settings" title="Club Atmosphere & Visual FX">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               <span>FX & LIGHTS</span>
             </button>
           </div>
-        </div>
-      </div>
-    </div>
-    <!-- 🎛️ Cyberpunk Dropdown / Action Sheet Picker Modal -->
-    <div id="cyber-picker-modal" class="lighting-modal-backdrop cyber-picker-backdrop hidden">
-      <div class="lighting-modal-card cyber-picker-card">
-        <div class="lighting-modal-header">
-          <div class="l-modal-title">
-            <span class="l-dot" id="cyber-picker-dot" style="background: #00f0ff; box-shadow: 0 0 8px #00f0ff;"></span>
-            <h3 id="cyber-picker-title">🎚️ SELECT OPTION</h3>
-          </div>
-          <button class="l-modal-close" id="btn-cyber-picker-close">&times;</button>
-        </div>
-
-        <div class="cyber-picker-list" id="cyber-picker-list">
-          <!-- Populated dynamically via JS -->
         </div>
       </div>
     </div>
@@ -1278,14 +1306,29 @@
 
       <!-- 5. Sound & EQ Presets -->
       <div class="m-menu-section">
-        <div class="m-menu-section-title">🎚️ SOUND & EQ PRESET</div>
-        <button type="button" class="m-eq-picker-btn" id="m-btn-eq-picker">
-          <div class="m-eq-btn-content">
-            <span class="m-eq-btn-icon">🎚️</span>
-            <span class="m-eq-btn-label" id="m-eq-val">FLAT (Default)</span>
-          </div>
-          <span class="m-eq-btn-chevron">⌵</span>
-        </button>
+        <div class="m-menu-section-title">🎚️ MASTER EQ PRESET</div>
+        <div class="m-genre-chips" id="m-eq-chips-group">
+          <button type="button" class="m-genre-chip active" data-eq="flat">
+            <span class="m-genre-chip-icon">🎚️</span>
+            <span class="m-genre-chip-name">FLAT (Default)</span>
+          </button>
+          <button type="button" class="m-genre-chip" data-eq="bass">
+            <span class="m-genre-chip-icon">🔊</span>
+            <span class="m-genre-chip-name">BASS BOOST</span>
+          </button>
+          <button type="button" class="m-genre-chip" data-eq="club">
+            <span class="m-genre-chip-icon">💥</span>
+            <span class="m-genre-chip-name">CLUB PUNCH</span>
+          </button>
+          <button type="button" class="m-genre-chip" data-eq="vocal">
+            <span class="m-genre-chip-icon">🎤</span>
+            <span class="m-genre-chip-name">VOCAL</span>
+          </button>
+          <button type="button" class="m-genre-chip" data-eq="electronic">
+            <span class="m-genre-chip-icon">⚡</span>
+            <span class="m-genre-chip-name">ELECTRONIC</span>
+          </button>
+        </div>
       </div>
 
       <!-- 6. Quick Tools & Utilities -->
