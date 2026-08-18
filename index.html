@@ -814,71 +814,69 @@
     </div>
 
     <!-- ======================================================== -->
-    <!-- 📻 MINIMALIST RADIO PLAYER MODE BAR (EXACT USER MOCKUP) -->
+    <!-- 📻 ALL-IN-ONE CYBER DECK RADIO CONSOLE (DESKTOP & MOBILE) -->
     <!-- ======================================================== -->
     <div class="radio-mode-console hidden" id="radio-mode-console">
-      <!-- Minimalist Now Playing Header / Transport Bar -->
-      <div class="radio-top-card">
+      <div class="radio-deck-console">
+        <!-- 1. Left: Track Meta & Live Status -->
         <div class="radio-track-meta">
-          <span class="radio-live-badge">📻 LIVE RADIO</span>
+          <div class="radio-live-badge">
+            <span class="live-dot"></span>
+            <span>LIVE RADIO</span>
+          </div>
           <div class="radio-title-clip">
             <h3 id="radio-track-title">Loading track...</h3>
           </div>
           <p id="radio-track-artist">JMF Radio 24/7</p>
         </div>
 
-        <div class="radio-transport-controls">
-          <button class="btn-radio-nav" id="btn-radio-prev" title="Previous Track">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
-          </button>
-          <button class="btn-radio-play active-play" id="btn-radio-play" title="Play / Pause">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" id="radio-play-icon"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
-          </button>
-          <button class="btn-radio-nav" id="btn-radio-next" title="Next Track">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
-          </button>
-        </div>
-
-        <div class="radio-waveform-wrap" id="radio-waveform-wrap" title="Click to seek">
-          <canvas id="radio-waveform-canvas" width="280" height="24"></canvas>
-          <div class="radio-time-display">
-            <span id="radio-time-cur">0:00</span> / <span id="radio-time-total">0:00</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Modern Cyberdeck Radio Bottom Bar -->
-      <div class="radio-bottom-bar">
-        <!-- Top Row: Master Volume & Dual Stereo VU Meter -->
-        <div class="r-bar-row r-bar-row-top">
-          <div class="r-vol-meta">
-            <span class="r-hp-icon">🎧</span>
-            <span class="r-vol-label">MASTER VOL</span>
+        <!-- 2. Center: Transport Controls & Sound Waveform -->
+        <div class="radio-center-controls">
+          <div class="radio-transport-controls">
+            <button class="btn-radio-nav" id="btn-radio-prev" title="Previous Track">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="19 20 9 12 19 4 19 20"></polygon><line x1="5" y1="19" x2="5" y2="5" stroke="currentColor" stroke-width="2"></line></svg>
+            </button>
+            <button class="btn-radio-play active-play" id="btn-radio-play" title="Play / Pause">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" id="radio-play-icon"><polygon points="6 4 20 12 6 20 6 4"></polygon></svg>
+            </button>
+            <button class="btn-radio-nav" id="btn-radio-next" title="Next Track">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20 5 4"></polygon><line x1="19" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2"></line></svg>
+            </button>
           </div>
 
-          <div class="radio-stereo-segmented-meter" id="radio-master-vu">
-            <div class="r-stereo-row r-row-l">
-              <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-yellow"></span><span class="r-seg lit-yellow"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
-            </div>
-            <div class="r-stereo-row r-row-r">
-              <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-yellow"></span><span class="r-seg lit-yellow"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
+          <div class="radio-waveform-wrap" id="radio-waveform-wrap" title="Click to seek">
+            <canvas id="radio-waveform-canvas" width="240" height="24"></canvas>
+            <div class="radio-time-display">
+              <span id="radio-time-cur">0:00</span> / <span id="radio-time-total">0:00</span>
             </div>
           </div>
+        </div>
 
-          <div class="rotary-knob-component knob-radio" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Volume">
-            <div class="knob-dial dial-radio">
-              <div class="knob-cap">
-                <div class="knob-pointer pointer-cyan"></div>
+        <!-- 3. Right: Master VU + Volume + EQ Pill + Settings -->
+        <div class="radio-right-controls">
+          <div class="r-sound-group">
+            <span class="r-hp-icon" title="Master Volume">🎧</span>
+            <div class="radio-stereo-segmented-meter" id="radio-master-vu" title="Stereo Output Meter">
+              <div class="r-stereo-row r-row-l">
+                <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-yellow"></span><span class="r-seg lit-yellow"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
+              </div>
+              <div class="r-stereo-row r-row-r">
+                <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-yellow"></span><span class="r-seg lit-yellow"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
+              </div>
+            </div>
+
+            <div class="rotary-knob-component knob-radio" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Volume">
+              <div class="knob-dial dial-radio">
+                <div class="knob-cap">
+                  <div class="knob-pointer pointer-cyan"></div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <!-- Bottom Row: Clean EQ Pill & Settings / Lights Pill -->
-        <div class="r-bar-row r-bar-row-bottom">
           <div class="r-eq-pill-wrap">
             <span class="r-eq-icon">🎚️</span>
-            <select class="radio-preset-dropdown" id="radio-eq-preset">
+            <select class="radio-preset-dropdown" id="radio-eq-preset" title="Equalizer Preset">
               <option value="flat">EQ: FLAT</option>
               <option value="bass">EQ: BASS BOOST</option>
               <option value="club">EQ: CLUB PUNCH</option>
@@ -887,9 +885,9 @@
             </select>
           </div>
 
-          <button class="btn-radio-settings" id="btn-radio-settings" title="Settings & Visual FX">
+          <button class="btn-radio-settings" id="btn-radio-settings" title="Club Atmosphere & Visual FX">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span>CLUB FX & LIGHTS</span>
+            <span>FX & LIGHTS</span>
           </button>
         </div>
       </div>

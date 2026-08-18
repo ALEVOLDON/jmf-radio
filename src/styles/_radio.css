@@ -1,46 +1,51 @@
 /* ======================================================== */
-/* 📻 MINIMALIST RADIO PLAYER MODE (100% USER MOCKUP) */
+/* 📻 ALL-IN-ONE CYBER DECK RADIO PLAYER CONSOLE */
 /* ======================================================== */
 .radio-mode-console {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   width: 100%;
-  max-width: 980px;
+  max-width: 1060px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .radio-mode-console.hidden {
   display: none !important;
 }
 
-/* Top Now Playing & Transport Floating Card */
-.radio-top-card {
+/* Monolithic Floating Console */
+.radio-deck-console {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1.1fr 1.3fr 1.4fr;
   align-items: center;
-  gap: 14px;
-  background: rgba(10, 12, 22, 0.88);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 8px 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  gap: 16px;
+  background: rgba(10, 13, 24, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 240, 255, 0.22);
+  border-radius: 14px;
+  padding: 10px 18px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 240, 255, 0.08);
+  box-sizing: border-box;
+  width: 100%;
 }
 
+/* 1. Left: Track Meta & Info */
 .radio-track-meta {
   display: flex;
   flex-direction: column;
   gap: 2px;
   min-width: 0;
+  overflow: hidden;
 }
 
 .radio-live-badge {
   display: inline-flex;
   align-items: center;
+  gap: 5px;
   font-family: var(--font-display);
-  font-size: 7.5px;
+  font-size: 8px;
   font-weight: 900;
   color: #00ff88;
   letter-spacing: 0.8px;
@@ -54,40 +59,59 @@
 
 #radio-track-title {
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 800;
   color: #ffffff;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #radio-track-artist {
-  font-size: 9px;
+  font-family: var(--font-body);
+  font-size: 9.5px;
   color: var(--text-muted);
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 2. Center: Transport Controls & Sound Waveform */
+.radio-center-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  justify-content: center;
 }
 
 .radio-transport-controls {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-radio-nav {
   background: #0e111d;
   border: 1px solid rgba(255, 255, 255, 0.12);
   color: #ffffff;
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .btn-radio-nav:hover {
   background: #181d30;
+  border-color: rgba(255, 255, 255, 0.25);
   transform: scale(1.08);
 }
 
@@ -95,8 +119,8 @@
   background: #0f1424;
   border: 1.5px solid #00ff88;
   color: #00ff88;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -104,11 +128,12 @@
   cursor: pointer;
   box-shadow: 0 0 14px rgba(0, 255, 136, 0.35);
   transition: all 0.15s ease;
+  flex-shrink: 0;
 }
 
 .btn-radio-play:hover {
   transform: scale(1.08);
-  box-shadow: 0 0 20px rgba(0, 255, 136, 0.6);
+  box-shadow: 0 0 22px rgba(0, 255, 136, 0.65);
 }
 
 .btn-radio-play.active-play {
@@ -121,13 +146,15 @@
   align-items: flex-end;
   gap: 3px;
   cursor: pointer;
+  flex: 1;
+  min-width: 120px;
 }
 
 #radio-waveform-canvas {
   width: 100%;
-  max-width: 260px;
+  max-width: 220px;
   height: 22px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.55);
   border-radius: 4px;
 }
 
@@ -138,75 +165,49 @@
   color: var(--text-muted);
 }
 
-/* ======================================================== */
-/* 🎚️ MODERN CYBERDECK RADIO BOTTOM BAR */
-/* ======================================================== */
-.radio-bottom-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(10, 13, 22, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 8px 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-  gap: 16px;
-  width: 100%;
-  max-width: 980px;
-  box-sizing: border-box;
-}
-
-/* Left Group (Desktop): Volume & Dual VU Meter */
-.r-bar-row-top {
+/* 3. Right: Master VU + Volume Knob + EQ Pill + Settings */
+.radio-right-controls {
   display: flex;
   align-items: center;
   gap: 12px;
-  flex: 1;
-  max-width: 480px;
+  justify-content: flex-end;
+  min-width: 0;
 }
 
-.r-vol-meta {
+.r-sound-group {
   display: flex;
   align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
+  gap: 8px;
+  flex: 1;
+  max-width: 200px;
+  min-width: 90px;
 }
 
 .r-hp-icon {
   font-size: 15px;
   color: var(--deck-a-cyan);
-}
-
-.r-vol-label {
-  font-family: var(--font-display);
-  font-size: 8.5px;
-  font-weight: 900;
-  letter-spacing: 0.8px;
-  color: #8c97ad;
-  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .radio-stereo-segmented-meter {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2.5px;
   flex: 1;
-  min-width: 120px;
+  min-width: 50px;
 }
 
 .r-stereo-row {
   display: flex;
   align-items: center;
-  gap: 2.5px;
+  gap: 2px;
   width: 100%;
 }
 
 .r-seg {
   flex: 1;
-  height: 8px;
-  border-radius: 1.5px;
+  height: 7px;
+  border-radius: 1px;
   background: rgba(255, 255, 255, 0.08);
   transition: background 0.05s ease, box-shadow 0.05s ease;
 }
@@ -237,14 +238,6 @@
   height: 28px;
 }
 
-/* Right Group (Desktop): EQ Preset & Settings / Lights */
-.r-bar-row-bottom {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-}
-
 .r-eq-pill-wrap {
   position: relative;
   display: flex;
@@ -252,8 +245,9 @@
   background: rgba(14, 18, 30, 0.9);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  padding: 0 10px;
+  padding: 0 8px 0 10px;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .r-eq-pill-wrap:hover,
@@ -263,8 +257,8 @@
 }
 
 .r-eq-icon {
-  font-size: 13px;
-  margin-right: 6px;
+  font-size: 12px;
+  margin-right: 5px;
   flex-shrink: 0;
 }
 
@@ -275,10 +269,10 @@
   border: none;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 800;
-  letter-spacing: 0.6px;
-  padding: 7px 20px 7px 0;
+  letter-spacing: 0.5px;
+  padding: 7px 18px 7px 0;
   cursor: pointer;
   outline: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2300f0ff' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -300,10 +294,10 @@
   border: 1px solid rgba(0, 240, 255, 0.35);
   color: #00f0ff;
   font-family: var(--font-display);
-  font-size: 9px;
+  font-size: 8.5px;
   font-weight: 800;
-  letter-spacing: 0.6px;
-  padding: 7px 14px;
+  letter-spacing: 0.5px;
+  padding: 7px 12px;
   border-radius: 8px;
   cursor: pointer;
   flex-shrink: 0;
@@ -318,34 +312,48 @@
   transform: scale(1.03);
 }
 
-/* Responsive adjustments for Radio Mode */
-@media (max-width: 820px) {
-  .radio-top-card {
-    grid-template-columns: 1fr auto;
+/* ======================================================== */
+/* 📱 RESPONSIVE LAYOUT FOR TABLETS & SMARTPHONES */
+/* ======================================================== */
+@media (max-width: 960px) {
+  .radio-deck-console {
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 10px 14px;
   }
-  .radio-waveform-wrap {
+  .radio-right-controls {
     grid-column: span 2;
-    align-items: stretch;
+    justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
   }
-  .radio-bottom-bar {
+}
+
+@media (max-width: 600px) {
+  .radio-deck-console {
+    display: flex;
     flex-direction: column;
+    gap: 10px;
     padding: 10px 12px;
-    gap: 8px;
-    max-width: 580px;
-    margin: 0 auto;
   }
-  .r-bar-row-top {
+  .radio-track-meta {
     width: 100%;
-    max-width: 100%;
-    justify-content: space-between;
-    padding-bottom: 6px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   }
-  .r-bar-row-bottom {
+  .radio-center-controls {
     width: 100%;
     justify-content: space-between;
+  }
+  .radio-right-controls {
+    width: 100%;
+    justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    gap: 6px;
+  }
+  .r-sound-group {
+    max-width: 130px;
   }
   .r-eq-pill-wrap {
-    flex: 1;
+    padding: 0 4px 0 6px;
   }
 }
