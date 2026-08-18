@@ -301,21 +301,59 @@ export class BarArea {
 
     torso.add(headGroup);
 
-    // Left & Right Arms holding Cocktail Shaker
+    // Left & Right Articulated Arms holding Cocktail Shaker
     const armL = new THREE.Group();
-    armL.position.set(-0.3, 0.6, 0);
-    const upperArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.35, 12), shirtMat);
-    upperArmL.position.set(0.1, -0.1, 0.15);
+    armL.position.set(-0.3, 0.62, 0);
+
+    const shoulderL = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), shirtMat);
+    armL.add(shoulderL);
+
+    const upperArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.28, 12), shirtMat);
+    upperArmL.position.set(0.08, -0.12, 0.1);
     upperArmL.rotation.set(Math.PI / 4, 0, -Math.PI / 6);
     armL.add(upperArmL);
+
+    const elbowL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), skinMat);
+    elbowL.position.set(0.14, -0.22, 0.18);
+    armL.add(elbowL);
+
+    const foreArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.042, 0.25, 12), skinMat);
+    foreArmL.position.set(0.2, -0.16, 0.26);
+    foreArmL.rotation.set(-Math.PI / 4, 0, -Math.PI / 4);
+    armL.add(foreArmL);
+
+    // Hand gripping base of shaker
+    const handL = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.06, 0.08), skinMat);
+    handL.position.set(0.24, -0.12, 0.32);
+    armL.add(handL);
+
     torso.add(armL);
 
     const armR = new THREE.Group();
-    armR.position.set(0.3, 0.6, 0);
-    const upperArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.06, 0.35, 12), shirtMat);
-    upperArmR.position.set(-0.1, -0.1, 0.15);
+    armR.position.set(0.3, 0.62, 0);
+
+    const shoulderR = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), shirtMat);
+    armR.add(shoulderR);
+
+    const upperArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.28, 12), shirtMat);
+    upperArmR.position.set(-0.08, -0.12, 0.1);
     upperArmR.rotation.set(Math.PI / 4, 0, Math.PI / 6);
     armR.add(upperArmR);
+
+    const elbowR = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), skinMat);
+    elbowR.position.set(-0.14, -0.22, 0.18);
+    armR.add(elbowR);
+
+    const foreArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.042, 0.25, 12), skinMat);
+    foreArmR.position.set(-0.2, -0.16, 0.26);
+    foreArmR.rotation.set(-Math.PI / 4, 0, Math.PI / 4);
+    armR.add(foreArmR);
+
+    // Hand gripping top cap of shaker
+    const handR = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.06, 0.08), skinMat);
+    handR.position.set(-0.24, -0.1, 0.32);
+    armR.add(handR);
+
     torso.add(armR);
 
     // Stainless Steel Cocktail Shaker

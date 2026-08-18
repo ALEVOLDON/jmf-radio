@@ -99,22 +99,22 @@ export class DanceFloor {
     const dancerGroup = new THREE.Group();
     dancerGroup.position.set(x, 0, z);
 
-    // Random slight facing rotation towards DJ or dance partners
+    // Facing rotation towards DJ or dance partners
     dancerGroup.rotation.y = (Math.PI) + (Math.random() - 0.5) * 1.2;
 
     const clothesMat = new THREE.MeshStandardMaterial({ color: outfitColor, roughness: 0.5, metalness: 0.2 });
     const pantsMat = new THREE.MeshStandardMaterial({ color: 0x0c0d14, roughness: 0.8 });
-    const skinMat = new THREE.MeshStandardMaterial({ color: skinColor, roughness: 0.6 });
+    const skinMat = new THREE.MeshStandardMaterial({ color: skinColor, roughness: 0.55 });
     const glowMat = new THREE.MeshBasicMaterial({ color: outfitColor });
 
-    // Legs / Pants
+    // 1. Legs / Pants
     const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.85, 12), pantsMat);
     legL.position.set(-0.16, 0.42, 0);
     const legR = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.07, 0.85, 12), pantsMat);
     legR.position.set(0.16, 0.42, 0);
     dancerGroup.add(legL, legR);
 
-    // Torso Group
+    // 2. Torso Group
     const torsoGroup = new THREE.Group();
     torsoGroup.position.set(0, 0.85, 0);
 
@@ -123,13 +123,13 @@ export class DanceFloor {
     torsoMesh.castShadow = true;
     torsoGroup.add(torsoMesh);
 
-    // Glowing wristbands or necklace
+    // Glowing necklace
     const accessory = new THREE.Mesh(new THREE.TorusGeometry(0.12, 0.02, 8, 16), glowMat);
     accessory.position.set(0, 0.58, 0.05);
     accessory.rotation.x = Math.PI / 3;
     torsoGroup.add(accessory);
 
-    // Head Group
+    // 3. Head Group
     const headGroup = new THREE.Group();
     headGroup.position.set(0, 0.7, 0);
 
@@ -143,7 +143,7 @@ export class DanceFloor {
     hair.position.y = 0.3;
     headGroup.add(hair);
 
-    // Stylish Club Sunglasses / Cyber Visors on every dancer
+    // 4. Stylish Club Sunglasses / Cyber Visors on every dancer
     const dancerGlasses = new THREE.Group();
     dancerGlasses.position.set(0, 0.18, 0.15);
 
@@ -168,7 +168,7 @@ export class DanceFloor {
     const glassesStyle = seed % 4;
 
     if (glassesStyle === 0) {
-      // 1. Cyberpunk Narrow Blade Shades (Matrix / Neo style)
+      // Cyberpunk Narrow Blade Shades (Matrix style)
       const bladeL = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.045, 0.02), darkMat);
       bladeL.position.x = -0.055;
       const bladeR = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.045, 0.02), darkMat);
@@ -181,7 +181,7 @@ export class DanceFloor {
       templeR.position.set(0.13, 0.015, -0.07);
       dancerGlasses.add(bladeL, bladeR, topBar, templeL, templeR);
     } else if (glassesStyle === 1) {
-      // 2. Full Cyberpunk Glowing Visor Shield (Rave Visor)
+      // Full Cyberpunk Glowing Visor Shield (Rave Visor)
       const visor = new THREE.Mesh(new THREE.BoxGeometry(0.27, 0.075, 0.025), neonLensMat);
       const visorFrame = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.018, 0.035), frameMat);
       visorFrame.position.y = 0.04;
@@ -191,7 +191,7 @@ export class DanceFloor {
       templeR.position.set(0.14, 0.02, -0.07);
       dancerGlasses.add(visor, visorFrame, templeL, templeR);
     } else if (glassesStyle === 2) {
-      // 3. Classic Dark Club Sunglasses (Ray-Ban Wayfarer style)
+      // Classic Dark Club Sunglasses (Wayfarer style)
       const lensL = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.065, 0.02), darkMat);
       lensL.position.x = -0.055;
       const lensR = new THREE.Mesh(new THREE.BoxGeometry(0.085, 0.065, 0.02), darkMat);
@@ -204,7 +204,7 @@ export class DanceFloor {
       templeR.position.set(0.125, 0.02, -0.07);
       dancerGlasses.add(lensL, lensR, bridge, templeL, templeR);
     } else {
-      // 4. Futuristic Sport Wrap-around Sunglasses (90s Techno Rave)
+      // Futuristic Sport Wrap-around Sunglasses (90s Rave)
       const wrapLens = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.055, 16, 1, true, 0, Math.PI), neonLensMat);
       wrapLens.rotation.x = Math.PI / 2;
       wrapLens.rotation.z = Math.PI / 2;
@@ -215,31 +215,91 @@ export class DanceFloor {
     }
 
     headGroup.add(dancerGlasses);
-
     torsoGroup.add(headGroup);
 
-    // Left Arm
+    // 5. Anatomical Articulated Left Arm (Shoulder -> Bicep -> Elbow -> Forearm -> Glowing Wristband -> Hand)
     const armL = new THREE.Group();
-    armL.position.set(-0.28, 0.55, 0);
-    const upperL = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.35, 12), clothesMat);
-    upperL.position.set(-0.1, -0.12, 0);
-    upperL.rotation.z = Math.PI / 6;
-    const foreL = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.35, 12), skinMat);
-    foreL.position.set(-0.22, -0.32, 0.1);
-    foreL.rotation.x = Math.PI / 4;
-    armL.add(upperL, foreL);
+    armL.position.set(-0.28, 0.58, 0);
+
+    const shoulderCapL = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), clothesMat);
+    armL.add(shoulderCapL);
+
+    const bicepGeo = new THREE.CylinderGeometry(0.065, 0.055, 0.28, 12);
+    bicepGeo.translate(0, -0.14, 0);
+    const bicepL = new THREE.Mesh(bicepGeo, clothesMat);
+    armL.add(bicepL);
+
+    const elbowL = new THREE.Group();
+    elbowL.position.set(0, -0.28, 0);
+
+    const elbowJointL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), skinMat);
+    elbowL.add(elbowJointL);
+
+    const forearmGeo = new THREE.CylinderGeometry(0.052, 0.042, 0.26, 12);
+    forearmGeo.translate(0, -0.13, 0);
+    const forearmL = new THREE.Mesh(forearmGeo, skinMat);
+    elbowL.add(forearmL);
+
+    // Glowing rave wristband
+    const wristbandGeo = new THREE.TorusGeometry(0.05, 0.015, 8, 16);
+    const wristbandL = new THREE.Mesh(wristbandGeo, glowMat);
+    wristbandL.position.set(0, -0.24, 0);
+    wristbandL.rotation.x = Math.PI / 2;
+    elbowL.add(wristbandL);
+
+    // Stylized Rave Hand with fingers
+    const handGroupL = new THREE.Group();
+    handGroupL.position.set(0, -0.27, 0);
+    const palmL = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.09, 0.035), skinMat);
+    palmL.position.set(0, -0.04, 0);
+    const thumbL = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.04, 0.025), skinMat);
+    thumbL.position.set(0.045, -0.02, 0.01);
+    handGroupL.add(palmL, thumbL);
+    elbowL.add(handGroupL);
+
+    armL.add(elbowL);
     torsoGroup.add(armL);
 
-    // Right Arm
+    // 6. Anatomical Articulated Right Arm
     const armR = new THREE.Group();
-    armR.position.set(0.28, 0.55, 0);
-    const upperR = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.35, 12), clothesMat);
-    upperR.position.set(0.1, -0.12, 0);
-    upperR.rotation.z = -Math.PI / 6;
-    const foreR = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.045, 0.35, 12), skinMat);
-    foreR.position.set(0.22, -0.32, 0.1);
-    foreR.rotation.x = Math.PI / 4;
-    armR.add(upperR, foreR);
+    armR.position.set(0.28, 0.58, 0);
+
+    const shoulderCapR = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), clothesMat);
+    armR.add(shoulderCapR);
+
+    const bicepGeoR = new THREE.CylinderGeometry(0.065, 0.055, 0.28, 12);
+    bicepGeoR.translate(0, -0.14, 0);
+    const bicepR = new THREE.Mesh(bicepGeoR, clothesMat);
+    armR.add(bicepR);
+
+    const elbowR = new THREE.Group();
+    elbowR.position.set(0, -0.28, 0);
+
+    const elbowJointR = new THREE.Mesh(new THREE.SphereGeometry(0.055, 12, 12), skinMat);
+    elbowR.add(elbowJointR);
+
+    const forearmGeoR = new THREE.CylinderGeometry(0.052, 0.042, 0.26, 12);
+    forearmGeoR.translate(0, -0.13, 0);
+    const forearmR = new THREE.Mesh(forearmGeoR, skinMat);
+    elbowR.add(forearmR);
+
+    // Glowing rave wristband
+    const wristbandR = new THREE.Mesh(wristbandGeo, glowMat);
+    wristbandR.position.set(0, -0.24, 0);
+    wristbandR.rotation.x = Math.PI / 2;
+    elbowR.add(wristbandR);
+
+    // Stylized Rave Hand
+    const handGroupR = new THREE.Group();
+    handGroupR.position.set(0, -0.27, 0);
+    const palmR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.09, 0.035), skinMat);
+    palmR.position.set(0, -0.04, 0);
+    const thumbR = new THREE.Mesh(new THREE.BoxGeometry(0.025, 0.04, 0.025), skinMat);
+    thumbR.position.set(-0.045, -0.02, 0.01);
+    handGroupR.add(palmR, thumbR);
+    elbowR.add(handGroupR);
+
+    armR.add(elbowR);
     torsoGroup.add(armR);
 
     dancerGroup.add(torsoGroup);
@@ -249,7 +309,9 @@ export class DanceFloor {
       torso: torsoGroup,
       head: headGroup,
       armL,
+      elbowL,
       armR,
+      elbowR,
       style,
       speed,
       seed,
@@ -259,9 +321,9 @@ export class DanceFloor {
 
   update(audioAnalysis, isPlaying, themeColors) {
     const time = performance.now() * 0.001;
-    const bass = audioAnalysis.bass;
-    const beat = audioAnalysis.beat;
-    const rawFreq = audioAnalysis.rawArray || [];
+    const bass = audioAnalysis ? audioAnalysis.bass : 0;
+    const beat = audioAnalysis ? audioAnalysis.beat : 0;
+    const rawFreq = (audioAnalysis && audioAnalysis.rawArray) ? audioAnalysis.rawArray : [];
 
     // 1. Animate LED Floor Tiles
     for (let i = 0; i < this.tiles.length; i++) {
@@ -275,7 +337,6 @@ export class DanceFloor {
 
       tile.mesh.material.emissiveIntensity = intensity;
 
-      // Cycle colors smoothly across the floor
       if (themeColors) {
         if ((tile.row + tile.col) % 2 === 0) {
           tile.mesh.material.emissive.setHex(themeColors.primary);
@@ -285,7 +346,7 @@ export class DanceFloor {
       }
     }
 
-    // 2. Animate Dancers based on dance styles and audio energy
+    // 2. Animate Dancers with Fluid Anatomical Limb Kinematics
     for (let d of this.dancers) {
       const spd = (isPlaying ? 4.5 : 1.2) * d.speed;
       const phase = time * spd + d.seed;
@@ -294,7 +355,7 @@ export class DanceFloor {
       // Bounce up and down
       d.group.position.y = Math.abs(Math.sin(phase)) * bounceIntensity;
 
-      // Head bobbing
+      // Head bobbing & groove
       d.head.rotation.x = Math.sin(phase * 2) * (0.15 + bass * 0.2);
       d.head.rotation.y = Math.cos(phase * 0.8) * 0.2;
 
@@ -302,28 +363,42 @@ export class DanceFloor {
       d.torso.rotation.z = Math.sin(phase) * (0.08 + bass * 0.12);
       d.torso.rotation.y = Math.cos(phase * 0.5) * 0.15;
 
-      // Style-specific arm movements
+      // Style-specific natural 2-joint arm kinematics
       switch (d.style) {
-        case 0: // Hands in the air jumping
-          d.armL.rotation.x = -Math.PI / 1.5 + Math.sin(phase * 2) * 0.4;
-          d.armR.rotation.x = -Math.PI / 1.5 + Math.cos(phase * 2) * 0.4;
-          d.armL.rotation.z = -0.4 + Math.sin(phase) * 0.3;
-          d.armR.rotation.z = 0.4 - Math.sin(phase) * 0.3;
+        case 0: // Hands in the air / Rave jump & fist pump
+          d.armL.rotation.x = -Math.PI / 1.35 + Math.sin(phase * 2) * 0.35;
+          d.armR.rotation.x = -Math.PI / 1.35 + Math.cos(phase * 2) * 0.35;
+          d.armL.rotation.z = -0.35 + Math.sin(phase) * 0.2;
+          d.armR.rotation.z = 0.35 - Math.sin(phase) * 0.2;
+          d.elbowL.rotation.x = 0.6 + Math.sin(phase * 2) * 0.3;
+          d.elbowR.rotation.x = 0.6 + Math.cos(phase * 2) * 0.3;
           break;
-        case 1: // Hip-hop rhythm groove
-          d.armL.rotation.x = Math.sin(phase) * 0.6;
-          d.armR.rotation.x = -Math.sin(phase) * 0.6;
-          d.armL.rotation.y = Math.PI / 4 + Math.cos(phase) * 0.3;
-          d.armR.rotation.y = -Math.PI / 4 - Math.cos(phase) * 0.3;
+
+        case 1: // Hip-hop / Techno rhythm bounce
+          d.armL.rotation.x = 0.2 + Math.sin(phase) * 0.6;
+          d.armR.rotation.x = 0.2 - Math.sin(phase) * 0.6;
+          d.armL.rotation.y = 0.3 + Math.cos(phase) * 0.2;
+          d.armR.rotation.y = -0.3 - Math.cos(phase) * 0.2;
+          d.elbowL.rotation.x = 1.1 + Math.cos(phase * 2) * 0.25;
+          d.elbowR.rotation.x = 1.1 + Math.sin(phase * 2) * 0.25;
           break;
-        case 2: // Side-to-side wave & point
-          d.armL.rotation.z = -Math.PI / 3 + Math.sin(phase) * 0.5;
-          d.armR.rotation.x = -Math.PI / 2.5 + Math.sin(phase * 2) * 0.3;
-          d.group.rotation.y += Math.sin(phase * 0.5) * 0.005;
+
+        case 2: // Side-to-side wave & point towards DJ booth
+          d.armL.rotation.z = -0.7 + Math.sin(phase) * 0.35;
+          d.armR.rotation.x = -Math.PI / 2.2 + Math.sin(phase * 2) * 0.3;
+          d.armR.rotation.y = -0.3;
+          d.elbowL.rotation.x = 0.4 + Math.sin(phase) * 0.3;
+          d.elbowR.rotation.x = 0.5 + Math.cos(phase * 2) * 0.2;
+          d.group.rotation.y += Math.sin(phase * 0.5) * 0.004;
           break;
-        case 3: // Upbeat shuffle bounce
-          d.armL.rotation.x = -Math.PI / 3 + Math.cos(phase * 2) * 0.5;
-          d.armR.rotation.x = -Math.PI / 3 + Math.sin(phase * 2) * 0.5;
+
+        case 3: // Upbeat shuffle / electronic groove
+          d.armL.rotation.x = -0.35 + Math.cos(phase * 2) * 0.45;
+          d.armR.rotation.x = -0.35 + Math.sin(phase * 2) * 0.45;
+          d.armL.rotation.z = -0.25;
+          d.armR.rotation.z = 0.25;
+          d.elbowL.rotation.x = 0.9 + Math.sin(phase * 2) * 0.3;
+          d.elbowR.rotation.x = 0.9 + Math.cos(phase * 2) * 0.3;
           d.group.position.x += Math.sin(phase * 0.5) * 0.002;
           break;
       }
