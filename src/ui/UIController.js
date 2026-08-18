@@ -681,24 +681,24 @@ export class UIController {
 
     const djAuthDict = {
       ru: {
-        title: '🎧 JMF RESIDENT DJ BOOTH',
+        title: 'JMF RESIDENT DJ BOOTH',
         heading: 'ДОСТУП К ПУЛЬТУ ОГРАНИЧЕН',
         desc: 'Сейчас за пультом играют резиденты <strong>JMF Radio</strong>.<br><br>Чтобы встать за вертушки, управлять треками эфира или заказать свой сет — обратитесь к <strong>администратору клуба</strong> за персональным DJ-ключом.',
-        label: '🔑 ЕСТЬ DJ-КЛЮЧ ДОСТУПА?',
+        label: 'ЕСТЬ DJ-КЛЮЧ ДОСТУПА?',
         placeholder: 'Введите ключ...',
         submit: 'Встать за пульт',
-        enjoy: '🍸 Наслаждаться музыкой и атмосферой',
-        success: '🎉 DJ-ключ сохранён! Пробуем войти за пульт...'
+        enjoy: 'Наслаждаться музыкой и атмосферой',
+        success: 'DJ-ключ сохранён! Пробуем войти за пульт...'
       },
       en: {
-        title: '🎧 JMF RESIDENT DJ BOOTH',
+        title: 'JMF RESIDENT DJ BOOTH',
         heading: 'DJ BOOTH ACCESS RESTRICTED',
         desc: 'Resident DJs are currently performing live on <strong>JMF Radio</strong>.<br><br>To take over the decks, control the broadcast, or request a set — please contact the <strong>club administrator</strong> for a personal DJ access key.',
-        label: '🔑 HAVE A DJ ACCESS KEY?',
+        label: 'HAVE A DJ ACCESS KEY?',
         placeholder: 'Enter access key...',
         submit: 'Take the Decks',
-        enjoy: '🍸 Enjoy the music & club vibes',
-        success: '🎉 DJ Key saved! Taking over the decks...'
+        enjoy: 'Enjoy the music & club vibes',
+        success: 'DJ Key saved! Taking over the decks...'
       }
     };
 
@@ -793,25 +793,25 @@ export class UIController {
 
     const aboutDict = {
       ru: {
-        title: 'ℹ️ О ПРОЕКТЕ JMF RADIO',
+        title: 'О ПРОЕКТЕ JMF RADIO',
         tagline: 'Интерактивная 3D киберпанк-станция нового поколения и платформа онлайн-вещания на базе Web Audio API.',
-        storyHeading: '🌌 ИСТОРИЯ И КОНЦЕПЦИЯ',
+        storyHeading: 'ИСТОРИЯ И КОНЦЕПЦИЯ',
         storyText: 'JMF Radio зародилось как ранний аудио-эксперимент на GitHub и выросло в атмосферный 3D киберпанк-клуб. Объединяя процедурный мир на Three.js, реалистичную эмуляцию диджейских дек Pioneer CDJ-3000 / микшера DJM-900 и интеллектуальный AutoDJ-движок с DSP-фильтрами в реальном времени, JMF Radio обеспечивает непрерывный электронный эфир 24/7 прямо в браузере.',
-        creatorHeading: '👤 АВТОР И МУЗЫКАЛЬНЫЕ РЕСУРСЫ',
+        creatorHeading: 'АВТОР И МУЗЫКАЛЬНЫЕ РЕСУРСЫ',
         scDesc: 'Оригинальные треки, живые сеты и миксы',
         bcDesc: 'Дискография, релизы и Lossless аудио',
         ghEarlyDesc: 'Истоки проекта и ранние архивы на GitHub',
         ghStationDesc: 'Исходный код 3D радио и дорожная карта',
-        techHeading: '🛠️ КЛЮЧЕВЫЕ ТЕХНОЛОГИИ',
-        legalHeading: '⚖️ ПРАВОВАЯ ИНФОРМАЦИЯ И DMCA',
+        techHeading: 'КЛЮЧЕВЫЕ ТЕХНОЛОГИИ',
+        legalHeading: 'ПРАВОВАЯ ИНФОРМАЦИЯ И DMCA',
         legalText: 'JMF Radio — некоммерческий экспериментальный веб-арт проект, созданный в образовательных, культурных и промо-целях.<br><br>Все права на музыкальные произведения, ремиксы и фонограммы принадлежат их законным авторам, исполнителям и лейблам. JMF Radio не продает треки и не взимает плату за прослушивание.<br><br><strong>Правообладателям и авторам:</strong> Если вы являетесь автором или правообладателем и хотите удалить свой трек из ротации, либо хотите отправить свои оригинальные треки для ротации в эфире — свяжитесь с нами через GitHub или контакты администратора.'
       },
       en: {
-        title: 'ℹ️ ABOUT JMF RADIO',
+        title: 'ABOUT JMF RADIO',
         tagline: 'Next-generation interactive 3D cyberpunk nightclub & real-time Web Audio broadcasting platform.',
-        storyHeading: '🌌 HISTORY & CONCEPT',
+        storyHeading: 'HISTORY & CONCEPT',
         storyText: 'JMF Radio began as an early experimental audio project on GitHub and has evolved into an immersive cyberpunk nightclub experience. Combining a procedural 3D world built with Three.js, realistic Pioneer CDJ-3000/DJM-900 hardware emulation, and an intelligent AutoDJ engine with real-time DSP filters, JMF Radio delivers continuous 24/7 electronic music streaming directly in your web browser.',
-        creatorHeading: '👤 CREATOR & MUSIC CHANNELS',
+        creatorHeading: 'CREATOR & MUSIC CHANNELS',
         scDesc: 'Original tracks, live sets & mixes',
         bcDesc: 'Discography, releases & lossless audio',
         ghEarlyDesc: 'Original roots & GitHub archives',
@@ -1230,7 +1230,7 @@ export class UIController {
 
     if (isTransitioning && nextTrack) {
       if (this.transitionText) {
-        this.transitionText.textContent = `🎛️ DJ MIXING: DECK ${fromDeck} ➔ DECK ${toDeck} ("${nextTrack.title.substring(0, 24)}...")`;
+        this.transitionText.textContent = `DJ MIXING: DECK ${fromDeck} ➔ DECK ${toDeck} ("${nextTrack.title.substring(0, 24)}...")`;
       }
       if (this.transitionBanner) this.transitionBanner.classList.remove('hidden');
 
