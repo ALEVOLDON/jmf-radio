@@ -410,7 +410,25 @@ function checkTrackAdvancement() {
   }
 }
 
-// --- API ENDPOINTS ---
+// Optional DJ Authentication middleware (Grok G-04 / Codex P0)
+// If DJ_PASSWORD is set in .env, remote clients must provide 'x-dj-key' to change broadcast state
+function requireDjAuth(req, res, next) {
+  const djPass = process.env.DJ_PASSWORD;
+  if (!djPass) return next(); // Open mode if not configured
+
+  const ip = req.ip || req.connection?.remoteAddress || '';
+  const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+  if (isLocal) return next(); // Host machine is always authorized
+
+  const clientKey = req.headers['x-dj-key'] || req.query.dj_key || req.body?.dj_key;
+  if (clientKey && clientKey === djPass) {
+    return next();
+  }
+
+  return res.status(403).json({
+    error: 'Broadcast is locked: DJ Password required to change tracks or genres for other listeners.'
+  });
+}
 
 // 1. Get available genre filters with track counts
 app.get('/api/genres', (req, res) => {
@@ -436,7 +454,7 @@ app.get('/api/genres', (req, res) => {
 });
 
 // 2. Select active radio stream genre filter
-app.post('/api/genre/select', async (req, res) => {
+app.post('/api/genre/select', requireDjAuth, async (req, res) => {
   const { genre } = req.body;
   if (genre && (genre === 'all' || GENRE_RULES.some(g => g.id === genre))) {
     activeGenreFilter = genre;
@@ -502,7 +520,7 @@ app.get(['/api/status', '/api/track'], (req, res) => {
   });
 });
 
-app.post(['/api/skip', '/api/next'], async (req, res) => {
+app.post(['/api/skip', '/api/next'], requireDjAuth, async (req, res) => {
   if (playlist.length === 0) return res.json({ success: false });
   await playTrack(getNextFilteredIndex());
   const current = playlist[currentIndex];
@@ -627,14 +645,14 @@ app.get('/api/cover/:id', async (req, res) => {
 
 
 
-app.post('/api/prev', async (req, res) => {
+app.post('/api/prev', requireDjAuth, async (req, res) => {
   if (playlist.length === 0) return res.json({ success: false });
   const prevIdx = (currentIndex - 1 + playlist.length) % playlist.length;
   await playTrack(prevIdx);
   res.json({ success: true, currentIndex, currentTrack: playlist[currentIndex] });
 });
 
-app.post('/api/rescan', async (req, res) => {
+app.post('/api/rescan', requireDjAuth, async (req, res) => {
   await initRadio();
   res.json({ success: true, totalTracks: playlist.length });
 });

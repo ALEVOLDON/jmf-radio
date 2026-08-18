@@ -649,6 +649,13 @@ export class AudioEngine {
     return true;
   }
 
+  getAuthHeaders() {
+    const key = localStorage.getItem('jmf_dj_key') || (typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('dj_key') : null);
+    const headers = { 'Content-Type': 'application/json' };
+    if (key) headers['x-dj-key'] = key;
+    return headers;
+  }
+
   async triggerDJCrossfade() {
     if (this.isCrossfading) return;
 
@@ -656,7 +663,7 @@ export class AudioEngine {
 
     if (!this.nextTrack) {
       try {
-        const res = await fetch('/api/next', { method: 'POST' });
+        const res = await fetch('/api/next', { method: 'POST', headers: this.getAuthHeaders() });
         const data = await res.json();
         if (data.track) {
           this.nextTrack = data.track;
@@ -718,7 +725,7 @@ export class AudioEngine {
     try {
       const res = await fetch('/api/genre/select', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: this.getAuthHeaders(),
         body: JSON.stringify({ genre: genreId })
       });
       const data = await res.json();
@@ -796,7 +803,7 @@ export class AudioEngine {
 
   async skipNext() {
     try {
-      const res = await fetch('/api/next', { method: 'POST' });
+      const res = await fetch('/api/next', { method: 'POST', headers: this.getAuthHeaders() });
       const data = await res.json();
       if (data.track) {
         this.currentTrack = data.track;
@@ -824,7 +831,7 @@ export class AudioEngine {
 
   async skipPrev() {
     try {
-      const res = await fetch('/api/prev', { method: 'POST' });
+      const res = await fetch('/api/prev', { method: 'POST', headers: this.getAuthHeaders() });
       const data = await res.json();
       if (data.track) {
         this.currentTrack = data.track;
