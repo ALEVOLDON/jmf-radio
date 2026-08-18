@@ -43,6 +43,12 @@ export class AudioEngine {
       B: { isPlaying: false, cueTime: 0, pitch: 1.0, bpm: 126.0, detectedBpm: 126.0, loopActive: false, loopBeats: 0, loopStart: 0, loopEnd: 0 }
     };
 
+    // Hardware FX Engine States
+    this.fxStates = {
+      A: { enabled: true, type: 'filter', lpf: 0.5, res: 0.3, drywet: 0.4 },
+      B: { enabled: true, type: 'filter', lpf: 0.5, res: 0.3, drywet: 0.4 }
+    };
+
     this.isPlaying = false;
     this.isMuted = false;
     this.volume = 0.8;
@@ -111,7 +117,7 @@ export class AudioEngine {
     this.masterGain.connect(this.analyser);
     this.analyser.connect(this.audioContext.destination);
 
-    // --- Build Deck A Processing Chain ---
+    // --- Build Deck A Processing Chain & Hardware FX Unit ---
     const sourceA = this.audioContext.createMediaElementSource(this.audioA);
     this.eqLowA = this.audioContext.createBiquadFilter();
     this.eqLowA.type = 'lowshelf';
@@ -133,21 +139,53 @@ export class AudioEngine {
     this.filterSweepA.type = 'lowpass';
     this.filterSweepA.frequency.value = 22000;
 
+    // Deck A FX Unit (Delay / Echo / Flanger / Filter)
+    this.fxFilterA = this.audioContext.createBiquadFilter();
+    this.fxFilterA.type = 'lowpass';
+    this.fxFilterA.frequency.value = 14000;
+    this.fxFilterA.Q.value = 1.5;
+
+    this.fxDelayA = this.audioContext.createDelay(2.0);
+    this.fxDelayA.delayTime.value = 0.375; // 3/8 beat sync delay
+
+    this.fxFeedbackA = this.audioContext.createGain();
+    this.fxFeedbackA.gain.value = 0.42;
+
+    this.fxDryA = this.audioContext.createGain();
+    this.fxDryA.gain.value = 0.8;
+
+    this.fxWetA = this.audioContext.createGain();
+    this.fxWetA.gain.value = 0.4;
+
     this.chGainA = this.audioContext.createGain();
     this.chGainA.gain.value = 1.0;
 
     this.xFaderGainA = this.audioContext.createGain();
     this.xFaderGainA.gain.value = 1.0;
 
+    // Connect Deck A Graph:
+    // Source -> EQs -> FilterSweep -> [Dry + Wet FX Chain] -> ChGain -> XFader -> Master
     sourceA.connect(this.eqLowA);
     this.eqLowA.connect(this.eqMidA);
     this.eqMidA.connect(this.eqHighA);
     this.eqHighA.connect(this.filterSweepA);
-    this.filterSweepA.connect(this.chGainA);
+
+    // Dry path
+    this.filterSweepA.connect(this.fxDryA);
+    this.fxDryA.connect(this.chGainA);
+
+    // Wet FX path
+    this.filterSweepA.connect(this.fxFilterA);
+    this.fxFilterA.connect(this.fxDelayA);
+    this.fxDelayA.connect(this.fxFeedbackA);
+    this.fxFeedbackA.connect(this.fxDelayA); // Feedback loop
+    this.fxDelayA.connect(this.fxWetA);
+    this.fxWetA.connect(this.chGainA);
+
     this.chGainA.connect(this.xFaderGainA);
     this.xFaderGainA.connect(this.masterGain);
 
-    // --- Build Deck B Processing Chain ---
+    // --- Build Deck B Processing Chain & Hardware FX Unit ---
     const sourceB = this.audioContext.createMediaElementSource(this.audioB);
     this.eqLowB = this.audioContext.createBiquadFilter();
     this.eqLowB.type = 'lowshelf';
@@ -169,6 +207,24 @@ export class AudioEngine {
     this.filterSweepB.type = 'lowpass';
     this.filterSweepB.frequency.value = 22000;
 
+    // Deck B FX Unit
+    this.fxFilterB = this.audioContext.createBiquadFilter();
+    this.fxFilterB.type = 'lowpass';
+    this.fxFilterB.frequency.value = 14000;
+    this.fxFilterB.Q.value = 1.5;
+
+    this.fxDelayB = this.audioContext.createDelay(2.0);
+    this.fxDelayB.delayTime.value = 0.375;
+
+    this.fxFeedbackB = this.audioContext.createGain();
+    this.fxFeedbackB.gain.value = 0.42;
+
+    this.fxDryB = this.audioContext.createGain();
+    this.fxDryB.gain.value = 0.8;
+
+    this.fxWetB = this.audioContext.createGain();
+    this.fxWetB.gain.value = 0.4;
+
     this.chGainB = this.audioContext.createGain();
     this.chGainB.gain.value = 1.0;
 
@@ -179,7 +235,19 @@ export class AudioEngine {
     this.eqLowB.connect(this.eqMidB);
     this.eqMidB.connect(this.eqHighB);
     this.eqHighB.connect(this.filterSweepB);
-    this.filterSweepB.connect(this.chGainB);
+
+    // Dry path
+    this.filterSweepB.connect(this.fxDryB);
+    this.fxDryB.connect(this.chGainB);
+
+    // Wet FX path
+    this.filterSweepB.connect(this.fxFilterB);
+    this.fxFilterB.connect(this.fxDelayB);
+    this.fxDelayB.connect(this.fxFeedbackB);
+    this.fxFeedbackB.connect(this.fxDelayB); // Feedback loop
+    this.fxDelayB.connect(this.fxWetB);
+    this.fxWetB.connect(this.chGainB);
+
     this.chGainB.connect(this.xFaderGainB);
     this.xFaderGainB.connect(this.masterGain);
   }
@@ -389,6 +457,95 @@ export class AudioEngine {
     const gainNode = deck === 'A' ? this.chGainA : this.chGainB;
     if (gainNode) gainNode.gain.setValueAtTime(Math.max(0, Math.min(1.5, val)), this.audioContext.currentTime);
   }
+
+  // --- 🎛️ Hardware FX Unit Controls ---
+  setFXType(deck, type) {
+    if (!this.fxStates[deck]) return;
+    this.fxStates[deck].type = type;
+    if (!this.audioContext) return;
+    const now = this.audioContext.currentTime;
+    const delay = deck === 'A' ? this.fxDelayA : this.fxDelayB;
+    const feedback = deck === 'A' ? this.fxFeedbackA : this.fxFeedbackB;
+    const filter = deck === 'A' ? this.fxFilterA : this.fxFilterB;
+
+    if (!delay || !feedback || !filter) return;
+
+    if (type === 'echo') {
+      delay.delayTime.setTargetAtTime(0.375, now, 0.05); // 3/8 beat echo
+      feedback.gain.setTargetAtTime(0.45, now, 0.05);
+      filter.frequency.setTargetAtTime(12000, now, 0.05);
+      filter.type = 'lowpass';
+    } else if (type === 'flanger') {
+      delay.delayTime.setTargetAtTime(0.006, now, 0.05); // Short comb delay
+      feedback.gain.setTargetAtTime(0.65, now, 0.05);
+      filter.frequency.setTargetAtTime(18000, now, 0.05);
+      filter.type = 'allpass';
+    } else if (type === 'reverb') {
+      delay.delayTime.setTargetAtTime(0.09, now, 0.05); // Slapback spatial decay
+      feedback.gain.setTargetAtTime(0.70, now, 0.05);
+      filter.frequency.setTargetAtTime(8000, now, 0.05);
+      filter.type = 'lowpass';
+    } else if (type === 'filter') {
+      delay.delayTime.setTargetAtTime(0.001, now, 0.05);
+      feedback.gain.setTargetAtTime(0.0, now, 0.05);
+      filter.frequency.setTargetAtTime(10000, now, 0.05);
+      filter.type = 'lowpass';
+    }
+  }
+
+  setFXToggle(deck, enabled) {
+    if (!this.fxStates[deck]) return;
+    this.fxStates[deck].enabled = enabled;
+    this.updateFXDryWet(deck);
+  }
+
+  setFXParam(deck, param, normalizedVal) {
+    if (!this.audioContext || !this.fxStates[deck]) return;
+    const now = this.audioContext.currentTime;
+    const state = this.fxStates[deck];
+    state[param] = normalizedVal;
+
+    const delay = deck === 'A' ? this.fxDelayA : this.fxDelayB;
+    const feedback = deck === 'A' ? this.fxFeedbackA : this.fxFeedbackB;
+    const filter = deck === 'A' ? this.fxFilterA : this.fxFilterB;
+
+    if (param === 'lpf' && filter) {
+      // Cutoff from 200 Hz to 20,000 Hz
+      const freq = 200 + Math.pow(normalizedVal, 2) * 19800;
+      filter.frequency.setTargetAtTime(freq, now, 0.05);
+      if (state.type === 'echo' && delay) {
+        // Also modulate delay time between 0.1s and 0.8s
+        const dt = 0.1 + normalizedVal * 0.7;
+        delay.delayTime.setTargetAtTime(dt, now, 0.05);
+      }
+    } else if (param === 'res' && filter && feedback) {
+      const q = 0.5 + normalizedVal * 12.0;
+      filter.Q.setTargetAtTime(q, now, 0.05);
+      const fb = Math.min(0.85, normalizedVal * 0.85);
+      feedback.gain.setTargetAtTime(fb, now, 0.05);
+    } else if (param === 'drywet') {
+      this.updateFXDryWet(deck);
+    }
+  }
+
+  updateFXDryWet(deck) {
+    if (!this.audioContext || !this.fxStates[deck]) return;
+    const now = this.audioContext.currentTime;
+    const state = this.fxStates[deck];
+    const dry = deck === 'A' ? this.fxDryA : this.fxDryB;
+    const wet = deck === 'A' ? this.fxWetA : this.fxWetB;
+    if (!dry || !wet) return;
+
+    if (!state.enabled) {
+      dry.gain.setTargetAtTime(1.0, now, 0.05);
+      wet.gain.setTargetAtTime(0.0, now, 0.05);
+    } else {
+      const w = state.drywet !== undefined ? state.drywet : 0.4;
+      dry.gain.setTargetAtTime(Math.max(0.2, 1.0 - (w * 0.6)), now, 0.05);
+      wet.gain.setTargetAtTime(w, now, 0.05);
+    }
+  }
+
 
   setCrossfader(val) {
     this.crossfadeProgress = Math.max(0, Math.min(1, val));

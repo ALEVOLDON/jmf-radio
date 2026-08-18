@@ -196,14 +196,21 @@ export class JogWheelController {
           case 'eq-A-mid': this.audioEngine.setEQ('A', 'mid', val); break;
           case 'eq-A-low': this.audioEngine.setEQ('A', 'low', val); break;
           case 'filter-A': this.audioEngine.setFilterSweep('A', val); break;
+          case 'fx-a-lpf': this.audioEngine.setFXParam('A', 'lpf', val); break;
+          case 'fx-a-res': this.audioEngine.setFXParam('A', 'res', val); break;
+          case 'fx-a-drywet': this.audioEngine.setFXParam('A', 'drywet', val); break;
 
           case 'trim-B': this.audioEngine.setChannelGain('B', val); break;
           case 'eq-B-high': this.audioEngine.setEQ('B', 'high', val); break;
           case 'eq-B-mid': this.audioEngine.setEQ('B', 'mid', val); break;
           case 'eq-B-low': this.audioEngine.setEQ('B', 'low', val); break;
           case 'filter-B': this.audioEngine.setFilterSweep('B', val); break;
+          case 'fx-b-lpf': this.audioEngine.setFXParam('B', 'lpf', val); break;
+          case 'fx-b-res': this.audioEngine.setFXParam('B', 'res', val); break;
+          case 'fx-b-drywet': this.audioEngine.setFXParam('B', 'drywet', val); break;
 
           case 'master-vol': this.audioEngine.setVolume(val); break;
+          case 'hp-vol': this.audioEngine.setVolume(val); break;
         }
       };
 

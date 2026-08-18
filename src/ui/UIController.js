@@ -232,8 +232,17 @@ export class UIController {
         if (this.deckALoop4) this.deckALoop4.classList.remove('active');
       });
     }
+    // FX A Type and Toggle
+    const deckAFxType = document.getElementById('deck-a-fx-type');
+    if (deckAFxType) {
+      deckAFxType.addEventListener('change', (e) => this.audioEngine.setFXType('A', e.target.value));
+    }
     if (this.deckAFxToggle) {
-      this.deckAFxToggle.addEventListener('click', () => this.deckAFxToggle.classList.toggle('active'));
+      this.deckAFxToggle.addEventListener('click', () => {
+        const enabled = !this.deckAFxToggle.classList.contains('active');
+        this.deckAFxToggle.classList.toggle('active', enabled);
+        this.audioEngine.setFXToggle('A', enabled);
+      });
     }
 
     // --- DECK B Hardware Events ---
@@ -298,8 +307,18 @@ export class UIController {
         if (this.deckBLoop4) this.deckBLoop4.classList.remove('active');
       });
     }
+
+    // FX B Type and Toggle
+    const deckBFxType = document.getElementById('deck-b-fx-type');
+    if (deckBFxType) {
+      deckBFxType.addEventListener('change', (e) => this.audioEngine.setFXType('B', e.target.value));
+    }
     if (this.deckBFxToggle) {
-      this.deckBFxToggle.addEventListener('click', () => this.deckBFxToggle.classList.toggle('active'));
+      this.deckBFxToggle.addEventListener('click', () => {
+        const enabled = !this.deckBFxToggle.classList.contains('active');
+        this.deckBFxToggle.classList.toggle('active', enabled);
+        this.audioEngine.setFXToggle('B', enabled);
+      });
     }
 
     // --- Faders ---
