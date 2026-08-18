@@ -679,6 +679,8 @@
 }
 
 .m-eq-dropdown {
+  appearance: none;
+  -webkit-appearance: none;
   width: 100%;
   background: rgba(10, 14, 26, 0.95);
   border: 1px solid rgba(0, 240, 255, 0.35);
@@ -688,11 +690,28 @@
   font-weight: 800;
   letter-spacing: 0.5px;
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 10px 30px 10px 14px;
   outline: none;
   cursor: pointer;
   box-sizing: border-box;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2300f0ff' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.m-eq-dropdown:focus {
+  border-color: #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+.m-eq-dropdown option {
+  background: #090c16 !important;
+  color: #ffffff !important;
+  font-family: var(--font-display) !important;
+  font-size: 11px !important;
+  padding: 10px 14px !important;
 }
 
 /* Quick Actions Grid */

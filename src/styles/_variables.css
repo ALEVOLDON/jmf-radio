@@ -68,3 +68,28 @@ html, body {
 #ui-overlay > * {
   pointer-events: auto;
 }
+
+/* Universal Custom Styled Select & Dropdowns */
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  background-repeat: no-repeat;
+  outline: none;
+  font-family: var(--font-display);
+  cursor: pointer;
+}
+
+select option {
+  background: #090c16 !important;
+  color: #ffffff !important;
+  font-family: var(--font-display) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 10px 14px !important;
+}
+
+select option:checked {
+  background: #00f0ff !important;
+  color: #000000 !important;
+  font-weight: 900 !important;
+}

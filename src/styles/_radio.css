@@ -313,6 +313,13 @@
   transform: scale(1.03);
 }
 
+.r-actions-subgrid {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
 /* ======================================================== */
 /* 📱 RESPONSIVE LAYOUT FOR TABLETS & SMARTPHONES */
 /* ======================================================== */
@@ -334,27 +341,65 @@
   .radio-deck-console {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 10px 12px;
+    gap: 8px;
+    padding: 9px 11px;
+    width: 100%;
+    box-sizing: border-box;
   }
   .radio-track-meta {
     width: 100%;
   }
   .radio-center-controls {
     width: 100%;
+    display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 8px;
+  }
+  .radio-waveform-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+  #radio-waveform-canvas {
+    max-width: 100%;
+    width: 100%;
   }
   .radio-right-controls {
     width: 100%;
-    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
     padding-top: 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.07);
-    gap: 6px;
   }
   .r-sound-group {
-    max-width: 130px;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .radio-stereo-segmented-meter {
+    flex: 1;
+    min-width: 0;
+  }
+  .r-actions-subgrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+    width: 100%;
   }
   .r-eq-pill-wrap {
-    padding: 0 4px 0 6px;
+    width: 100%;
+    padding: 0 8px 0 10px;
+    box-sizing: border-box;
+    justify-content: space-between;
+  }
+  .btn-radio-settings {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 7px 8px;
   }
 }
