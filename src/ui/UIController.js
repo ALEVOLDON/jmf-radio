@@ -658,6 +658,8 @@ export class UIController {
         if (genreModal) genreModal.classList.add('hidden');
         const djAuthModal = document.getElementById('dj-auth-modal');
         if (djAuthModal) djAuthModal.classList.add('hidden');
+        const aboutModal = document.getElementById('about-modal');
+        if (aboutModal) aboutModal.classList.add('hidden');
         const mDrawer = document.getElementById('mobile-menu-drawer');
         const mBackdrop = document.getElementById('mobile-menu-backdrop');
         if (mDrawer) mDrawer.classList.add('hidden');
@@ -778,6 +780,101 @@ export class UIController {
     this.audioEngine.onAuthRequired = () => {
       this.showDjAuthModal();
     };
+
+    // ========================================================
+    // ℹ️ ABOUT JMF RADIO & STORY MODAL (BILINGUAL RU / EN)
+    // ========================================================
+    const aboutModal = document.getElementById('about-modal');
+    const btnAboutToggle = document.getElementById('btn-about-toggle');
+    const mBtnAboutOpen = document.getElementById('m-btn-about-open');
+    const btnAboutClose = document.getElementById('btn-about-close');
+    const btnAboutLangRu = document.getElementById('btn-about-lang-ru');
+    const btnAboutLangEn = document.getElementById('btn-about-lang-en');
+
+    const aboutDict = {
+      ru: {
+        title: 'ℹ️ О ПРОЕКТЕ JMF RADIO',
+        tagline: 'Интерактивная 3D киберпанк-станция нового поколения и платформа онлайн-вещания на базе Web Audio API.',
+        storyHeading: '🌌 ИСТОРИЯ И КОНЦЕПЦИЯ',
+        storyText: 'JMF Radio зародилось как ранний аудио-эксперимент на GitHub и выросло в атмосферный 3D киберпанк-клуб. Объединяя процедурный мир на Three.js, реалистичную эмуляцию диджейских дек Pioneer CDJ-3000 / микшера DJM-900 и интеллектуальный AutoDJ-движок с DSP-фильтрами в реальном времени, JMF Radio обеспечивает непрерывный электронный эфир 24/7 прямо в браузере.',
+        creatorHeading: '👤 АВТОР И МУЗЫКАЛЬНЫЕ РЕСУРСЫ',
+        scDesc: 'Оригинальные треки, живые сеты и миксы',
+        bcDesc: 'Дискография, релизы и Lossless аудио',
+        ghEarlyDesc: 'Истоки проекта и ранние архивы на GitHub',
+        ghStationDesc: 'Исходный код 3D радио и дорожная карта',
+        techHeading: '🛠️ КЛЮЧЕВЫЕ ТЕХНОЛОГИИ',
+        legalHeading: '⚖️ ПРАВОВАЯ ИНФОРМАЦИЯ И DMCA',
+        legalText: 'JMF Radio — некоммерческий экспериментальный веб-арт проект, созданный в образовательных, культурных и промо-целях.<br><br>Все права на музыкальные произведения, ремиксы и фонограммы принадлежат их законным авторам, исполнителям и лейблам. JMF Radio не продает треки и не взимает плату за прослушивание.<br><br><strong>Правообладателям и авторам:</strong> Если вы являетесь автором или правообладателем и хотите удалить свой трек из ротации, либо хотите отправить свои оригинальные треки для ротации в эфире — свяжитесь с нами через GitHub или контакты администратора.'
+      },
+      en: {
+        title: 'ℹ️ ABOUT JMF RADIO',
+        tagline: 'Next-generation interactive 3D cyberpunk nightclub & real-time Web Audio broadcasting platform.',
+        storyHeading: '🌌 HISTORY & CONCEPT',
+        storyText: 'JMF Radio began as an early experimental audio project on GitHub and has evolved into an immersive cyberpunk nightclub experience. Combining a procedural 3D world built with Three.js, realistic Pioneer CDJ-3000/DJM-900 hardware emulation, and an intelligent AutoDJ engine with real-time DSP filters, JMF Radio delivers continuous 24/7 electronic music streaming directly in your web browser.',
+        creatorHeading: '👤 CREATOR & MUSIC CHANNELS',
+        scDesc: 'Original tracks, live sets & mixes',
+        bcDesc: 'Discography, releases & lossless audio',
+        ghEarlyDesc: 'Original roots & GitHub archives',
+        ghStationDesc: 'Full 3D station source code & roadmap',
+        techHeading: '🛠️ CORE TECHNOLOGIES',
+        legalHeading: '⚖️ LEGAL DISCLAIMER & DMCA NOTICE',
+        legalText: 'JMF Radio is an experimental, non-commercial web audio art & cultural project created for educational, developmental, and promotional purposes.<br><br>All musical works, remixes, and sound recordings remain the intellectual property of their respective artists, composers, and record labels. JMF Radio does not sell audio files or charge listeners for streaming.<br><br><strong>For Artists & Copyright Holders:</strong> If you are a copyright owner and wish to have your music removed from the rotation, or if you would like to submit your original tracks for 24/7 broadcast promotion, please reach out via GitHub or contact the administrator.'
+      }
+    };
+
+    const updateAboutModalLang = (lang) => {
+      const dict = aboutDict[lang] || aboutDict.en;
+      const titleEl = document.getElementById('about-modal-title');
+      const taglineEl = document.getElementById('about-tagline');
+      const storyHeadingEl = document.getElementById('about-story-heading');
+      const storyTextEl = document.getElementById('about-story-text');
+      const creatorHeadingEl = document.getElementById('about-creator-heading');
+      const scDescEl = document.getElementById('about-sc-desc');
+      const bcDescEl = document.getElementById('about-bc-desc');
+      const ghEarlyDescEl = document.getElementById('about-gh-early-desc');
+      const ghStationDescEl = document.getElementById('about-gh-station-desc');
+      const techHeadingEl = document.getElementById('about-tech-heading');
+      const legalHeadingEl = document.getElementById('about-legal-heading');
+      const legalTextEl = document.getElementById('about-legal-text');
+
+      if (titleEl) titleEl.textContent = dict.title;
+      if (taglineEl) taglineEl.textContent = dict.tagline;
+      if (storyHeadingEl) storyHeadingEl.textContent = dict.storyHeading;
+      if (storyTextEl) storyTextEl.textContent = dict.storyText;
+      if (creatorHeadingEl) creatorHeadingEl.textContent = dict.creatorHeading;
+      if (scDescEl) scDescEl.textContent = dict.scDesc;
+      if (bcDescEl) bcDescEl.textContent = dict.bcDesc;
+      if (ghEarlyDescEl) ghEarlyDescEl.textContent = dict.ghEarlyDesc;
+      if (ghStationDescEl) ghStationDescEl.textContent = dict.ghStationDesc;
+      if (techHeadingEl) techHeadingEl.textContent = dict.techHeading;
+      if (legalHeadingEl) legalHeadingEl.textContent = dict.legalHeading;
+      if (legalTextEl) legalTextEl.innerHTML = dict.legalText;
+
+      if (btnAboutLangRu) btnAboutLangRu.classList.toggle('active', lang === 'ru');
+      if (btnAboutLangEn) btnAboutLangEn.classList.toggle('active', lang === 'en');
+    };
+
+    if (btnAboutLangRu) btnAboutLangRu.addEventListener('click', () => updateAboutModalLang('ru'));
+    if (btnAboutLangEn) btnAboutLangEn.addEventListener('click', () => updateAboutModalLang('en'));
+
+    const openAboutModal = () => {
+      if (aboutModal) {
+        updateAboutModalLang(currentDjLang);
+        aboutModal.classList.remove('hidden');
+      }
+    };
+
+    if (btnAboutToggle) btnAboutToggle.addEventListener('click', openAboutModal);
+    if (mBtnAboutOpen) mBtnAboutOpen.addEventListener('click', () => {
+      const mDrawer = document.getElementById('mobile-menu-drawer');
+      const mBackdrop = document.getElementById('mobile-menu-backdrop');
+      if (mDrawer) mDrawer.classList.add('hidden');
+      if (mBackdrop) mBackdrop.classList.add('hidden');
+      openAboutModal();
+    });
+    if (btnAboutClose && aboutModal) {
+      btnAboutClose.addEventListener('click', () => aboutModal.classList.add('hidden'));
+    }
   }
 
 
