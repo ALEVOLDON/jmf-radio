@@ -168,13 +168,14 @@ export class DJScene {
 
     this.controls.update();
 
-    // 2. Update Subsystems
-    this.room.update(safeAnalysis, this.lighting.currentTheme);
-    this.soundSystem.update(safeAnalysis, this.lighting.currentTheme);
-    this.dj.update(safeAnalysis, isPlaying, this.lighting.currentTheme);
-    this.danceFloor.update(safeAnalysis, isPlaying, this.lighting.currentTheme);
-    this.barArea.update(safeAnalysis, isPlaying, this.lighting.currentTheme);
-    this.lighting.update(safeAnalysis);
+    // 2. Update Subsystems with Safe Guards
+    const theme = this.lighting ? this.lighting.currentTheme : null;
+    try { if (this.room) this.room.update(safeAnalysis, theme); } catch (e) { console.warn('[DJScene] room update error:', e); }
+    try { if (this.soundSystem) this.soundSystem.update(safeAnalysis, theme); } catch (e) { console.warn('[DJScene] soundSystem update error:', e); }
+    try { if (this.dj) this.dj.update(safeAnalysis, isPlaying, theme); } catch (e) { console.warn('[DJScene] dj update error:', e); }
+    try { if (this.danceFloor) this.danceFloor.update(safeAnalysis, isPlaying, theme); } catch (e) { console.warn('[DJScene] danceFloor update error:', e); }
+    try { if (this.barArea) this.barArea.update(safeAnalysis, isPlaying, theme); } catch (e) { console.warn('[DJScene] barArea update error:', e); }
+    try { if (this.lighting) this.lighting.update(safeAnalysis); } catch (e) { console.warn('[DJScene] lighting update error:', e); }
 
     // 3. Render
     this.renderer.render(this.scene, this.camera);

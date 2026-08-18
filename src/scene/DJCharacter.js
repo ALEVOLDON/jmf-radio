@@ -565,8 +565,10 @@ export class DJCharacter {
 
   update(audioAnalysis, isPlaying, themeColors) {
     const time = performance.now() * 0.001;
-    const bass = audioAnalysis ? audioAnalysis.bass : 0;
-    const beat = audioAnalysis ? audioAnalysis.beat : 0;
+    const bass = audioAnalysis ? (audioAnalysis.bass || 0) : 0;
+    const beat = audioAnalysis ? (audioAnalysis.beat || 0) : 0;
+    const mids = audioAnalysis ? (audioAnalysis.mids || 0) : 0;
+    const treble = audioAnalysis ? (audioAnalysis.treble || 0) : 0;
     const rawFreq = (audioAnalysis && audioAnalysis.rawArray) ? audioAnalysis.rawArray : [];
 
     // 1. Spin Vinyl records when music is playing
