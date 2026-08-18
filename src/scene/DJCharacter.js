@@ -20,6 +20,13 @@ export class DJCharacter {
     this.laptopTexture = null;
     this.laptopCtx = null;
 
+    // Stage Backdrop Elements Behind DJ
+    this.haloRings = [];
+    this.haloRays = [];
+    this.synthVUs = [];
+    this.stageBlinders = [];
+    this.hologramRing = null;
+
     this.init();
     this.scene.add(this.group);
   }
@@ -29,6 +36,7 @@ export class DJCharacter {
     this.createTurntablesAndMixer();
     this.createLaptop();
     this.createDJAvatar();
+    this.createStageBackdropBehindDJ();
   }
 
   createDJBooth() {
@@ -643,6 +651,242 @@ export class DJCharacter {
     if (this.laptopCtx) {
       this.drawLaptopScreen(audioAnalysis, isPlaying);
     }
+
+    // 8. Animate Stage Backdrop Behind DJ (Halo Rings, Matrix Blinders, Synth Racks)
+    if (isPlaying) {
+      // Halo Rings pulse & breathe to bass
+      if (this.haloRings.length > 0) {
+        const pulse = 1.0 + bass * 0.12 + beat * 0.08;
+        this.haloRings[0].scale.set(pulse, pulse, 1.0);
+        if (this.haloRings[1]) {
+          this.haloRings[1].rotation.z = time * 0.6;
+          this.haloRings[1].scale.set(1.0 + beat * 0.15, 1.0 + beat * 0.15, 1.0);
+        }
+      }
+
+      // Radial Light Blades
+      for (let i = 0; i < this.haloRays.length; i++) {
+        const ray = this.haloRays[i];
+        const rayIntensity = 0.3 + Math.sin(time * 3 + i) * 0.3 + (i % 2 === 0 ? bass * 0.6 : treble * 0.6);
+        ray.material.opacity = Math.min(1.0, rayIntensity);
+      }
+
+      // Matrix Strobe Blinders flash on heavy beat drops
+      for (let blinder of this.stageBlinders) {
+        if (beat > 0.78 && bass > 0.55) {
+          blinder.material.emissiveIntensity = 4.0;
+        } else {
+          blinder.material.emissiveIntensity *= 0.82;
+        }
+      }
+
+      // Synth Rack VU-Meter bars
+      for (let i = 0; i < this.synthVUs.length; i++) {
+        const vu = this.synthVUs[i];
+        const freqVal = rawFreq[(i * 3) % rawFreq.length] || 0;
+        vu.scale.y = Math.max(0.1, (freqVal / 255) * 1.6 * (1.0 + bass * 0.5));
+      }
+
+      // Holographic Cyber Crest rotation
+      if (this.hologramRing) {
+        this.hologramRing.rotation.z = -time * 0.8;
+      }
+    }
+  }
+
+  createStageBackdropBehindDJ() {
+    const backdropGroup = new THREE.Group();
+    backdropGroup.position.set(0, 0, -1.6);
+
+    const metalMat = new THREE.MeshStandardMaterial({ color: 0x141520, roughness: 0.3, metalness: 0.9 });
+    const cyanMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    const pinkMat = new THREE.MeshBasicMaterial({ color: 0xff007f });
+
+    // ==========================================
+    // 1. GLOWING STAGE HALO ARCH BEHIND DJ (Y = 2.3)
+    // ==========================================
+    const haloGroup = new THREE.Group();
+    haloGroup.position.set(0, 2.3, 0);
+
+    // Outer Aluminum Truss Ring
+    const trussRing = new THREE.Mesh(new THREE.TorusGeometry(1.9, 0.04, 12, 48), metalMat);
+    haloGroup.add(trussRing);
+
+    // Inner Glowing Neon Halo Ring 1 (Cyan)
+    const neonRing1 = new THREE.Mesh(new THREE.TorusGeometry(1.8, 0.025, 8, 48), cyanMat);
+    haloGroup.add(neonRing1);
+    this.haloRings.push(neonRing1);
+
+    // Inner Glowing Neon Halo Ring 2 (Pink)
+    const neonRing2 = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.02, 8, 48), pinkMat);
+    haloGroup.add(neonRing2);
+    this.haloRings.push(neonRing2);
+
+    // 8 Radial Light Blades radiating from the Halo
+    const rayMat = new THREE.MeshBasicMaterial({
+      color: 0x00f0ff,
+      transparent: true,
+      opacity: 0.6,
+      blending: THREE.AdditiveBlending
+    });
+
+    for (let i = 0; i < 8; i++) {
+      const angle = (i / 8) * Math.PI * 2;
+      const ray = new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.04, 0.9, 8), rayMat.clone());
+      ray.position.set(Math.cos(angle) * 2.3, Math.sin(angle) * 2.3, 0);
+      ray.rotation.z = angle + Math.PI / 2;
+      haloGroup.add(ray);
+      this.haloRays.push(ray);
+    }
+
+    backdropGroup.add(haloGroup);
+
+    // ==========================================
+    // 2. MODULAR SYNTH & AUDIO RACK TOWERS (LEFT & RIGHT)
+    // ==========================================
+    const createSynthRackTower = (xPos, rotY) => {
+      const rackGroup = new THREE.Group();
+      rackGroup.position.set(xPos, 0, 0.4);
+      rackGroup.rotation.y = rotY;
+
+      // 19-inch Flight Case Slanted Body
+      const caseMat = new THREE.MeshStandardMaterial({ color: 0x0a0b12, roughness: 0.4, metalness: 0.6 });
+      const rackCase = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.6, 0.75), caseMat);
+      rackCase.position.y = 0.8;
+      rackCase.castShadow = true;
+      rackGroup.add(rackCase);
+
+      // Aluminum Flight Case Edge Trims
+      const edgeMat = new THREE.MeshStandardMaterial({ color: 0x44485a, metalness: 0.95, roughness: 0.2 });
+      const topEdge = new THREE.Mesh(new THREE.BoxGeometry(0.88, 0.04, 0.78), edgeMat);
+      topEdge.position.y = 1.6;
+      rackGroup.add(topEdge);
+
+      // Front Modular Panels (3 Synth Units)
+      for (let unit = 0; unit < 3; unit++) {
+        const uY = 0.35 + unit * 0.45;
+        const panelFace = new THREE.Mesh(
+          new THREE.BoxGeometry(0.78, 0.38, 0.04),
+          new THREE.MeshStandardMaterial({ color: 0x181a26, metalness: 0.7, roughness: 0.3 })
+        );
+        panelFace.position.set(0, uY, 0.38);
+        rackGroup.add(panelFace);
+
+        // LED VU Meter Array per unit
+        for (let v = 0; v < 6; v++) {
+          const vuBar = new THREE.Mesh(
+            new THREE.BoxGeometry(0.03, 0.22, 0.02),
+            new THREE.MeshBasicMaterial({ color: v < 4 ? 0x00ff88 : (v === 4 ? 0xffaa00 : 0xff0044) })
+          );
+          vuBar.position.set(-0.28 + v * 0.06, uY, 0.41);
+          rackGroup.add(vuBar);
+          this.synthVUs.push(vuBar);
+        }
+
+        // Rotary Dials on Synth Panel
+        for (let d = 0; d < 4; d++) {
+          const dial = new THREE.Mesh(
+            new THREE.CylinderGeometry(0.025, 0.025, 0.03, 12),
+            new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 0.4 })
+          );
+          dial.rotation.x = Math.PI / 2;
+          dial.position.set(0.12 + (d % 2) * 0.1, uY - 0.06 + Math.floor(d / 2) * 0.12, 0.41);
+          rackGroup.add(dial);
+        }
+      }
+
+      // Small Oscilloscope Display Screen on Top Unit
+      const oscCanvas = document.createElement('canvas');
+      oscCanvas.width = 256;
+      oscCanvas.height = 128;
+      const octx = oscCanvas.getContext('2d');
+      octx.fillStyle = '#050c08';
+      octx.fillRect(0, 0, 256, 128);
+      octx.strokeStyle = '#00ff88';
+      octx.lineWidth = 2;
+      octx.beginPath();
+      for (let ox = 0; ox < 256; ox += 8) {
+        const oy = 64 + Math.sin(ox * 0.08) * 35;
+        if (ox === 0) octx.moveTo(ox, oy);
+        else octx.lineTo(ox, oy);
+      }
+      octx.stroke();
+
+      const oscTex = new THREE.CanvasTexture(oscCanvas);
+      const oscScreen = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.32, 0.16),
+        new THREE.MeshBasicMaterial({ map: oscTex })
+      );
+      oscScreen.position.set(0, 1.35, 0.41);
+      rackGroup.add(oscScreen);
+
+      backdropGroup.add(rackGroup);
+    };
+
+    createSynthRackTower(-2.1, Math.PI / 6);
+    createSynthRackTower(2.1, -Math.PI / 6);
+
+    // ==========================================
+    // 3. MATRIX STROBE BLINDER ARRAY (CENTER BACKDROP)
+    // ==========================================
+    const blinderMat = new THREE.MeshStandardMaterial({
+      color: 0xffe066,
+      emissive: 0xffe066,
+      emissiveIntensity: 0.3,
+      roughness: 0.1,
+      metalness: 0.9
+    });
+
+    for (let row = 0; row < 2; row++) {
+      for (let col = 0; col < 3; col++) {
+        const bGroup = new THREE.Group();
+        bGroup.position.set((col - 1) * 0.65, 1.8 + row * 0.65, -0.3);
+
+        const housing = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.18, 0.22, 0.15, 6),
+          metalMat
+        );
+        housing.rotation.x = Math.PI / 2;
+        bGroup.add(housing);
+
+        const blinderLens = new THREE.Mesh(new THREE.CircleGeometry(0.16, 16), blinderMat.clone());
+        blinderLens.position.z = 0.08;
+        bGroup.add(blinderLens);
+        this.stageBlinders.push(blinderLens);
+
+        backdropGroup.add(bGroup);
+      }
+    }
+
+    // ==========================================
+    // 4. STAGE CRYO CO2 JET NOZZLES (STAGE CORNERS)
+    // ==========================================
+    const createCryoJet = (xPos) => {
+      const cryoGroup = new THREE.Group();
+      cryoGroup.position.set(xPos, 0, 0.8);
+
+      const barrel = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.08, 0.1, 0.45, 16),
+        new THREE.MeshStandardMaterial({ color: 0x222432, metalness: 0.9, roughness: 0.2 })
+      );
+      barrel.position.y = 0.225;
+      cryoGroup.add(barrel);
+
+      const nozzleRing = new THREE.Mesh(
+        new THREE.TorusGeometry(0.075, 0.015, 8, 16),
+        new THREE.MeshBasicMaterial({ color: 0x00f0ff })
+      );
+      nozzleRing.position.y = 0.44;
+      nozzleRing.rotation.x = Math.PI / 2;
+      cryoGroup.add(nozzleRing);
+
+      backdropGroup.add(cryoGroup);
+    };
+
+    createCryoJet(-1.6);
+    createCryoJet(1.6);
+
+    this.group.add(backdropGroup);
   }
 
   drawLaptopScreen(audioAnalysis, isPlaying) {
