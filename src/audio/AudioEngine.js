@@ -43,10 +43,10 @@ export class AudioEngine {
       B: { isPlaying: false, cueTime: 0, pitch: 1.0, bpm: 126.0, detectedBpm: 126.0, loopActive: false, loopBeats: 0, loopStart: 0, loopEnd: 0 }
     };
 
-    // Hardware FX Engine States
+    // Hardware FX Engine States (Disabled by default — clean bypass)
     this.fxStates = {
-      A: { enabled: true, type: 'filter', lpf: 0.5, res: 0.3, drywet: 0.4 },
-      B: { enabled: true, type: 'filter', lpf: 0.5, res: 0.3, drywet: 0.4 }
+      A: { enabled: false, type: 'filter', lpf: 0.5, res: 0.3, drywet: 0.4 },
+      B: { enabled: false, type: 'filter', lpf: 0.5, res: 0.3, drywet: 0.4 }
     };
 
     this.isPlaying = false;
@@ -152,10 +152,10 @@ export class AudioEngine {
     this.fxFeedbackA.gain.value = 0.42;
 
     this.fxDryA = this.audioContext.createGain();
-    this.fxDryA.gain.value = 0.8;
+    this.fxDryA.gain.value = 1.0;
 
     this.fxWetA = this.audioContext.createGain();
-    this.fxWetA.gain.value = 0.4;
+    this.fxWetA.gain.value = 0.0;
 
     this.chGainA = this.audioContext.createGain();
     this.chGainA.gain.value = 1.0;
@@ -220,10 +220,10 @@ export class AudioEngine {
     this.fxFeedbackB.gain.value = 0.42;
 
     this.fxDryB = this.audioContext.createGain();
-    this.fxDryB.gain.value = 0.8;
+    this.fxDryB.gain.value = 1.0;
 
     this.fxWetB = this.audioContext.createGain();
-    this.fxWetB.gain.value = 0.4;
+    this.fxWetB.gain.value = 0.0;
 
     this.chGainB = this.audioContext.createGain();
     this.chGainB.gain.value = 1.0;
