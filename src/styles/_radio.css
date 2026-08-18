@@ -5,7 +5,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1060px;
+  max-width: 1120px;
   margin: 0 auto;
   padding-bottom: 8px;
   box-sizing: border-box;
@@ -18,7 +18,7 @@
 /* Monolithic Floating Console */
 .radio-deck-console {
   display: grid;
-  grid-template-columns: 1.1fr 1.3fr 1.4fr;
+  grid-template-columns: minmax(140px, 1fr) minmax(200px, 1.2fr) auto;
   align-items: center;
   gap: 16px;
   background: rgba(10, 13, 24, 0.94);
@@ -170,18 +170,16 @@
 .radio-right-controls {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   justify-content: flex-end;
-  min-width: 0;
+  flex-shrink: 0;
 }
 
 .r-sound-group {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex: 1;
-  max-width: 200px;
-  min-width: 90px;
+  flex-shrink: 0;
 }
 
 .r-hp-icon {
@@ -194,8 +192,8 @@
   display: flex;
   flex-direction: column;
   gap: 2.5px;
-  flex: 1;
-  min-width: 50px;
+  width: 75px;
+  flex-shrink: 0;
 }
 
 .r-stereo-row {
@@ -232,6 +230,8 @@
   width: 28px;
   height: 28px;
   flex-shrink: 0;
+  margin-left: 2px;
+  margin-right: 4px;
 }
 
 .dial-radio {
