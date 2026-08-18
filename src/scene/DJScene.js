@@ -93,6 +93,8 @@ export class DJScene {
     this.isTransitioningCam = false;
     this.isCinematicOrbit = false;
     this.cinematicAngle = 0;
+    this.isTopOrbit = false;
+    this.topAngle = 0;
 
     // Resize Handler
     window.addEventListener('resize', () => this.onResize());
@@ -109,8 +111,13 @@ export class DJScene {
 
     if (presetName === 'cinematic') {
       this.isCinematicOrbit = true;
+      this.isTopOrbit = false;
+    } else if (presetName === 'top') {
+      this.isTopOrbit = true;
+      this.isCinematicOrbit = false;
     } else {
       this.isCinematicOrbit = false;
+      this.isTopOrbit = false;
       this.targetCamPos.copy(CAMERA_PRESETS[presetName].position);
       this.targetCamLook.copy(CAMERA_PRESETS[presetName].target);
       this.isTransitioningCam = true;
@@ -152,8 +159,16 @@ export class DJScene {
       bpmB: 126
     };
 
-    // 1. Camera interpolation or cinematic orbit
-    if (this.isCinematicOrbit) {
+    // 1. Camera interpolation, cinematic orbit, or 360° top-down perimeter flyover
+    if (this.isTopOrbit) {
+      this.topAngle += 0.0028;
+      const radiusX = 9.4;
+      const radiusZ = 8.6;
+      this.camera.position.x = Math.cos(this.topAngle) * radiusX;
+      this.camera.position.z = 2.5 + Math.sin(this.topAngle) * radiusZ;
+      this.camera.position.y = 10.4 + Math.sin(this.topAngle * 2.0) * 0.4;
+      this.controls.target.set(0, 0.8, 2.5);
+    } else if (this.isCinematicOrbit) {
       this.cinematicAngle += 0.0025;
       const radius = 8.5;
       const camY = 3.5 + Math.sin(this.cinematicAngle * 1.2) * 0.8;
