@@ -27,6 +27,7 @@ if (fs.existsSync(envFile)) {
 }
 
 const app = express();
+app.set('trust proxy', true);
 const PORT = process.env.PORT || 3000;
 const MUSIC_DIR = process.env.MUSIC_DIR || 'D:\\Soundcloud';
 
@@ -412,14 +413,36 @@ function checkTrackAdvancement() {
 
 // Optional DJ Authentication middleware (Grok G-04 / Codex P0)
 // If DJ_PASSWORD is set in .env, remote clients must provide 'x-dj-key' to change broadcast state
+function getDjPassword() {
+  if (process.env.DJ_PASSWORD) return process.env.DJ_PASSWORD;
+  const envFile = path.join(__dirname, '.env');
+  if (fs.existsSync(envFile)) {
+    try {
+      const content = fs.readFileSync(envFile, 'utf-8');
+      for (const line of content.split('\n')) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('DJ_PASSWORD=')) {
+          return trimmed.slice('DJ_PASSWORD='.length).trim().replace(/^["'](.*)["']$/, '$1');
+        }
+      }
+    } catch (e) {}
+  }
+  return null;
+}
+
 function requireDjAuth(req, res, next) {
-  const djPass = process.env.DJ_PASSWORD;
+  const djPass = getDjPassword();
   if (!djPass) return next(); // Open mode if not configured
 
-  const ip = req.ip || req.connection?.remoteAddress || '';
-  const isLocal = ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
-  if (isLocal) return next(); // Host machine is always authorized
+  // Detect if request came through public tunnel (Cloudflare, ngrok, reverse proxy)
+  const forwarded = req.headers['x-forwarded-for'] || req.headers['cf-connecting-ip'] || req.headers['x-real-ip'];
+  const rawIp = req.socket?.remoteAddress || req.connection?.remoteAddress || '';
+  const isDirectLocalhost = !forwarded && (rawIp === '127.0.0.1' || rawIp === '::1' || rawIp === '::ffff:127.0.0.1');
 
+  // Direct localhost browser on host PC is authorized
+  if (isDirectLocalhost) return next();
+
+  // Remote / Tunnel clients must provide correct DJ key
   const clientKey = req.headers['x-dj-key'] || req.query.dj_key || req.body?.dj_key;
   if (clientKey && clientKey === djPass) {
     return next();
