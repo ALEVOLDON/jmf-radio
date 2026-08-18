@@ -672,6 +672,10 @@ export class AudioEngine {
     if (!this.nextTrack) {
       try {
         const res = await fetch('/api/next', { method: 'POST', headers: this.getAuthHeaders() });
+        if (res.status === 403) {
+          if (this.onAuthRequired) this.onAuthRequired();
+          return;
+        }
         const data = await res.json();
         if (data.track) {
           this.nextTrack = data.track;

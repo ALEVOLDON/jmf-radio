@@ -509,6 +509,10 @@
 /* ======================================================== */
 /* 🔒 DJ BOOTH RESIDENT AUTH MODAL */
 /* ======================================================== */
+.dj-auth-backdrop {
+  z-index: 1300 !important;
+}
+
 .dj-auth-card {
   max-width: 420px;
   border-color: rgba(0, 240, 255, 0.35);
