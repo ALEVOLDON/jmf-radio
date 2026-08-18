@@ -32,6 +32,10 @@ export const CAMERA_PRESETS = {
     position: new THREE.Vector3(0, 2.6, 1.0),
     target: new THREE.Vector3(0, 1.1, -0.2)
   },
+  top: {
+    position: new THREE.Vector3(0, 11.2, 2.4),
+    target: new THREE.Vector3(0, 0.0, 2.4)
+  },
   room: {
     position: new THREE.Vector3(7.5, 4.8, 9.5),
     target: new THREE.Vector3(0, 1.5, 2.5)
