@@ -48,10 +48,10 @@ export class DJScene {
     this.width = container.clientWidth || window.innerWidth || 1280;
     this.height = container.clientHeight || window.innerHeight || 720;
 
-    // Core Three.js components
+    // Core Three.js components with vibrant cyber atmospheric depth
     this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color(0x07070b);
-    this.scene.fog = new THREE.FogExp2(0x07070b, 0.035);
+    this.scene.background = new THREE.Color(0x0e1124);
+    this.scene.fog = new THREE.FogExp2(0x0e1124, 0.012);
 
     this.camera = new THREE.PerspectiveCamera(50, this.width / this.height, 0.1, 80);
     this.camera.position.copy(CAMERA_PRESETS.booth.position);
@@ -60,7 +60,7 @@ export class DJScene {
     this.renderer.setSize(this.width, this.height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5)); // Cap at 1.5x — avoids 4x pixel count on HiDPI
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.15;
+    this.renderer.toneMappingExposure = 1.35;
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.container.appendChild(this.renderer.domElement);

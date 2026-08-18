@@ -29,6 +29,10 @@ export class Room {
     this.wallGenMode = 0;
     this.lastWallGenSwitch = 0;
 
+    // Overhead Kinetic Ceiling LED Light Tubes (Mega-club array)
+    this.ceilingTubes = [];
+    this.ceilingTubeMats = [];
+
     this.init();
     this.scene.add(this.group);
   }
@@ -38,6 +42,7 @@ export class Room {
     this.createWalls();
     this.createGenerativeWallPanels();
     this.createCeilingTrusses();
+    this.createCeilingLightTubes();
     this.createWindowAndSkyline();
     this.createAcousticPanels();
     this.createNeonSigns();
@@ -47,12 +52,12 @@ export class Room {
   }
 
   createFloor() {
-    // 1. Polished dark reflective epoxy nightclub floor (26m x 24m)
+    // 1. Polished reflective nightclub floor (26m x 24m) with cyber metallic finish
     const floorGeo = new THREE.PlaneGeometry(26, 24);
     const floorMat = new THREE.MeshStandardMaterial({
-      color: 0x0a0b12,
-      roughness: 0.12,
-      metalness: 0.88,
+      color: 0x16182c,
+      roughness: 0.16,
+      metalness: 0.85,
     });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
@@ -60,37 +65,45 @@ export class Room {
     this.group.add(floor);
 
     // 2. Architectural Floor Line Insets (Separating Stage, Dancefloor, and Lounge)
-    const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.45 });
+    const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.65 });
     this.wallWashNeonMats.push(lineMat);
 
     // Stage border line
-    const stageLine = new THREE.Mesh(new THREE.PlaneGeometry(16, 0.05), lineMat);
+    const stageLine = new THREE.Mesh(new THREE.PlaneGeometry(16, 0.06), lineMat);
     stageLine.rotation.x = -Math.PI / 2;
     stageLine.position.set(0, 0.006, -1.2);
     this.group.add(stageLine);
 
     // Central circular glow ring around the DJ & dancefloor
-    const ringGeo = new THREE.RingGeometry(4.2, 4.26, 64);
+    const ringGeo = new THREE.RingGeometry(4.2, 4.28, 64);
     const ringMesh = new THREE.Mesh(ringGeo, lineMat);
     ringMesh.rotation.x = -Math.PI / 2;
     ringMesh.position.set(0, 0.006, 3.5);
     this.group.add(ringMesh);
 
     // Outer dancefloor runway neon lines
-    const leftRunway = new THREE.Mesh(new THREE.PlaneGeometry(0.04, 14), lineMat);
+    const leftRunway = new THREE.Mesh(new THREE.PlaneGeometry(0.06, 14), lineMat);
     leftRunway.rotation.x = -Math.PI / 2;
     leftRunway.position.set(-5.8, 0.006, 4.0);
-    const rightRunway = new THREE.Mesh(new THREE.PlaneGeometry(0.04, 14), lineMat);
+    const rightRunway = new THREE.Mesh(new THREE.PlaneGeometry(0.06, 14), lineMat);
     rightRunway.rotation.x = -Math.PI / 2;
     rightRunway.position.set(5.8, 0.006, 4.0);
     this.group.add(leftRunway, rightRunway);
+
+    // Cross-grid neon lines across the dancefloor perimeter
+    for (let gz = -0.5; gz <= 8.5; gz += 1.8) {
+      const gridLine = new THREE.Mesh(new THREE.PlaneGeometry(11.6, 0.02), lineMat);
+      gridLine.rotation.x = -Math.PI / 2;
+      gridLine.position.set(0, 0.005, gz);
+      this.group.add(gridLine);
+    }
   }
 
   createWalls() {
     const wallMat = new THREE.MeshStandardMaterial({
-      color: 0x12131d,
-      roughness: 0.75,
-      metalness: 0.25,
+      color: 0x20243c,
+      roughness: 0.65,
+      metalness: 0.35,
     });
 
     // 1. Back Wall (behind DJ, with big window opening)
@@ -103,6 +116,16 @@ export class Room {
     backRightPillar.position.set(8.5, 4.5, -9.8);
     backRightPillar.receiveShadow = true;
     this.group.add(backRightPillar);
+
+    // Glowing vertical LED light battens on the window pillars
+    const windowLedMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.85 });
+    this.wallWashNeonMats.push(windowLedMat);
+
+    const leftWindowLed = new THREE.Mesh(new THREE.BoxGeometry(0.06, 8.2, 0.06), windowLedMat);
+    leftWindowLed.position.set(-5.0, 4.5, -9.6);
+    const rightWindowLed = new THREE.Mesh(new THREE.BoxGeometry(0.06, 8.2, 0.06), windowLedMat);
+    rightWindowLed.position.set(5.0, 4.5, -9.6);
+    this.group.add(leftWindowLed, rightWindowLed);
 
     // Top window lintel
     const backTopLintel = new THREE.Mesh(new THREE.BoxGeometry(24, 1.8, 0.4), wallMat);
@@ -127,9 +150,9 @@ export class Room {
 
     // 3. Ceiling with concrete beams
     const ceilingMat = new THREE.MeshStandardMaterial({
-      color: 0x080910,
-      roughness: 0.85,
-      metalness: 0.2
+      color: 0x181c2e,
+      roughness: 0.8,
+      metalness: 0.25
     });
     const ceiling = new THREE.Mesh(new THREE.BoxGeometry(26, 0.4, 24), ceilingMat);
     ceiling.position.set(0, 9, 2);
@@ -144,9 +167,9 @@ export class Room {
     ];
 
     const columnMat = new THREE.MeshStandardMaterial({
-      color: 0x161824,
-      roughness: 0.6,
-      metalness: 0.4
+      color: 0x262b44,
+      roughness: 0.55,
+      metalness: 0.45
     });
 
     const columnLedMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
@@ -168,7 +191,7 @@ export class Room {
     });
 
     // 5. Continuous Floor and Ceiling LED Cove Washers (Скрытая подсветка стен)
-    const coveLedMat = new THREE.MeshBasicMaterial({ color: 0xff007f, transparent: true, opacity: 0.8 });
+    const coveLedMat = new THREE.MeshBasicMaterial({ color: 0xff007f, transparent: true, opacity: 0.85 });
     this.wallWashNeonMats.push(coveLedMat);
 
     // Bottom baseboard cove strips
@@ -1114,8 +1137,91 @@ export class Room {
       }
     }
 
+    // 4. Animate Kinetic Overhead Ceiling LED Light Tubes (Mega-club wave)
+    if (this.ceilingTubes.length > 0) {
+      const primaryHex = themeColors ? themeColors.primary : 0x00f0ff;
+      const secHex = themeColors ? themeColors.secondary : 0xff007f;
+      const accentHex = themeColors ? themeColors.accent : 0x9d4edd;
+
+      for (let i = 0; i < this.ceilingTubes.length; i++) {
+        const tube = this.ceilingTubes[i];
+        const wave = Math.sin(time * 3.5 + tube.gridX * 0.6 + tube.gridZ * 0.6);
+        const waveY = Math.cos(time * 2.0 + tube.gridX * 0.4) * 0.15;
+        tube.mesh.position.y = tube.baseY + waveY + (bass * 0.2);
+
+        const intensity = 0.45 + wave * 0.35 + bass * 0.4 + beat * 0.3;
+        tube.mat.opacity = Math.min(1.0, intensity);
+
+        if (wave > 0.4) {
+          tube.mat.color.setHex(primaryHex);
+        } else if (wave < -0.4) {
+          tube.mat.color.setHex(secHex);
+        } else {
+          tube.mat.color.setHex(accentHex);
+        }
+      }
+    }
+
     this.updateGenerativeWallPanels(audioAnalysis, themeColors);
     this.updateStageScreen(audioAnalysis, themeColors);
+  }
+
+  createCeilingLightTubes() {
+    // Array of 36 suspended kinetic LED tubes arranged across the club ceiling
+    const tubeGeo = new THREE.CylinderGeometry(0.025, 0.025, 1.8, 12);
+    const cableGeo = new THREE.CylinderGeometry(0.004, 0.004, 1.2, 6);
+    const cableMat = new THREE.MeshStandardMaterial({ color: 0x11121a, metalness: 0.9, roughness: 0.3 });
+
+    const rows = 6;
+    const cols = 6;
+    const startX = -5.0;
+    const endX = 5.0;
+    const startZ = -3.5;
+    const endZ = 7.5;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const x = startX + (c / (cols - 1)) * (endX - startX);
+        const z = startZ + (r / (rows - 1)) * (endZ - startZ);
+        const baseY = 6.8 + ((r + c) % 2) * 0.35;
+
+        const tubeGroup = new THREE.Group();
+        tubeGroup.position.set(x, baseY, z);
+
+        // Suspension cable from ceiling down to tube
+        const cable = new THREE.Mesh(cableGeo, cableMat);
+        cable.position.y = 1.5;
+        tubeGroup.add(cable);
+
+        // Glowing LED Pixel Tube
+        const tubeMat = new THREE.MeshBasicMaterial({
+          color: (r + c) % 2 === 0 ? 0x00f0ff : 0xff007f,
+          transparent: true,
+          opacity: 0.8
+        });
+        this.ceilingTubeMats.push(tubeMat);
+
+        const tubeMesh = new THREE.Mesh(tubeGeo, tubeMat);
+        tubeGroup.add(tubeMesh);
+
+        // Chrome end caps
+        const capMat = new THREE.MeshStandardMaterial({ color: 0x333646, metalness: 0.95, roughness: 0.2 });
+        const topCap = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.04, 12), capMat);
+        topCap.position.y = 0.9;
+        const btmCap = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.04, 12), capMat);
+        btmCap.position.y = -0.9;
+        tubeGroup.add(topCap, btmCap);
+
+        this.group.add(tubeGroup);
+        this.ceilingTubes.push({
+          mesh: tubeGroup,
+          mat: tubeMat,
+          baseY: baseY,
+          gridX: c,
+          gridZ: r
+        });
+      }
+    }
   }
 
   createGenerativeWallPanels() {

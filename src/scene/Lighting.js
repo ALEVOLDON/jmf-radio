@@ -6,7 +6,9 @@ export const THEMES = {
     primary: 0x00f0ff,
     secondary: 0xff007f,
     accent: 0x9d4edd,
-    ambient: 0x141528,
+    ambient: 0x22264a,
+    sky: 0x00d2ff,
+    ground: 0x7928ca,
     spotlight: 0x00f0ff
   },
   sunset: {
@@ -14,7 +16,9 @@ export const THEMES = {
     primary: 0xff6b35,
     secondary: 0xf7c59f,
     accent: 0xef233c,
-    ambient: 0x24151a,
+    ambient: 0x382228,
+    sky: 0xff9e00,
+    ground: 0x7b2cbf,
     spotlight: 0xffa500
   },
   matrix: {
@@ -22,7 +26,9 @@ export const THEMES = {
     primary: 0x00ff88,
     secondary: 0x00bb55,
     accent: 0x88ff00,
-    ambient: 0x0a1a12,
+    ambient: 0x143422,
+    sky: 0x00ff88,
+    ground: 0x084c28,
     spotlight: 0x00ff88
   },
   acid: {
@@ -30,7 +36,9 @@ export const THEMES = {
     primary: 0x3a86ff,
     secondary: 0x8338ec,
     accent: 0xff006e,
-    ambient: 0x101426,
+    ambient: 0x222a55,
+    sky: 0x3a86ff,
+    ground: 0x8338ec,
     spotlight: 0x3a86ff
   }
 };
@@ -42,6 +50,7 @@ export class Lighting {
     this.currentTheme = THEMES.cyber;
 
     this.ambientLight = null;
+    this.hemiLight = null;
     this.djSpotlight = null;
     this.danceFloorSpot = null;
     this.barLight = null;
@@ -62,12 +71,20 @@ export class Lighting {
   }
 
   init() {
-    // 1. Ambient Lighting (Low mood fill)
-    this.ambientLight = new THREE.AmbientLight(this.currentTheme.ambient, 1.4);
+    // 1. Dual-Tone Hemisphere Ambient Light (Eliminates dead black shadows across all surfaces)
+    this.hemiLight = new THREE.HemisphereLight(
+      this.currentTheme.sky || 0x00d2ff,
+      this.currentTheme.ground || 0x7928ca,
+      2.4
+    );
+    this.group.add(this.hemiLight);
+
+    // 2. Ambient Lighting Fill
+    this.ambientLight = new THREE.AmbientLight(this.currentTheme.ambient, 2.6);
     this.group.add(this.ambientLight);
 
-    // 2. Focused Spotlight on DJ Booth (only shadow-caster in the scene)
-    this.djSpotlight = new THREE.SpotLight(this.currentTheme.spotlight, 6.0, 16, Math.PI / 4, 0.4, 1.5);
+    // 3. Focused Spotlight on DJ Booth
+    this.djSpotlight = new THREE.SpotLight(this.currentTheme.spotlight, 7.0, 18, Math.PI / 3.5, 0.4, 1.4);
     this.djSpotlight.position.set(0, 8.5, 1.2);
     this.djSpotlight.target.position.set(0, 1.0, 0);
     this.djSpotlight.castShadow = true;
@@ -78,55 +95,55 @@ export class Lighting {
     this.group.add(this.djSpotlight);
     this.group.add(this.djSpotlight.target);
 
-    // 3. Dynamic Dance Floor Overhead Spotlight
-    this.danceFloorSpot = new THREE.SpotLight(this.currentTheme.secondary, 5.0, 16, Math.PI / 3, 0.5, 1.2);
+    // 4. Dynamic Dance Floor Overhead Spotlight
+    this.danceFloorSpot = new THREE.SpotLight(this.currentTheme.secondary, 6.0, 18, Math.PI / 3, 0.5, 1.2);
     this.danceFloorSpot.position.set(0, 8.5, 4.5);
     this.danceFloorSpot.target.position.set(0, 0, 4.5);
     this.group.add(this.danceFloorSpot);
     this.group.add(this.danceFloorSpot.target);
 
-    // 4. Bar Counter Overhead Light
-    this.barLight = new THREE.PointLight(this.currentTheme.secondary, 3.5, 10, 2);
-    this.barLight.position.set(6.8, 4.0, 3.5);
+    // 5. Bar Counter Overhead Light
+    this.barLight = new THREE.PointLight(this.currentTheme.secondary, 4.5, 12, 2);
+    this.barLight.position.set(6.8, 4.2, 3.5);
     this.group.add(this.barLight);
 
-    // 5. VIP Lounge Light
-    this.vipLight = new THREE.PointLight(this.currentTheme.accent, 3.0, 10, 2);
-    this.vipLight.position.set(-7.5, 3.8, 3.5);
+    // 6. VIP Lounge Light
+    this.vipLight = new THREE.PointLight(this.currentTheme.accent, 4.0, 12, 2);
+    this.vipLight.position.set(-7.5, 4.0, 3.5);
     this.group.add(this.vipLight);
 
-    // 6. Left & Right Fill Point Lights
-    this.leftFillPoint = new THREE.PointLight(this.currentTheme.primary, 3.0, 12, 2);
-    this.leftFillPoint.position.set(-4.5, 3.5, -2.0);
+    // 7. Left & Right Fill Point Lights
+    this.leftFillPoint = new THREE.PointLight(this.currentTheme.primary, 4.5, 14, 2);
+    this.leftFillPoint.position.set(-4.5, 4.0, -1.5);
     this.group.add(this.leftFillPoint);
 
-    this.rightFillPoint = new THREE.PointLight(this.currentTheme.secondary, 3.0, 12, 2);
-    this.rightFillPoint.position.set(4.5, 3.5, -2.0);
+    this.rightFillPoint = new THREE.PointLight(this.currentTheme.secondary, 4.5, 14, 2);
+    this.rightFillPoint.position.set(4.5, 4.0, -1.5);
     this.group.add(this.rightFillPoint);
 
-    // 7. Architectural Wall-Wash Uplights (Gives depth and illuminates club walls)
-    this.wallWashLeft = new THREE.PointLight(this.currentTheme.primary, 4.0, 16, 2);
-    this.wallWashLeft.position.set(-11.0, 5.0, 2.0);
+    // 8. Architectural Wall-Wash Uplights (Gives depth and illuminates club walls)
+    this.wallWashLeft = new THREE.PointLight(this.currentTheme.primary, 5.5, 18, 2);
+    this.wallWashLeft.position.set(-11.0, 5.2, 2.0);
     this.group.add(this.wallWashLeft);
 
-    this.wallWashRight = new THREE.PointLight(this.currentTheme.secondary, 4.0, 16, 2);
-    this.wallWashRight.position.set(11.0, 5.0, 2.0);
+    this.wallWashRight = new THREE.PointLight(this.currentTheme.secondary, 5.5, 18, 2);
+    this.wallWashRight.position.set(11.0, 5.2, 2.0);
     this.group.add(this.wallWashRight);
 
-    this.wallWashBack = new THREE.PointLight(this.currentTheme.accent, 4.5, 14, 2);
-    this.wallWashBack.position.set(0.0, 6.5, -9.0);
+    this.wallWashBack = new THREE.PointLight(this.currentTheme.accent, 6.0, 16, 2);
+    this.wallWashBack.position.set(0.0, 6.8, -8.5);
     this.group.add(this.wallWashBack);
 
-    // 8. Strobe Flash Light (Pulses on heavy bass / kick drops)
-    this.strobeLight = new THREE.PointLight(0xffffff, 0, 18, 2);
+    // 9. Strobe Flash Light
+    this.strobeLight = new THREE.PointLight(0xffffff, 0, 20, 2);
     this.strobeLight.position.set(0, 7.5, 4.0);
     this.group.add(this.strobeLight);
 
-    // 9. 3D Scanning Laser Beams (Multi-beam fan from stage truss)
+    // 10. 3D Scanning Laser Beams
     this.laserBeams = [];
     this.createLaserBeams();
 
-    // 10. Floating Atmosphere Dust / Haze Particles
+    // 11. Floating Atmosphere Dust / Haze Particles
     this.createAtmosphereParticles();
   }
 
@@ -214,6 +231,10 @@ export class Lighting {
     this.currentTheme = THEMES[themeKey];
 
     if (this.ambientLight) this.ambientLight.color.setHex(this.currentTheme.ambient);
+    if (this.hemiLight) {
+      if (this.currentTheme.sky) this.hemiLight.color.setHex(this.currentTheme.sky);
+      if (this.currentTheme.ground) this.hemiLight.groundColor.setHex(this.currentTheme.ground);
+    }
     if (this.djSpotlight) this.djSpotlight.color.setHex(this.currentTheme.spotlight);
     if (this.danceFloorSpot) this.danceFloorSpot.color.setHex(this.currentTheme.secondary);
     if (this.barLight) this.barLight.color.setHex(this.currentTheme.secondary);
