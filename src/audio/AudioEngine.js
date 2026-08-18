@@ -736,6 +736,10 @@ export class AudioEngine {
         headers: this.getAuthHeaders(),
         body: JSON.stringify({ genre: genreId })
       });
+      if (res.status === 403) {
+        if (this.onAuthRequired) this.onAuthRequired();
+        return;
+      }
       const data = await res.json();
       if (data.currentTrack) {
         this.nextTrack = data.currentTrack;
@@ -812,6 +816,10 @@ export class AudioEngine {
   async skipNext() {
     try {
       const res = await fetch('/api/next', { method: 'POST', headers: this.getAuthHeaders() });
+      if (res.status === 403) {
+        if (this.onAuthRequired) this.onAuthRequired();
+        return;
+      }
       const data = await res.json();
       if (data.track) {
         this.currentTrack = data.track;
@@ -840,6 +848,10 @@ export class AudioEngine {
   async skipPrev() {
     try {
       const res = await fetch('/api/prev', { method: 'POST', headers: this.getAuthHeaders() });
+      if (res.status === 403) {
+        if (this.onAuthRequired) this.onAuthRequired();
+        return;
+      }
       const data = await res.json();
       if (data.track) {
         this.currentTrack = data.track;

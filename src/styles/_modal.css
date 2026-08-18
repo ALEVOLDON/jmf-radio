@@ -505,3 +505,149 @@
   font-weight: 800;
   letter-spacing: 0.5px;
 }
+
+/* ======================================================== */
+/* 🔒 DJ BOOTH RESIDENT AUTH MODAL */
+/* ======================================================== */
+.dj-auth-card {
+  max-width: 420px;
+  border-color: rgba(0, 240, 255, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 30px rgba(0, 240, 255, 0.15);
+}
+
+.dj-auth-body {
+  text-align: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.dj-auth-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.dj-avatar-badge {
+  font-size: 34px;
+  width: 62px;
+  height: 62px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+  margin-bottom: 4px;
+}
+
+.dj-auth-heading {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  color: #00f0ff;
+  text-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+  margin: 0;
+}
+
+.dj-auth-desc {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: #a8b4c8;
+  margin: 0;
+  max-width: 360px;
+}
+
+.dj-auth-desc strong {
+  color: #fff;
+}
+
+.dj-key-box {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
+}
+
+.dj-key-row {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.dj-key-input {
+  flex: 1;
+  background: rgba(14, 18, 28, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 10px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.dj-key-input:focus {
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+}
+
+.btn-dj-action {
+  background: linear-gradient(135deg, #00f0ff, #0088ff);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #000;
+  font-family: var(--font-display);
+  font-size: 9.5px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+.btn-dj-action:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.6);
+}
+
+.dj-auth-error {
+  font-size: 9.5px;
+  color: #ff3366;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.dj-auth-error.hidden {
+  display: none;
+}
+
+.btn-enjoy-stream {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 16px;
+  color: #e2e8f0;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-enjoy-stream:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(0, 240, 255, 0.3);
+}
+

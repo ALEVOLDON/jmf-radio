@@ -656,12 +656,70 @@ export class UIController {
         if (this.lightingModal) this.lightingModal.classList.add('hidden');
         const genreModal = document.getElementById('genre-modal');
         if (genreModal) genreModal.classList.add('hidden');
+        const djAuthModal = document.getElementById('dj-auth-modal');
+        if (djAuthModal) djAuthModal.classList.add('hidden');
         const mDrawer = document.getElementById('mobile-menu-drawer');
         const mBackdrop = document.getElementById('mobile-menu-backdrop');
         if (mDrawer) mDrawer.classList.add('hidden');
         if (mBackdrop) mBackdrop.classList.add('hidden');
       }
     });
+
+    // ========================================================
+    // 🎧 RESIDENT DJ BOOTH ACCESS MODAL
+    // ========================================================
+    const djAuthModal = document.getElementById('dj-auth-modal');
+    const btnDjAuthClose = document.getElementById('btn-dj-auth-close');
+    const btnDjEnjoy = document.getElementById('btn-dj-enjoy');
+    const inputDjKey = document.getElementById('input-dj-key');
+    const btnSubmitDjKey = document.getElementById('btn-submit-dj-key');
+    const djAuthError = document.getElementById('dj-auth-error');
+
+    this.showDjAuthModal = () => {
+      if (djAuthModal) {
+        djAuthModal.classList.remove('hidden');
+        if (djAuthError) djAuthError.classList.add('hidden');
+        if (inputDjKey) {
+          inputDjKey.value = '';
+          inputDjKey.focus();
+        }
+      }
+    };
+
+    if (btnDjAuthClose && djAuthModal) {
+      btnDjAuthClose.addEventListener('click', () => djAuthModal.classList.add('hidden'));
+    }
+    if (btnDjEnjoy && djAuthModal) {
+      btnDjEnjoy.addEventListener('click', () => djAuthModal.classList.add('hidden'));
+    }
+
+    if (btnSubmitDjKey && inputDjKey) {
+      const handleKeySubmit = async () => {
+        const key = inputDjKey.value.trim();
+        if (!key) return;
+
+        localStorage.setItem('jmf_dj_key', key);
+        if (djAuthError) {
+          djAuthError.classList.remove('hidden');
+          djAuthError.style.color = '#00ff88';
+          djAuthError.textContent = '🎉 DJ-ключ сохранён! Пробуем войти за пульт...';
+        }
+
+        setTimeout(() => {
+          if (djAuthModal) djAuthModal.classList.add('hidden');
+          this.audioEngine.skipNext();
+        }, 600);
+      };
+
+      btnSubmitDjKey.addEventListener('click', handleKeySubmit);
+      inputDjKey.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleKeySubmit();
+      });
+    }
+
+    this.audioEngine.onAuthRequired = () => {
+      this.showDjAuthModal();
+    };
   }
 
 
