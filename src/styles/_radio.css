@@ -139,60 +139,73 @@
 }
 
 /* ======================================================== */
-/* 🎚️ SLEEK RADIO BOTTOM BAR (100% MATCHING USER MOCKUP) */
+/* 🎚️ MODERN CYBERDECK RADIO BOTTOM BAR */
 /* ======================================================== */
 .radio-bottom-bar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #070911;
-  border: 1.5px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 8px 18px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.85);
-  gap: 16px;
+  flex-direction: column;
+  background: rgba(10, 13, 22, 0.95);
+  border: 1.5px solid rgba(0, 240, 255, 0.25);
+  border-radius: 14px;
+  padding: 10px 14px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.9), 0 0 20px rgba(0, 240, 255, 0.08);
+  gap: 8px;
+  width: 100%;
+  max-width: 580px;
+  box-sizing: border-box;
 }
 
-/* Left: Headphones & Horizontal Cyan VU */
-.radio-util-left {
+/* Row 1: Volume & Dual VU Meter */
+.r-bar-row-top {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.r-vol-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .r-hp-icon {
   font-size: 15px;
-  opacity: 0.85;
+  color: var(--deck-a-cyan);
 }
 
-.r-label {
+.r-vol-label {
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 8.5px;
   font-weight: 900;
-  letter-spacing: 0.6px;
-  color: #7d8b9e;
+  letter-spacing: 0.8px;
+  color: #8c97ad;
+  white-space: nowrap;
 }
 
-.knob-radio {
-  width: 26px;
-  height: 26px;
+.radio-stereo-segmented-meter {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  max-width: 220px;
+  min-width: 60px;
 }
 
-.dial-radio {
-  width: 26px;
-  height: 26px;
-}
-
-.radio-segmented-meter {
+.r-stereo-row {
   display: flex;
   align-items: center;
   gap: 2.5px;
+  width: 100%;
 }
 
 .r-seg {
-  width: 3px;
-  height: 9px;
-  border-radius: 1px;
+  flex: 1;
+  height: 8px;
+  border-radius: 1.5px;
   background: rgba(255, 255, 255, 0.08);
   transition: background 0.05s ease, box-shadow 0.05s ease;
 }
@@ -212,121 +225,98 @@
   box-shadow: 0 0 6px rgba(255, 208, 0, 0.8);
 }
 
-/* Center: Equalizer & Dropdown */
-.radio-util-center {
+.knob-radio {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.dial-radio {
+  width: 32px;
+  height: 32px;
+}
+
+/* Row 2: EQ Preset & Settings / Lights */
+.r-bar-row-bottom {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 10px;
 }
 
-.btn-radio-eq {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: #0c0f1b;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ced6e2;
-  font-family: var(--font-display);
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.6px;
-  padding: 6px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.btn-radio-eq:hover {
-  background: #14192b;
-  border-color: rgba(0, 240, 255, 0.3);
-  color: #fff;
-}
-
-.radio-preset-select-wrap {
+.r-eq-pill-wrap {
   position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  background: rgba(14, 18, 30, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0 8px 0 10px;
+  transition: all 0.2s ease;
+}
+
+.r-eq-pill-wrap:hover,
+.r-eq-pill-wrap:focus-within {
+  border-color: var(--deck-a-cyan);
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+.r-eq-icon {
+  font-size: 13px;
+  margin-right: 6px;
+  flex-shrink: 0;
 }
 
 .radio-preset-dropdown {
   appearance: none;
   -webkit-appearance: none;
-  background: #0c0f1b;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  border: none;
   color: #ffffff;
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 9.5px;
   font-weight: 800;
   letter-spacing: 0.6px;
-  padding: 6px 20px 6px 12px;
-  border-radius: 6px;
+  padding: 8px 18px 8px 0;
+  width: 100%;
   cursor: pointer;
   outline: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%238a99ad' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%2300f0ff' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 6px center;
-  transition: all 0.15s ease;
-}
-
-.radio-preset-dropdown:hover, .radio-preset-dropdown:focus {
-  border-color: rgba(0, 240, 255, 0.4);
+  background-position: right 2px center;
 }
 
 .radio-preset-dropdown option {
   background: #0c0f1b;
   color: #ffffff;
-}
-
-/* Right: Master Volume, Dual Stereo VU, Settings */
-.radio-util-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.radio-master-labels {
-  display: flex;
-  flex-direction: column;
-  font-family: var(--font-display);
-  font-size: 6px;
-  font-weight: 900;
-  line-height: 1.1;
-  color: #7d8b9e;
-  letter-spacing: 0.5px;
-  text-align: right;
-}
-
-.radio-stereo-segmented-meter {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5px;
-}
-
-.r-stereo-row {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+  font-size: 11px;
 }
 
 .btn-radio-settings {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  background: #0c0f1b;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #ced6e2;
+  gap: 6px;
+  background: rgba(14, 18, 30, 0.9);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #00f0ff;
   font-family: var(--font-display);
-  font-size: 8px;
+  font-size: 9.5px;
   font-weight: 800;
   letter-spacing: 0.6px;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
 }
 
-.btn-radio-settings:hover {
-  background: #14192b;
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.25);
+.btn-radio-settings:hover,
+.btn-radio-settings:active {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--deck-a-cyan);
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.35);
+  transform: scale(1.02);
 }
 
 /* Responsive adjustments for Radio Mode */
@@ -339,20 +329,7 @@
     align-items: stretch;
   }
   .radio-bottom-bar {
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 8px 10px;
-    gap: 10px;
-  }
-}
-
-@media (max-width: 480px) {
-  .radio-bottom-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-  }
-  .radio-util-left, .radio-util-center, .radio-util-right {
-    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
   }
 }

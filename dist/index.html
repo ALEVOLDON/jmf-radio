@@ -35,8 +35,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Styles -->
-  <script type="module" crossorigin src="/assets/index-D7VpPGiY.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-BVpuedgR.css">
+  <script type="module" crossorigin src="/assets/index-BRLAj3Dg.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DWA5VQXD.css">
 </head>
 <body>
   <!-- 3D Canvas Container -->
@@ -848,47 +848,15 @@
         </div>
       </div>
 
-      <!-- Sleek Radio Bottom Bar (100% Matching Screenshot) -->
+      <!-- Modern Cyberdeck Radio Bottom Bar -->
       <div class="radio-bottom-bar">
-        <!-- Left: Headphones & Segmented Cyan Meter -->
-        <div class="radio-util-left">
-          <span class="r-hp-icon">🎧</span>
-          <span class="r-label">HEADPHONES</span>
-          <div class="rotary-knob-component knob-radio" data-param="hp-vol" data-min="0" data-max="1" data-val="0.7" data-default="0.7" title="Headphones Level">
-            <div class="knob-dial dial-radio">
-              <div class="knob-cap">
-                <div class="knob-pointer pointer-cyan"></div>
-              </div>
-            </div>
+        <!-- Top Row: Master Volume & Dual Stereo VU Meter -->
+        <div class="r-bar-row r-bar-row-top">
+          <div class="r-vol-meta">
+            <span class="r-hp-icon">🎧</span>
+            <span class="r-vol-label">MASTER VOL</span>
           </div>
-          <div class="radio-segmented-meter" id="radio-hp-meter">
-            <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
-          </div>
-        </div>
 
-        <!-- Center: Equalizer & Preset Dropdown -->
-        <div class="radio-util-center">
-          <button class="btn-radio-eq" id="btn-radio-eq-toggle" title="Toggle Equalizer">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
-            <span>EQUALIZER</span>
-          </button>
-          <div class="radio-preset-select-wrap">
-            <select class="radio-preset-dropdown" id="radio-eq-preset">
-              <option value="flat">FLAT ⌵</option>
-              <option value="bass">BASS BOOST ⌵</option>
-              <option value="club">CLUB ⌵</option>
-              <option value="vocal">VOCAL ⌵</option>
-              <option value="electronic">ELECTRONIC ⌵</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Right: Master Volume & Dual Stereo Meters -->
-        <div class="radio-util-right">
-          <div class="radio-master-labels">
-            <span>MASTER</span>
-            <span>VOLUME</span>
-          </div>
           <div class="radio-stereo-segmented-meter" id="radio-master-vu">
             <div class="r-stereo-row r-row-l">
               <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-yellow"></span><span class="r-seg lit-yellow"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
@@ -897,6 +865,7 @@
               <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-yellow"></span><span class="r-seg lit-yellow"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
             </div>
           </div>
+
           <div class="rotary-knob-component knob-radio" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Volume">
             <div class="knob-dial dial-radio">
               <div class="knob-cap">
@@ -904,9 +873,24 @@
               </div>
             </div>
           </div>
-          <button class="btn-radio-settings" id="btn-radio-settings" title="Settings">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
-            <span>SETTINGS</span>
+        </div>
+
+        <!-- Bottom Row: Clean EQ Pill & Settings / Lights Pill -->
+        <div class="r-bar-row r-bar-row-bottom">
+          <div class="r-eq-pill-wrap">
+            <span class="r-eq-icon">🎚️</span>
+            <select class="radio-preset-dropdown" id="radio-eq-preset">
+              <option value="flat">EQ: FLAT</option>
+              <option value="bass">EQ: BASS BOOST</option>
+              <option value="club">EQ: CLUB PUNCH</option>
+              <option value="vocal">EQ: VOCAL</option>
+              <option value="electronic">EQ: ELECTRONIC</option>
+            </select>
+          </div>
+
+          <button class="btn-radio-settings" id="btn-radio-settings" title="Settings & Visual FX">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            <span>CLUB FX & LIGHTS</span>
           </button>
         </div>
       </div>
