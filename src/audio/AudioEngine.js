@@ -559,9 +559,17 @@ export class AudioEngine {
 
   cueDeck(deck) {
     const audio = deck === 'A' ? this.audioA : this.audioB;
-    audio.pause();
-    audio.currentTime = this.deckStates[deck].cueTime || 0;
-    this.deckStates[deck].isPlaying = false;
+    if (!audio) return;
+
+    if (audio.paused) {
+      // On CDJ: When paused, pressing CUE sets a new cue point at current playhead
+      this.deckStates[deck].cueTime = audio.currentTime || 0;
+    } else {
+      // On CDJ: When playing, pressing CUE pauses and rewinds instantly to cue point
+      audio.pause();
+      audio.currentTime = this.deckStates[deck].cueTime || 0;
+      this.deckStates[deck].isPlaying = false;
+    }
   }
 
   togglePlayDeck(deck) {
