@@ -1044,6 +1044,30 @@ export class UIController {
     this.genreModalGrid = document.getElementById('genre-modal-grid');
     this.queueGenreFilter = document.getElementById('queue-genre-filter');
 
+    const getGenreSvg = (id) => {
+      switch (id) {
+        case 'all':
+          return `<svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
+        case 'techno':
+          return `<svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
+        case 'house':
+          return `<svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>`;
+        case 'bass':
+          return `<svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M2 10v4"/><path d="M6 6v12"/><path d="M10 3v18"/><path d="M14 8v8"/><path d="M18 5v14"/><path d="M22 10v4"/></svg>`;
+        case 'lofi':
+          return `<svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>`;
+        case 'electro':
+          return `<svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`;
+        default:
+          return `<svg class="ui-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
+      }
+    };
+
+    const cleanGenreName = (name) => {
+      if (!name) return 'ALL STYLES';
+      return name.replace(/^[\p{Emoji}\p{Extended_Pictographic}\uFE0F\s]+/u, '').trim();
+    };
+
     const openGenreModal = () => {
       if (this.genreModal) this.genreModal.classList.remove('hidden');
     };
@@ -1062,10 +1086,11 @@ export class UIController {
 
     const updateAllGenreLabels = (chosen) => {
       if (chosen) {
-        if (this.headerGenreIcon) this.headerGenreIcon.textContent = chosen.icon;
-        const shortName = chosen.name.replace(/^[^\s]+\s/, '');
-        if (this.headerGenreLabel) this.headerGenreLabel.textContent = shortName;
-        if (this.mHeaderGenreLabel) this.mHeaderGenreLabel.textContent = `${chosen.icon} ${shortName}`;
+        const svgIcon = getGenreSvg(chosen.id);
+        const name = cleanGenreName(chosen.name);
+        if (this.headerGenreIcon) this.headerGenreIcon.innerHTML = svgIcon;
+        if (this.headerGenreLabel) this.headerGenreLabel.textContent = name;
+        if (this.mHeaderGenreLabel) this.mHeaderGenreLabel.innerHTML = `${svgIcon} <span>${name}</span>`;
       }
     };
 
@@ -1076,15 +1101,19 @@ export class UIController {
       const renderGenreButtons = () => {
         // 1. Populate Genre Modal Grid
         if (this.genreModalGrid && genres) {
-          this.genreModalGrid.innerHTML = genres.map(g => `
-            <button class="genre-card-btn ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}">
-              <div class="genre-card-header">
-                <span class="genre-card-icon">${g.icon}</span>
-                <span class="genre-card-count">${g.count} tracks</span>
-              </div>
-              <div class="genre-card-name" style="color: ${g.color};">${g.name}</div>
-            </button>
-          `).join('');
+          this.genreModalGrid.innerHTML = genres.map(g => {
+            const name = cleanGenreName(g.name);
+            const icon = getGenreSvg(g.id);
+            return `
+              <button class="genre-card-btn ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}">
+                <div class="genre-card-header">
+                  <span class="genre-card-icon">${icon}</span>
+                  <span class="genre-card-count">${g.count} tracks</span>
+                </div>
+                <div class="genre-card-name" style="color: ${g.color};">${name}</div>
+              </button>
+            `;
+          }).join('');
 
           this.genreModalGrid.querySelectorAll('.genre-card-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
@@ -1101,12 +1130,16 @@ export class UIController {
 
         // 2. Populate Quick Filter Pills in Queue Drawer
         if (this.queueGenreFilter && genres) {
-          this.queueGenreFilter.innerHTML = genres.map(g => `
-            <button class="q-filter-pill ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}" style="--pill-color: ${g.color}">
-              <span>${g.icon} ${g.name.split(' ')[1] || 'ALL'}</span>
-              <span class="pill-badge">${g.count}</span>
-            </button>
-          `).join('');
+          this.queueGenreFilter.innerHTML = genres.map(g => {
+            const name = cleanGenreName(g.name);
+            const icon = getGenreSvg(g.id);
+            return `
+              <button class="q-filter-pill ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}" style="--pill-color: ${g.color}">
+                <span class="q-filter-inner">${icon} <span>${name.split(' ')[0] || 'ALL'}</span></span>
+                <span class="pill-badge">${g.count}</span>
+              </button>
+            `;
+          }).join('');
 
           this.queueGenreFilter.querySelectorAll('.q-filter-pill').forEach(btn => {
             btn.addEventListener('click', async () => {
@@ -1123,12 +1156,16 @@ export class UIController {
         // 3. Populate Mobile Menu Genre Chips
         const mGenreChips = document.getElementById('m-genre-chips');
         if (mGenreChips && genres) {
-          mGenreChips.innerHTML = genres.map(g => `
-            <button class="m-genre-chip ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}">
-              <span class="m-genre-chip-icon">${g.icon}</span>
-              <span class="m-genre-chip-name" style="color: ${g.color};">${g.name}</span>
-            </button>
-          `).join('');
+          mGenreChips.innerHTML = genres.map(g => {
+            const name = cleanGenreName(g.name);
+            const icon = getGenreSvg(g.id);
+            return `
+              <button class="m-genre-chip ${g.id === this.activeGenre ? 'active' : ''}" data-genre="${g.id}">
+                <span class="m-genre-chip-icon">${icon}</span>
+                <span class="m-genre-chip-name" style="color: ${g.color};">${name}</span>
+              </button>
+            `;
+          }).join('');
 
           mGenreChips.querySelectorAll('.m-genre-chip').forEach(btn => {
             btn.addEventListener('click', async () => {

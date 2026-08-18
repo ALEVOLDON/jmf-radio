@@ -727,7 +727,7 @@ export class Room {
 
     // 2. Genre / Style Pill Badge
     const genre = this.currentTrack?.genre;
-    const genreText = genre ? `${genre.icon} ${genre.name}` : '🔥 ALL STYLES';
+    const genreText = genre ? (genre.name || 'ALL STYLES').replace(/^[\p{Emoji}\p{Extended_Pictographic}\uFE0F\s]+/u, '').trim() : 'ALL STYLES';
     const genreColor = genre?.color || '#00f0ff';
 
     ctx.font = '900 13px Orbitron, sans-serif';

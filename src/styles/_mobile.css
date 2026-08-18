@@ -500,6 +500,9 @@
 .m-genre-chip-icon {
   font-size: 14px;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .m-genre-chip-name {

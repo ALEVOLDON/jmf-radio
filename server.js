@@ -52,7 +52,7 @@ const CACHE_FILE = path.join(__dirname, 'genre_library_cache.json');
 const GENRE_RULES = [
   {
     id: 'techno',
-    name: '⚡ TECHNO & ACID',
+    name: 'TECHNO & ACID',
     icon: '⚡',
     color: '#00f0ff',
     defaultBpm: 128,
@@ -66,7 +66,7 @@ const GENRE_RULES = [
   },
   {
     id: 'house',
-    name: '🌴 HOUSE & DEEP',
+    name: 'HOUSE & DEEP',
     icon: '🌴',
     color: '#ff6b35',
     defaultBpm: 124,
@@ -80,7 +80,7 @@ const GENRE_RULES = [
   },
   {
     id: 'bass',
-    name: '🛸 UK BASS & BREAKS',
+    name: 'UK BASS & BREAKS',
     icon: '🛸',
     color: '#a855f7',
     defaultBpm: 168,
@@ -93,7 +93,7 @@ const GENRE_RULES = [
   },
   {
     id: 'lofi',
-    name: '☕ LO-FI & CHILL',
+    name: 'LO-FI & CHILL',
     icon: '☕',
     color: '#ffd000',
     defaultBpm: 84,
@@ -105,7 +105,7 @@ const GENRE_RULES = [
   },
   {
     id: 'electro',
-    name: '🔮 ELECTRO & SYNTH',
+    name: 'ELECTRO & SYNTH',
     icon: '🔮',
     color: '#00ff88',
     defaultBpm: 132,
@@ -463,7 +463,7 @@ app.get('/api/genres', (req, res) => {
   }
 
   const list = [
-    { id: 'all', name: '🔥 ALL STYLES', icon: '🔥', count: counts.all, color: '#00f0ff' },
+    { id: 'all', name: 'ALL STYLES', icon: '🔥', count: counts.all, color: '#00f0ff' },
     ...GENRE_RULES.map(g => ({
       id: g.id,
       name: g.name,
