@@ -864,3 +864,215 @@
   }
 }
 
+/* ======================================================== */
+/* 🎛️ CYBERPUNK CUSTOM DROPDOWN / ACTION SHEET PICKER */
+/* ======================================================== */
+.cyber-picker-backdrop {
+  z-index: 1300 !important;
+}
+
+.cyber-picker-card {
+  max-width: 420px;
+  background: rgba(12, 15, 26, 0.97);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.95), 0 0 35px rgba(0, 240, 255, 0.15);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cyber-picker-list {
+  padding: 12px 14px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 70vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cyber-picker-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(18, 23, 38, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 11px 14px;
+  cursor: pointer;
+  text-align: left;
+  color: #fff;
+  transition: all 0.18s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cyber-picker-item:hover,
+.cyber-picker-item:active {
+  background: rgba(26, 34, 56, 0.95);
+  border-color: rgba(0, 240, 255, 0.4);
+  transform: translateX(3px);
+}
+
+.cyber-picker-item.active {
+  background: linear-gradient(135deg, rgba(0, 240, 255, 0.18), rgba(0, 136, 255, 0.1));
+  border-color: #00f0ff;
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.25);
+}
+
+.cyber-picker-item.active-pink {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.18), rgba(157, 78, 221, 0.1));
+  border-color: #ff007f;
+  box-shadow: 0 0 16px rgba(255, 0, 127, 0.25);
+}
+
+.cyber-picker-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.cyber-picker-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.cyber-picker-name {
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #fff;
+}
+
+.cyber-picker-desc {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+.cyber-picker-indicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.cyber-picker-item.active .cyber-picker-indicator {
+  border-color: #00f0ff;
+  background: #00f0ff;
+  box-shadow: 0 0 8px #00f0ff;
+}
+
+.cyber-picker-item.active-pink .cyber-picker-indicator {
+  border-color: #ff007f;
+  background: #ff007f;
+  box-shadow: 0 0 8px #ff007f;
+}
+
+.cyber-picker-item.active .cyber-picker-indicator::after,
+.cyber-picker-item.active-pink .cyber-picker-indicator::after {
+  content: "✓";
+  color: #000;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* Custom Dropdown Trigger Buttons */
+.r-eq-pill-wrap {
+  cursor: pointer;
+}
+
+.r-eq-val {
+  font-family: var(--font-display);
+  font-size: 8.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  padding: 7px 4px;
+  flex: 1;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.r-eq-chevron,
+.fx-chevron,
+.m-eq-btn-chevron {
+  color: #00f0ff;
+  font-size: 10px;
+  font-weight: bold;
+  opacity: 0.85;
+  transition: transform 0.2s ease;
+}
+
+.fx-picker-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #111320;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 7.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fx-picker-btn:hover {
+  border-color: #00f0ff;
+  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
+}
+
+.m-eq-picker-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10, 14, 26, 0.95);
+  border: 1px solid rgba(0, 240, 255, 0.35);
+  border-radius: 8px;
+  padding: 10px 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: all 0.2s ease;
+}
+
+.m-eq-picker-btn:hover,
+.m-eq-picker-btn:active {
+  border-color: #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+.m-eq-btn-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.m-eq-btn-icon {
+  font-size: 14px;
+}
+
+.m-eq-btn-label {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: #00f0ff;
+}
+

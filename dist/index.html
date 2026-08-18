@@ -35,8 +35,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Styles -->
-  <script type="module" crossorigin src="/assets/index-D-vjLpoD.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-BmRht3Cz.css">
+  <script type="module" crossorigin src="/assets/index-DNrQZPF-.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B9NQFBNe.css">
 </head>
 <body>
   <!-- 3D Canvas Container -->
@@ -303,12 +303,10 @@
         <div class="deck-fx-strip">
           <div class="fx-header-left">
             <span class="fx-label cyan-text">EFFECTS</span>
-            <select class="fx-dropdown" id="deck-a-fx-type">
-              <option value="filter">FILTER</option>
-              <option value="echo">ECHO</option>
-              <option value="reverb">REVERB</option>
-              <option value="flanger">FLANGER</option>
-            </select>
+            <button type="button" class="fx-picker-btn" id="btn-deck-a-fx-picker" title="Select Deck A FX">
+              <span id="deck-a-fx-val">FILTER</span>
+              <span class="fx-chevron">⌵</span>
+            </button>
           </div>
 
           <div class="fx-knobs-row">
@@ -710,12 +708,10 @@
         <div class="deck-fx-strip">
           <div class="fx-header-left">
             <span class="fx-label magenta-text">EFFECTS</span>
-            <select class="fx-dropdown" id="deck-b-fx-type">
-              <option value="filter">FILTER</option>
-              <option value="echo">ECHO</option>
-              <option value="reverb">REVERB</option>
-              <option value="flanger">FLANGER</option>
-            </select>
+            <button type="button" class="fx-picker-btn" id="btn-deck-b-fx-picker" title="Select Deck B FX">
+              <span id="deck-b-fx-val">FILTER</span>
+              <span class="fx-chevron">⌵</span>
+            </button>
           </div>
 
           <div class="fx-knobs-row">
@@ -870,7 +866,6 @@
                 <span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-cyan"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-green"></span><span class="r-seg lit-yellow"></span><span class="r-seg lit-yellow"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span><span class="r-seg"></span>
               </div>
             </div>
-
             <div class="rotary-knob-component knob-radio" data-param="master-vol" data-min="0" data-max="1" data-val="0.8" data-default="0.8" title="Master Volume">
               <div class="knob-dial dial-radio">
                 <div class="knob-cap">
@@ -881,25 +876,37 @@
           </div>
 
           <div class="r-actions-subgrid">
-            <div class="r-eq-pill-wrap">
+            <button type="button" class="r-eq-pill-wrap" id="btn-radio-eq-picker" title="Select Equalizer Preset">
               <span class="r-eq-icon">🎚️</span>
-              <select class="radio-preset-dropdown" id="radio-eq-preset" title="Equalizer Preset">
-                <option value="flat">FLAT</option>
-                <option value="bass">BASS BOOST</option>
-                <option value="club">CLUB PUNCH</option>
-                <option value="vocal">VOCAL</option>
-                <option value="electronic">ELECTRONIC</option>
-              </select>
-            </div>
+              <span class="r-eq-val" id="radio-eq-val">EQ: FLAT</span>
+              <span class="r-eq-chevron">⌵</span>
+            </button>
 
             <button class="btn-radio-settings" id="btn-radio-settings" title="Club Atmosphere & Visual FX">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               <span>FX & LIGHTS</span>
             </button>
           </div>
         </div>
       </div>
     </div>
+    <!-- 🎛️ Cyberpunk Dropdown / Action Sheet Picker Modal -->
+    <div id="cyber-picker-modal" class="lighting-modal-backdrop cyber-picker-backdrop hidden">
+      <div class="lighting-modal-card cyber-picker-card">
+        <div class="lighting-modal-header">
+          <div class="l-modal-title">
+            <span class="l-dot" id="cyber-picker-dot" style="background: #00f0ff; box-shadow: 0 0 8px #00f0ff;"></span>
+            <h3 id="cyber-picker-title">🎚️ SELECT OPTION</h3>
+          </div>
+          <button class="l-modal-close" id="btn-cyber-picker-close">&times;</button>
+        </div>
+
+        <div class="cyber-picker-list" id="cyber-picker-list">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </div>
+
     <!-- Music Style / Genre Selection Modal -->
     <div id="genre-modal" class="lighting-modal-backdrop hidden">
       <div class="lighting-modal-card genre-modal-card">
@@ -1273,15 +1280,13 @@
       <!-- 5. Sound & EQ Presets -->
       <div class="m-menu-section">
         <div class="m-menu-section-title">🎚️ SOUND & EQ PRESET</div>
-        <div class="m-eq-select-wrap">
-          <select class="m-eq-dropdown" id="m-radio-eq-preset">
-            <option value="flat">FLAT (Default)</option>
-            <option value="bass">BASS BOOST</option>
-            <option value="club">CLUB PUNCH</option>
-            <option value="vocal">VOCAL CLARITY</option>
-            <option value="electronic">ELECTRONIC DANCE</option>
-          </select>
-        </div>
+        <button type="button" class="m-eq-picker-btn" id="m-btn-eq-picker">
+          <div class="m-eq-btn-content">
+            <span class="m-eq-btn-icon">🎚️</span>
+            <span class="m-eq-btn-label" id="m-eq-val">FLAT (Default)</span>
+          </div>
+          <span class="m-eq-btn-chevron">⌵</span>
+        </button>
       </div>
 
       <!-- 6. Quick Tools & Utilities -->

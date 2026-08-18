@@ -875,6 +875,135 @@ export class UIController {
     if (btnAboutClose && aboutModal) {
       btnAboutClose.addEventListener('click', () => aboutModal.classList.add('hidden'));
     }
+
+    // ========================================================
+    // 🎛️ CYBERPUNK CUSTOM PICKER (ACTION SHEET / DROPDOWN)
+    // ========================================================
+    const cyberPickerModal = document.getElementById('cyber-picker-modal');
+    const cyberPickerTitle = document.getElementById('cyber-picker-title');
+    const cyberPickerDot = document.getElementById('cyber-picker-dot');
+    const cyberPickerList = document.getElementById('cyber-picker-list');
+    const btnCyberPickerClose = document.getElementById('btn-cyber-picker-close');
+
+    const pickerConfigs = {
+      eq: {
+        title: '🎚️ SELECT EQUALIZER PRESET',
+        color: '#00f0ff',
+        options: [
+          { val: 'flat', icon: '🎚️', name: 'FLAT', desc: 'Balanced studio frequency response (Default)' },
+          { val: 'bass', icon: '🔊', name: 'BASS BOOST', desc: 'Deep low-end sub-bass & kick enhancement' },
+          { val: 'club', icon: '💥', name: 'CLUB PUNCH', desc: 'Enhanced punchy bass & crisp club highs' },
+          { val: 'vocal', icon: '🎤', name: 'VOCAL CLARITY', desc: 'Elevated mid-range for clear vocals' },
+          { val: 'electronic', icon: '⚡', name: 'ELECTRONIC DANCE', desc: 'Dynamic wide-spectrum electronic mastering' }
+        ],
+        getCurrent: () => this.audioEngine.currentEQPreset || 'flat',
+        onSelect: (val, opt) => {
+          this.audioEngine.setEQPreset(val);
+          const radioEqVal = document.getElementById('radio-eq-val');
+          const mEqVal = document.getElementById('m-eq-val');
+          if (radioEqVal) radioEqVal.textContent = `EQ: ${opt.name}`;
+          if (mEqVal) mEqVal.textContent = opt.name === 'FLAT' ? 'FLAT (Default)' : opt.name;
+        }
+      },
+      'fx-a': {
+        title: '⚡ DECK A EFFECTS',
+        color: '#00f0ff',
+        options: [
+          { val: 'filter', icon: '🎛️', name: 'FILTER', desc: 'Bi-directional resonant LPF / HPF sweep' },
+          { val: 'echo', icon: '🔁', name: 'ECHO', desc: 'Beat-synchronized delay with feedback' },
+          { val: 'reverb', icon: '🌌', name: 'REVERB', desc: 'Spatial nightclub reverberation' },
+          { val: 'flanger', icon: '🌊', name: 'FLANGER', desc: 'Sweeping harmonic comb modulation' }
+        ],
+        getCurrent: () => this.audioEngine.fxStates?.A?.type || 'filter',
+        onSelect: (val, opt) => {
+          this.audioEngine.setFXType('A', val);
+          const el = document.getElementById('deck-a-fx-val');
+          if (el) el.textContent = opt.name;
+        }
+      },
+      'fx-b': {
+        title: '⚡ DECK B EFFECTS',
+        color: '#ff007f',
+        options: [
+          { val: 'filter', icon: '🎛️', name: 'FILTER', desc: 'Bi-directional resonant LPF / HPF sweep' },
+          { val: 'echo', icon: '🔁', name: 'ECHO', desc: 'Beat-synchronized delay with feedback' },
+          { val: 'reverb', icon: '🌌', name: 'REVERB', desc: 'Spatial nightclub reverberation' },
+          { val: 'flanger', icon: '🌊', name: 'FLANGER', desc: 'Sweeping harmonic comb modulation' }
+        ],
+        getCurrent: () => this.audioEngine.fxStates?.B?.type || 'filter',
+        onSelect: (val, opt) => {
+          this.audioEngine.setFXType('B', val);
+          const el = document.getElementById('deck-b-fx-val');
+          if (el) el.textContent = opt.name;
+        }
+      }
+    };
+
+    const openCyberPicker = (type) => {
+      const config = pickerConfigs[type];
+      if (!config || !cyberPickerModal || !cyberPickerList) return;
+
+      if (cyberPickerTitle) cyberPickerTitle.textContent = config.title;
+      if (cyberPickerDot) {
+        cyberPickerDot.style.background = config.color;
+        cyberPickerDot.style.boxShadow = `0 0 8px ${config.color}`;
+      }
+
+      const currentVal = config.getCurrent();
+      cyberPickerList.innerHTML = '';
+
+      config.options.forEach(opt => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        const isActive = opt.val === currentVal;
+        const activeClass = config.color === '#ff007f' ? 'active-pink' : 'active';
+        item.className = `cyber-picker-item ${isActive ? activeClass : ''}`;
+        item.setAttribute('data-val', opt.val);
+
+        item.innerHTML = `
+          <span class="cyber-picker-icon">${opt.icon}</span>
+          <div class="cyber-picker-meta">
+            <span class="cyber-picker-name">${opt.name}</span>
+            <span class="cyber-picker-desc">${opt.desc}</span>
+          </div>
+          <span class="cyber-picker-indicator"></span>
+        `;
+
+        item.addEventListener('click', () => {
+          config.onSelect(opt.val, opt);
+          cyberPickerModal.classList.add('hidden');
+        });
+
+        cyberPickerList.appendChild(item);
+      });
+
+      cyberPickerModal.classList.remove('hidden');
+    };
+
+    const btnRadioEqPicker = document.getElementById('btn-radio-eq-picker');
+    const btnDeckAFxPicker = document.getElementById('btn-deck-a-fx-picker');
+    const btnDeckBFxPicker = document.getElementById('btn-deck-b-fx-picker');
+    const mBtnEqPicker = document.getElementById('m-btn-eq-picker');
+
+    if (btnRadioEqPicker) btnRadioEqPicker.addEventListener('click', () => openCyberPicker('eq'));
+    if (btnDeckAFxPicker) btnDeckAFxPicker.addEventListener('click', () => openCyberPicker('fx-a'));
+    if (btnDeckBFxPicker) btnDeckBFxPicker.addEventListener('click', () => openCyberPicker('fx-b'));
+    if (mBtnEqPicker) {
+      mBtnEqPicker.addEventListener('click', () => {
+        const mDrawer = document.getElementById('mobile-menu-drawer');
+        const mBackdrop = document.getElementById('mobile-menu-backdrop');
+        if (mDrawer) mDrawer.classList.add('hidden');
+        if (mBackdrop) mBackdrop.classList.add('hidden');
+        openCyberPicker('eq');
+      });
+    }
+
+    if (btnCyberPickerClose && cyberPickerModal) {
+      btnCyberPickerClose.addEventListener('click', () => cyberPickerModal.classList.add('hidden'));
+      cyberPickerModal.addEventListener('click', (e) => {
+        if (e.target === cyberPickerModal) cyberPickerModal.classList.add('hidden');
+      });
+    }
   }
 
 

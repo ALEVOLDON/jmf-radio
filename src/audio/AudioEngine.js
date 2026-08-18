@@ -432,6 +432,24 @@ export class AudioEngine {
     }
   }
 
+  setEQPreset(preset) {
+    this.currentEQPreset = preset;
+    const presets = {
+      flat: { low: 0, mid: 0, high: 0 },
+      bass: { low: 6, mid: 0, high: 1 },
+      club: { low: 4, mid: -1, high: 3 },
+      vocal: { low: -2, mid: 4, high: 2 },
+      electronic: { low: 5, mid: -2, high: 4 }
+    };
+    const gains = presets[preset] || presets.flat;
+    this.setEQ('A', 'low', gains.low);
+    this.setEQ('A', 'mid', gains.mid);
+    this.setEQ('A', 'high', gains.high);
+    this.setEQ('B', 'low', gains.low);
+    this.setEQ('B', 'mid', gains.mid);
+    this.setEQ('B', 'high', gains.high);
+  }
+
   setFilterSweep(deck, normalizedVal) {
     if (!this.audioContext) return;
     const filter = deck === 'A' ? this.filterSweepA : this.filterSweepB;
