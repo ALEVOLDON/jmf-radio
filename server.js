@@ -18,7 +18,12 @@ app.use(express.json());
 // Serve static frontend
 app.use(express.static(path.join(__dirname, 'dist')));
 app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use(express.static(path.join(__dirname, 'public')));
+
+// In-memory cover art cache — avoids re-parsing audio files on every request
+// Key: track.id, Value: { data: Buffer, format: string } | null (cache miss)
+const COVER_CACHE_MAX = 200;
+const coverCache = new Map();
+
 
 // Supported audio formats
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.wav', '.ogg', '.flac', '.m4a', '.aac', '.wma', '.opus']);
@@ -558,6 +563,15 @@ app.get('/api/cover/:id', async (req, res) => {
     return res.status(404).send('Not found');
   }
 
+  // Serve from cache if available
+  if (coverCache.has(id)) {
+    const cached = coverCache.get(id);
+    if (!cached) return res.status(404).send('No cover art found');
+    res.set('Content-Type', cached.format);
+    res.set('Cache-Control', 'public, max-age=86400'); // 24h browser cache
+    return res.send(cached.data);
+  }
+
   try {
     const parsePromise = musicMetadata.parseFile(track.path);
     const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000));
@@ -565,13 +579,25 @@ app.get('/api/cover/:id', async (req, res) => {
     
     if (mm.common.picture && mm.common.picture.length > 0) {
       const picture = mm.common.picture[0];
+      // Store in cache with LRU eviction
+      if (coverCache.size >= COVER_CACHE_MAX) {
+        coverCache.delete(coverCache.keys().next().value);
+      }
+      coverCache.set(id, { data: picture.data, format: picture.format });
       res.set('Content-Type', picture.format);
+      res.set('Cache-Control', 'public, max-age=86400');
       return res.send(picture.data);
     }
   } catch (err) {}
 
+  // Cache negative result to avoid repeated parsing of tracks without cover art
+  if (coverCache.size >= COVER_CACHE_MAX) {
+    coverCache.delete(coverCache.keys().next().value);
+  }
+  coverCache.set(id, null);
   res.status(404).send('No cover art found');
 });
+
 
 
 app.post('/api/prev', async (req, res) => {
