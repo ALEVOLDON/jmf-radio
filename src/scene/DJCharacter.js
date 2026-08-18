@@ -441,97 +441,113 @@ export class DJCharacter {
     this.djHead.add(djGlassesGroup);
     this.djTorso.add(this.djHead);
 
-    // 5. Left Arm (Scratching vinyl deck with articulated joints and DJ Glove)
-    this.djLeftArm = new THREE.Group();
-    this.djLeftArm.position.set(-0.34, 0.65, 0);
+    // ==========================================
+    // 4. ARTICULATED DJ ARMS (TURNTABLE & MIXER)
+    // ==========================================
+    const gloveMat = new THREE.MeshStandardMaterial({ color: 0x111218, roughness: 0.3, metalness: 0.8 });
 
-    const shoulderCapL = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), hoodieMat);
+    // 4A. Left Arm (Positioned & Angled Directly onto Left Turntable Vinyl at x = -0.9, y = 1.15, z = 0.0)
+    this.djLeftArm = new THREE.Group();
+    this.djLeftArm.position.set(-0.34, 0.65, 0.0);
+
+    const shoulderCapL = new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 14), hoodieMat);
     this.djLeftArm.add(shoulderCapL);
 
-    const upperArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.32, 16), hoodieMat);
-    upperArmL.position.set(-0.12, -0.14, 0.12);
-    upperArmL.rotation.set(Math.PI / 4, 0, Math.PI / 6);
-    this.djLeftArm.add(upperArmL);
+    // Bicep (Upper arm angled forward and left)
+    const bicepGeoL = new THREE.CylinderGeometry(0.075, 0.065, 0.32, 14);
+    bicepGeoL.translate(0, -0.16, 0);
+    const bicepL = new THREE.Mesh(bicepGeoL, hoodieMat);
+    bicepL.rotation.set(0.65, 0, 0.45);
+    this.djLeftArm.add(bicepL);
 
-    const elbowL = new THREE.Group();
-    elbowL.position.set(-0.24, -0.26, 0.24);
+    // Elbow Joint
+    this.djLeftElbow = new THREE.Group();
+    this.djLeftElbow.position.set(-0.14, -0.25, 0.18);
 
-    const elbowJointL = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), skinMat);
-    elbowL.add(elbowJointL);
+    const elbowBallL = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12), skinMat);
+    this.djLeftElbow.add(elbowBallL);
 
-    const foreArmL = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.34, 16), skinMat);
-    foreArmL.position.set(-0.12, -0.12, 0.16);
-    foreArmL.rotation.set(Math.PI / 3, 0, Math.PI / 6);
-    elbowL.add(foreArmL);
+    // Forearm (Reaching down-forward to the vinyl)
+    const foreGeoL = new THREE.CylinderGeometry(0.06, 0.05, 0.32, 14);
+    foreGeoL.translate(0, -0.16, 0);
+    const foreL = new THREE.Mesh(foreGeoL, skinMat);
+    foreL.rotation.set(0.75, 0, 0.2);
+    this.djLeftElbow.add(foreL);
 
     // Glowing DJ Wristband
     const djWristbandL = new THREE.Mesh(
-      new THREE.TorusGeometry(0.06, 0.018, 8, 16),
+      new THREE.TorusGeometry(0.055, 0.015, 8, 16),
       new THREE.MeshBasicMaterial({ color: 0x00f0ff })
     );
-    djWristbandL.position.set(-0.2, -0.22, 0.28);
+    djWristbandL.position.set(-0.06, -0.27, 0.23);
     djWristbandL.rotation.x = Math.PI / 3;
-    elbowL.add(djWristbandL);
+    this.djLeftElbow.add(djWristbandL);
 
     // DJ Cyber Glove & Palm resting flat on vinyl
-    const gloveMat = new THREE.MeshStandardMaterial({ color: 0x111218, roughness: 0.3, metalness: 0.8 });
     const handL = new THREE.Group();
-    handL.position.set(-0.22, -0.25, 0.32);
+    handL.position.set(-0.08, -0.29, 0.26);
 
-    const palmL = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.035, 0.12), gloveMat);
-    palmL.rotation.x = -Math.PI / 10;
+    const palmL = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.035, 0.12), gloveMat);
+    palmL.rotation.set(0.1, 0.3, 0);
     const thumbL = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.025, 0.05), gloveMat);
     thumbL.position.set(0.055, -0.01, 0.02);
-    handL.add(palmL, thumbL);
-    elbowL.add(handL);
+    const fingersL = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.025, 0.05), gloveMat);
+    fingersL.position.set(0, -0.005, 0.07);
+    handL.add(palmL, thumbL, fingersL);
+    this.djLeftElbow.add(handL);
 
-    this.djLeftArm.add(elbowL);
+    this.djLeftArm.add(this.djLeftElbow);
     this.djTorso.add(this.djLeftArm);
 
-    // 6. Right Arm (Reaching for mixer / faders with articulated joints)
+    // 4B. Right Arm (Positioned & Angled Directly over Center Mixer Knobs / Crossfader)
     this.djRightArm = new THREE.Group();
-    this.djRightArm.position.set(0.34, 0.65, 0);
+    this.djRightArm.position.set(0.34, 0.65, 0.0);
 
-    const shoulderCapR = new THREE.Mesh(new THREE.SphereGeometry(0.09, 16, 16), hoodieMat);
+    const shoulderCapR = new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 14), hoodieMat);
     this.djRightArm.add(shoulderCapR);
 
-    const upperArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.07, 0.32, 16), hoodieMat);
-    upperArmR.position.set(0.12, -0.14, 0.12);
-    upperArmR.rotation.set(Math.PI / 4, 0, -Math.PI / 8);
-    this.djRightArm.add(upperArmR);
+    // Bicep (Upper arm angled forward and towards center)
+    const bicepGeoR = new THREE.CylinderGeometry(0.075, 0.065, 0.32, 14);
+    bicepGeoR.translate(0, -0.16, 0);
+    const bicepR = new THREE.Mesh(bicepGeoR, hoodieMat);
+    bicepR.rotation.set(0.65, 0, -0.4);
+    this.djRightArm.add(bicepR);
 
-    const elbowR = new THREE.Group();
-    elbowR.position.set(0.22, -0.26, 0.22);
+    // Elbow Joint
+    this.djRightElbow = new THREE.Group();
+    this.djRightElbow.position.set(0.12, -0.25, 0.18);
 
-    const elbowJointR = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), skinMat);
-    elbowR.add(elbowJointR);
+    const elbowBallR = new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 12), skinMat);
+    this.djRightElbow.add(elbowBallR);
 
-    const foreArmR = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.055, 0.34, 16), skinMat);
-    foreArmR.position.set(-0.06, -0.12, 0.16);
-    foreArmR.rotation.set(Math.PI / 3, 0, -Math.PI / 8);
-    elbowR.add(foreArmR);
+    // Forearm (Reaching down-center to the mixer)
+    const foreGeoR = new THREE.CylinderGeometry(0.06, 0.05, 0.32, 14);
+    foreGeoR.translate(0, -0.16, 0);
+    const foreR = new THREE.Mesh(foreGeoR, skinMat);
+    foreR.rotation.set(0.75, 0, -0.25);
+    this.djRightElbow.add(foreR);
 
     // Glowing DJ Wristband
     const djWristbandR = new THREE.Mesh(
-      new THREE.TorusGeometry(0.06, 0.018, 8, 16),
+      new THREE.TorusGeometry(0.055, 0.015, 8, 16),
       new THREE.MeshBasicMaterial({ color: 0xff007f })
     );
-    djWristbandR.position.set(-0.12, -0.22, 0.28);
+    djWristbandR.position.set(0.06, -0.27, 0.23);
     djWristbandR.rotation.x = Math.PI / 3;
-    elbowR.add(djWristbandR);
+    this.djRightElbow.add(djWristbandR);
 
-    // DJ Right Hand (Tweaking knobs with finger posture)
+    // DJ Right Hand (Curved fingers tweaking EQ knobs / faders)
     const handR = new THREE.Group();
-    handR.position.set(-0.14, -0.25, 0.32);
+    handR.position.set(0.07, -0.29, 0.26);
 
-    const palmR = new THREE.Mesh(new THREE.BoxGeometry(0.09, 0.04, 0.1), gloveMat);
-    palmR.rotation.x = -Math.PI / 8;
-    const fingersR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.025, 0.05), gloveMat);
-    fingersR.position.set(0, -0.01, 0.06);
+    const palmR = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.04, 0.1), gloveMat);
+    palmR.rotation.set(0.1, -0.2, 0);
+    const fingersR = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.03, 0.06), gloveMat);
+    fingersR.position.set(0, -0.015, 0.06);
     handR.add(palmR, fingersR);
-    elbowR.add(handR);
+    this.djRightElbow.add(handR);
 
-    this.djRightArm.add(elbowR);
+    this.djRightArm.add(this.djRightElbow);
     this.djTorso.add(this.djRightArm);
 
     djGroup.add(this.djTorso);
@@ -541,9 +557,9 @@ export class DJCharacter {
 
   update(audioAnalysis, isPlaying, themeColors) {
     const time = performance.now() * 0.001;
-    const bass = audioAnalysis.bass;
-    const beat = audioAnalysis.beat;
-    const rawFreq = audioAnalysis.rawArray || [];
+    const bass = audioAnalysis ? audioAnalysis.bass : 0;
+    const beat = audioAnalysis ? audioAnalysis.beat : 0;
+    const rawFreq = (audioAnalysis && audioAnalysis.rawArray) ? audioAnalysis.rawArray : [];
 
     // 1. Spin Vinyl records when music is playing
     if (isPlaying && this.turntables.length > 0) {
@@ -554,8 +570,7 @@ export class DJCharacter {
     }
 
     // 2. Animate Mixer Crossfader position
-    if (this.xFader && audioAnalysis.crossfadeProgress !== undefined) {
-      // Moves from -0.15 (Deck A) to +0.15 (Deck B)
+    if (this.xFader && audioAnalysis && audioAnalysis.crossfadeProgress !== undefined) {
       const targetX = (audioAnalysis.crossfadeProgress - 0.5) * 0.3;
       this.xFader.position.x = THREE.MathUtils.lerp(this.xFader.position.x, targetX, 0.1);
     }
@@ -576,20 +591,31 @@ export class DJCharacter {
       this.djTorso.position.y = 0.9 + Math.cos(time * swayFreq * 2) * (0.01 + bass * 0.03);
     }
 
-    // 5. DJ Arms Scratching & Tweaking (Focusing on active deck or crossfading)
+    // 5. Realistic DJ Arm Kinematics & Scratching
     if (this.djLeftArm && isPlaying) {
-      this.djLeftArm.rotation.y = Math.sin(time * 6.0) * (0.15 + bass * 0.2);
-      this.djLeftArm.position.z = Math.cos(time * 6.0) * 0.05;
+      // Left Arm: Smooth vinyl scratch scrubbing on platter
+      const scratchOsc = Math.sin(time * 7.5);
+      this.djLeftArm.rotation.z = Math.sin(time * 2.5) * 0.06;
+      this.djLeftArm.rotation.x = Math.sin(time * 3.5) * 0.05;
+      if (this.djLeftElbow) {
+        this.djLeftElbow.rotation.z = scratchOsc * 0.12;
+        this.djLeftElbow.position.z = 0.18 + scratchOsc * 0.04;
+      }
     }
 
     if (this.djRightArm && isPlaying) {
-      if (audioAnalysis.isCrossfading) {
-        // Hand directly on crossfader & EQ tweaking
-        this.djRightArm.rotation.x = Math.PI / 4 + Math.sin(time * 8.0) * 0.15;
-        this.djRightArm.position.x = 0.3 + (audioAnalysis.crossfadeProgress - 0.5) * 0.2;
+      if (audioAnalysis && audioAnalysis.isCrossfading) {
+        // Hand directly guiding crossfader
+        const faderPos = (audioAnalysis.crossfadeProgress || 0.5) - 0.5;
+        this.djRightArm.rotation.y = -0.15 + faderPos * 0.3;
+        this.djRightArm.rotation.x = Math.sin(time * 6.0) * 0.08;
       } else {
-        this.djRightArm.rotation.x = Math.sin(time * 3.0) * (0.1 + bass * 0.15);
-        this.djRightArm.rotation.y = Math.cos(time * 2.0) * 0.12;
+        // Rhythmic EQ tweaking & filter sweep
+        this.djRightArm.rotation.x = Math.sin(time * 3.0) * (0.08 + bass * 0.1);
+        this.djRightArm.rotation.y = Math.cos(time * 2.2) * 0.1;
+        if (this.djRightElbow) {
+          this.djRightElbow.rotation.x = Math.sin(time * 4.0) * 0.1;
+        }
       }
     }
 
