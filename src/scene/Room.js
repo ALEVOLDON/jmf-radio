@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export class Room {
   constructor(scene) {
@@ -102,6 +103,8 @@ export class Room {
     const buildingMat = new THREE.MeshBasicMaterial({ color: 0x040508 });
     const windowColors = [0x00f0ff, 0xff007f, 0xffd000, 0x9d4edd, 0xffffff];
 
+    // Merge all 45 buildings into 1 draw call
+    const buildingGeos = [];
     for (let i = 0; i < 45; i++) {
       const width = 0.8 + Math.random() * 1.6;
       const height = 4 + Math.random() * 9;
@@ -109,12 +112,12 @@ export class Room {
       const x = -18 + i * 0.8 + (Math.random() - 0.5) * 0.5;
       const z = (Math.random() - 0.5) * 4;
 
-      const building = new THREE.Mesh(new THREE.BoxGeometry(width, height, depth), buildingMat);
-      building.position.set(x, height / 2 - 1, z);
-      skylineGroup.add(building);
+      const g = new THREE.BoxGeometry(width, height, depth);
+      g.applyMatrix4(new THREE.Matrix4().makeTranslation(x, height / 2 - 1, z));
+      buildingGeos.push(g);
 
-      // Glowing beacon points on rooftops
-      const beaconGeo = new THREE.SphereGeometry(0.06, 8, 8);
+      // Glowing beacon points on rooftops (still individual — they animate)
+      const beaconGeo = new THREE.SphereGeometry(0.06, 6, 6);
       const beaconCol = windowColors[Math.floor(Math.random() * windowColors.length)];
       const beaconMat = new THREE.MeshBasicMaterial({ color: beaconCol });
       const beacon = new THREE.Mesh(beaconGeo, beaconMat);
@@ -122,22 +125,28 @@ export class Room {
       skylineGroup.add(beacon);
       this.cityBuildings.push(beacon);
     }
+    const mergedBuildings = mergeGeometries(buildingGeos);
+    buildingGeos.forEach(g => g.dispose());
+    skylineGroup.add(new THREE.Mesh(mergedBuildings, buildingMat));
 
-    // Window Glass Frame
+    // Window Glass Frame — merge 4 mullions into 1 draw call
     const frameMat = new THREE.MeshStandardMaterial({
       color: 0x1a1b26,
       metalness: 0.9,
       roughness: 0.2
     });
-    
-    for (let x of [-4.5, -1.5, 1.5, 4.5]) {
-      const mullion = new THREE.Mesh(new THREE.BoxGeometry(0.14, 7, 0.2), frameMat);
-      mullion.position.set(x, 4.7, -9.8);
-      this.group.add(mullion);
-    }
-    const hMullion = new THREE.Mesh(new THREE.BoxGeometry(12, 0.14, 0.2), frameMat);
-    hMullion.position.set(0, 5.0, -9.8);
-    this.group.add(hMullion);
+    const mullionGeos = [-4.5, -1.5, 1.5, 4.5].map(x => {
+      const g = new THREE.BoxGeometry(0.14, 7, 0.2);
+      g.applyMatrix4(new THREE.Matrix4().makeTranslation(x, 4.7, -9.8));
+      return g;
+    });
+    const hGeo = new THREE.BoxGeometry(12, 0.14, 0.2);
+    hGeo.applyMatrix4(new THREE.Matrix4().makeTranslation(0, 5.0, -9.8));
+    mullionGeos.push(hGeo);
+    const mergedMullions = mergeGeometries(mullionGeos);
+    mullionGeos.forEach(g => g.dispose());
+    this.group.add(new THREE.Mesh(mergedMullions, frameMat));
+
 
     // Glass pane
     const glassMat = new THREE.MeshPhysicalMaterial({
@@ -228,15 +237,19 @@ export class Room {
     signMesh.position.set(0, 8.0, -9.42);
     this.group.add(signMesh);
 
-    // Decorative wall neon equalizer arches on left wall
+    // Decorative wall neon equalizer arches on left wall — merged into 1 draw call
     const eqNeonMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    const eqGeos = [];
     for (let i = 0; i < 9; i++) {
       const height = 0.6 + Math.sin(i * 0.7) * 0.9;
-      const bar = new THREE.Mesh(new THREE.BoxGeometry(0.08, height, 0.05), eqNeonMat);
-      bar.position.set(-11.7, 6.0, -3 + i * 0.45);
-      this.group.add(bar);
-      this.neonElements.push(eqNeonMat);
+      const g = new THREE.BoxGeometry(0.08, height, 0.05);
+      g.applyMatrix4(new THREE.Matrix4().makeTranslation(-11.7, 6.0, -3 + i * 0.45));
+      eqGeos.push(g);
     }
+    const mergedEqBars = mergeGeometries(eqGeos);
+    eqGeos.forEach(g => g.dispose());
+    this.group.add(new THREE.Mesh(mergedEqBars, eqNeonMat));
+    this.neonElements.push(eqNeonMat);
   }
 
   createVIPLounge() {

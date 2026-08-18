@@ -585,187 +585,6 @@ export class UIController {
     });
   }
 
-  initMobileMenu() {
-    this.btnMobileMenu = document.getElementById('btn-mobile-menu');
-    this.btnMobileMenuClose = document.getElementById('btn-mobile-menu-close');
-    this.mobileMenuDrawer = document.getElementById('mobile-menu-drawer');
-    this.mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
-
-    const openDrawer = () => {
-      if (this.mobileMenuDrawer) this.mobileMenuDrawer.classList.remove('hidden');
-      if (this.mobileMenuBackdrop) this.mobileMenuBackdrop.classList.remove('hidden');
-
-      // Update current track info in mobile drawer
-      if (this.currentTrack) {
-        const mTrackTitle = document.getElementById('m-menu-track-title');
-        const mTrackArtist = document.getElementById('m-menu-track-artist');
-        if (mTrackTitle) mTrackTitle.textContent = this.currentTrack.title || 'Unknown Track';
-        if (mTrackArtist) {
-          const gBadge = this.currentTrack.genre ? ` • ${this.currentTrack.genre.name}` : '';
-          mTrackArtist.textContent = (this.currentTrack.artist || 'JMF Live Station') + gBadge;
-        }
-      }
-    };
-
-    const closeDrawer = () => {
-      if (this.mobileMenuDrawer) this.mobileMenuDrawer.classList.add('hidden');
-      if (this.mobileMenuBackdrop) this.mobileMenuBackdrop.classList.add('hidden');
-    };
-
-    if (this.btnMobileMenu) this.btnMobileMenu.addEventListener('click', openDrawer);
-    if (this.btnMobileMenuClose) this.btnMobileMenuClose.addEventListener('click', closeDrawer);
-    if (this.mobileMenuBackdrop) this.mobileMenuBackdrop.addEventListener('click', closeDrawer);
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeDrawer();
-    });
-
-    // 1. Playback Modes in Mobile Menu
-    const mBtnModeDj = document.getElementById('m-btn-mode-dj');
-    const mBtnModeRadio = document.getElementById('m-btn-mode-radio');
-    if (mBtnModeDj) {
-      mBtnModeDj.addEventListener('click', () => {
-        this.setMode('dj');
-      });
-    }
-    if (mBtnModeRadio) {
-      mBtnModeRadio.addEventListener('click', () => {
-        this.setMode('radio');
-      });
-    }
-
-    // 2. 3D Club Cameras
-    const mCamItems = document.querySelectorAll('.m-cam-item');
-    mCamItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const camPreset = item.getAttribute('data-cam');
-        mCamItems.forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
-
-        // Sync with desktop camera toolbar
-        this.camButtons.forEach(btn => {
-          if (btn.getAttribute('data-cam') === camPreset) {
-            btn.classList.add('active');
-          } else {
-            btn.classList.remove('active');
-          }
-        });
-
-        this.djScene.setCameraPreset(camPreset);
-      });
-    });
-
-    // 3. Open All Genres Modal
-    const mBtnOpenAllGenres = document.getElementById('m-btn-open-all-genres');
-    if (mBtnOpenAllGenres) {
-      mBtnOpenAllGenres.addEventListener('click', () => {
-        closeDrawer();
-        if (this.genreModal) this.genreModal.classList.remove('hidden');
-      });
-    }
-
-    // 4. Open Lighting Modal
-    const mBtnOpenLightingModal = document.getElementById('m-btn-open-lighting-modal');
-    if (mBtnOpenLightingModal) {
-      mBtnOpenLightingModal.addEventListener('click', () => {
-        closeDrawer();
-        if (this.lightingModal) this.lightingModal.classList.remove('hidden');
-      });
-    }
-
-    // 5. Lighting Themes in Mobile Menu
-    const mThemePills = document.querySelectorAll('.m-theme-pill');
-    mThemePills.forEach(pill => {
-      pill.addEventListener('click', () => {
-        mThemePills.forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        const theme = pill.getAttribute('data-theme');
-
-        // Sync with modal theme buttons
-        const modalThemeButtons = document.querySelectorAll('.l-theme-btn');
-        modalThemeButtons.forEach(b => {
-          if (b.getAttribute('data-theme') === theme) b.classList.add('active');
-          else b.classList.remove('active');
-        });
-
-        this.djScene.setTheme(theme);
-      });
-    });
-
-    // 6. Lighting Toggles
-    const mToggleStrobe = document.getElementById('m-toggle-strobe');
-    const mToggleLasers = document.getElementById('m-toggle-lasers');
-    const mToggleFog = document.getElementById('m-toggle-fog');
-    const toggleStrobe = document.getElementById('toggle-strobe');
-    const toggleLasers = document.getElementById('toggle-lasers');
-    const toggleFog = document.getElementById('toggle-fog');
-
-    if (mToggleStrobe) {
-      mToggleStrobe.addEventListener('change', (e) => {
-        if (toggleStrobe) toggleStrobe.checked = e.target.checked;
-        this.djScene.lighting.setStrobeEnabled(e.target.checked);
-      });
-    }
-    if (mToggleLasers) {
-      mToggleLasers.addEventListener('change', (e) => {
-        if (toggleLasers) toggleLasers.checked = e.target.checked;
-        this.djScene.lighting.setLasersEnabled(e.target.checked);
-      });
-    }
-    if (mToggleFog) {
-      mToggleFog.addEventListener('change', (e) => {
-        if (toggleFog) toggleFog.checked = e.target.checked;
-        this.djScene.lighting.setFogEnabled(e.target.checked);
-      });
-    }
-
-    // 7. Light Intensity Slider
-    const mSliderIntensity = document.getElementById('m-slider-light-intensity');
-    const mValIntensity = document.getElementById('m-val-light-intensity');
-    const sliderIntensity = document.getElementById('slider-light-intensity');
-    const valIntensity = document.getElementById('val-light-intensity');
-
-    if (mSliderIntensity && mValIntensity) {
-      mSliderIntensity.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value);
-        const text = `${Math.round(val * 100)}%`;
-        mValIntensity.textContent = text;
-        if (sliderIntensity) sliderIntensity.value = val;
-        if (valIntensity) valIntensity.textContent = text;
-        this.djScene.lighting.setIntensityMultiplier(val);
-      });
-    }
-
-    // 8. Sound & EQ Preset
-    const mRadioEqPreset = document.getElementById('m-radio-eq-preset');
-    if (mRadioEqPreset) {
-      mRadioEqPreset.addEventListener('change', (e) => {
-        const val = e.target.value;
-        if (this.radioEqPreset) this.radioEqPreset.value = val;
-        this.audioEngine.setEQPreset(val);
-      });
-    }
-
-    // 9. Quick Actions
-    const mBtnOpenQueue = document.getElementById('m-btn-open-queue');
-    if (mBtnOpenQueue) {
-      mBtnOpenQueue.addEventListener('click', () => {
-        closeDrawer();
-        if (this.queueDrawer) this.queueDrawer.classList.remove('hidden');
-      });
-    }
-
-    const mBtnFullscreen = document.getElementById('m-btn-fullscreen');
-    if (mBtnFullscreen) {
-      mBtnFullscreen.addEventListener('click', () => {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(() => {});
-        } else {
-          document.exitFullscreen().catch(() => {});
-        }
-      });
-    }
-  }
 
   updatePlayState(isPlaying) {
     if (isPlaying) {
@@ -923,6 +742,7 @@ export class UIController {
   updateTrackInfo(track, nextTrack, queue) {
     if (!track) return;
     this.currentTrack = track;
+    if (this.mobileMenu) this.mobileMenu.currentTrack = track;
     const activeDeck = this.audioEngine.activeDeck;
 
     // Mobile Menu Track Info
@@ -947,14 +767,14 @@ export class UIController {
       if (this.deckAState) this.deckAState.textContent = 'ON AIR';
       if (this.deckAPlay) this.deckAPlay.classList.add('active-play');
 
-      this.waveformProfileA = this.generateWaveformProfile(track.title + (track.id || 'a'));
+      this.waveform.waveformProfileA = this.waveform.generateWaveformProfile(track.title + (track.id || 'a'));
 
       if (nextTrack) {
         if (this.deckBTitle) this.deckBTitle.textContent = nextTrack.title || 'Upcoming Track';
         if (this.deckBArtist) this.deckBArtist.textContent = nextTrack.artist || 'Next on Deck';
         if (this.deckBState) this.deckBState.textContent = 'CUE / NEXT';
         if (this.deckBPlay) this.deckBPlay.classList.remove('active-play');
-        this.waveformProfileB = this.generateWaveformProfile(nextTrack.title + (nextTrack.id || 'b'));
+        this.waveform.waveformProfileB = this.waveform.generateWaveformProfile(nextTrack.title + (nextTrack.id || 'b'));
       }
     } else {
       if (this.deckBTitle) this.deckBTitle.textContent = track.title || 'Unknown Track';
@@ -962,14 +782,14 @@ export class UIController {
       if (this.deckBState) this.deckBState.textContent = 'ON AIR';
       if (this.deckBPlay) this.deckBPlay.classList.add('active-play');
 
-      this.waveformProfileB = this.generateWaveformProfile(track.title + (track.id || 'b'));
+      this.waveform.waveformProfileB = this.waveform.generateWaveformProfile(track.title + (track.id || 'b'));
 
       if (nextTrack) {
         if (this.deckATitle) this.deckATitle.textContent = nextTrack.title || 'Upcoming Track';
         if (this.deckAArtist) this.deckAArtist.textContent = nextTrack.artist || 'Next on Deck';
         if (this.deckAState) this.deckAState.textContent = 'CUE / NEXT';
         if (this.deckAPlay) this.deckAPlay.classList.remove('active-play');
-        this.waveformProfileA = this.generateWaveformProfile(nextTrack.title + (nextTrack.id || 'a'));
+        this.waveform.waveformProfileA = this.waveform.generateWaveformProfile(nextTrack.title + (nextTrack.id || 'a'));
       }
     }
 
@@ -1028,7 +848,7 @@ export class UIController {
     if (this.radioTimeCur) this.radioTimeCur.textContent = this.formatTime(elapsedTime);
     if (this.radioTimeTotal) this.radioTimeTotal.textContent = this.formatTime(duration);
     if (this.radioWaveformCanvas) {
-      this.drawWaveform(this.radioWaveformCanvas, this.waveformProfileA, pct, 'A', audioAnalysis);
+      this.waveform.drawWaveform(this.radioWaveformCanvas, this.waveform.waveformProfileA, pct, 'A', audioAnalysis);
     }
     if (audioAnalysis && isPlaying) {
       this.updateSegmentedLEDs(this.radioHpSegs, audioAnalysis.volume * 0.85);
@@ -1042,12 +862,12 @@ export class UIController {
 
     // 1. Draw Waveforms on HTML5 Canvas & Update Time Displays
     if (activeDeck === 'A') {
-      this.drawWaveform(this.deckACanvas, this.waveformProfileA, pct, 'A', audioAnalysis);
+      this.waveform.drawWaveform(this.deckACanvas, this.waveform.waveformProfileA, pct, 'A', audioAnalysis);
       if (this.deckATimeCur) this.deckATimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckATimeRem) this.deckATimeRem.textContent = `-${this.formatTime(rem)}`;
 
       if (!isCrossfading) {
-        this.drawWaveform(this.deckBCanvas, this.waveformProfileB, 0, 'B', null);
+        this.waveform.drawWaveform(this.deckBCanvas, this.waveform.waveformProfileB, 0, 'B', null);
         if (this.deckBTimeCur) this.deckBTimeCur.textContent = '0:00';
         if (this.deckBTimeRem) this.deckBTimeRem.textContent = 'READY';
       } else {
@@ -1055,17 +875,17 @@ export class UIController {
         const inElapsed = incomingAudio.currentTime || 0;
         const inDur = incomingAudio.duration || 180;
         const inPct = inDur > 0 ? Math.min(1.0, inElapsed / inDur) : 0;
-        this.drawWaveform(this.deckBCanvas, this.waveformProfileB, inPct, 'B', audioAnalysis);
+        this.waveform.drawWaveform(this.deckBCanvas, this.waveform.waveformProfileB, inPct, 'B', audioAnalysis);
         if (this.deckBTimeCur) this.deckBTimeCur.textContent = this.formatTime(inElapsed);
         if (this.deckBTimeRem) this.deckBTimeRem.textContent = `-${this.formatTime(Math.max(0, inDur - inElapsed))}`;
       }
     } else {
-      this.drawWaveform(this.deckBCanvas, this.waveformProfileB, pct, 'B', audioAnalysis);
+      this.waveform.drawWaveform(this.deckBCanvas, this.waveform.waveformProfileB, pct, 'B', audioAnalysis);
       if (this.deckBTimeCur) this.deckBTimeCur.textContent = this.formatTime(elapsedTime);
       if (this.deckBTimeRem) this.deckBTimeRem.textContent = `-${this.formatTime(rem)}`;
 
       if (!isCrossfading) {
-        this.drawWaveform(this.deckACanvas, this.waveformProfileA, 0, 'A', null);
+        this.waveform.drawWaveform(this.deckACanvas, this.waveform.waveformProfileA, 0, 'A', null);
         if (this.deckATimeCur) this.deckATimeCur.textContent = '0:00';
         if (this.deckATimeRem) this.deckATimeRem.textContent = 'READY';
       } else {
@@ -1073,7 +893,7 @@ export class UIController {
         const inElapsed = incomingAudio.currentTime || 0;
         const inDur = incomingAudio.duration || 180;
         const inPct = inDur > 0 ? Math.min(1.0, inElapsed / inDur) : 0;
-        this.drawWaveform(this.deckACanvas, this.waveformProfileA, inPct, 'A', audioAnalysis);
+        this.waveform.drawWaveform(this.deckACanvas, this.waveform.waveformProfileA, inPct, 'A', audioAnalysis);
         if (this.deckATimeCur) this.deckATimeCur.textContent = this.formatTime(inElapsed);
         if (this.deckATimeRem) this.deckATimeRem.textContent = `-${this.formatTime(Math.max(0, inDur - inElapsed))}`;
       }
@@ -1090,19 +910,7 @@ export class UIController {
     }
 
     // 3. Spin CDJ Jog Platters Continuously Forward
-    if (isPlaying) {
-      const isDeckAPlaying = activeDeck === 'A' || this.audioEngine.isCrossfading || this.audioEngine.deckStates?.A?.isPlaying;
-      const isDeckBPlaying = activeDeck === 'B' || this.audioEngine.isCrossfading || this.audioEngine.deckStates?.B?.isPlaying;
-
-      if (isDeckAPlaying) {
-        this.jogAngleA += 2.2;
-        if (this.deckAJog) this.deckAJog.style.transform = `rotate(${this.jogAngleA}deg)`;
-      }
-      if (isDeckBPlaying) {
-        this.jogAngleB += 2.2;
-        if (this.deckBJog) this.deckBJog.style.transform = `rotate(${this.jogAngleB}deg)`;
-      }
-    }
+    this.jogWheel.updateJogAngles(audioAnalysis, isPlaying, this.audioEngine.deckStates);
 
     // 4. Crossfader Position Slider
     if (this.crossfaderCap && audioAnalysis) {

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export class DJCharacter {
   constructor(scene) {
@@ -52,16 +53,19 @@ export class DJCharacter {
     ledTrim.position.set(0, 1.05, 0.7);
     this.group.add(ledTrim);
 
-    // Sturdy metal legs / booth frame
+    // Sturdy metal legs — merged into 1 draw call
     const legMat = new THREE.MeshStandardMaterial({ color: 0x0a0a0f, metalness: 0.9, roughness: 0.2 });
-    for (let x of [-1.6, 1.6]) {
-      for (let z of [-0.5, 0.5]) {
-        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.05, 16), legMat);
-        leg.position.set(x, 0.525, z);
-        leg.castShadow = true;
-        this.group.add(leg);
-      }
-    }
+    const legPositions = [[-1.6, -0.5], [-1.6, 0.5], [1.6, -0.5], [1.6, 0.5]];
+    const legGeos = legPositions.map(([x, z]) => {
+      const g = new THREE.CylinderGeometry(0.05, 0.05, 1.05, 12);
+      g.applyMatrix4(new THREE.Matrix4().makeTranslation(x, 0.525, z));
+      return g;
+    });
+    const mergedLegs = mergeGeometries(legGeos);
+    legGeos.forEach(g => g.dispose());
+    const legsMesh = new THREE.Mesh(mergedLegs, legMat);
+    legsMesh.castShadow = true;
+    this.group.add(legsMesh);
 
     // Front facade panel with DJ Logo
     const facade = new THREE.Mesh(
@@ -158,30 +162,42 @@ export class DJCharacter {
     this.xFader.position.set(0, 0.04, 0.28);
     mixerGroup.add(this.xFader);
 
-    // EQ Knobs (High, Mid, Low per channel)
-    const knobGeo = new THREE.CylinderGeometry(0.02, 0.022, 0.03, 16);
+    // EQ Knobs — merged into 1 draw call per channel group
+    const knobGeo = new THREE.CylinderGeometry(0.02, 0.022, 0.03, 12);
     const knobMat = new THREE.MeshStandardMaterial({ color: 0x33354a, roughness: 0.3, metalness: 0.6 });
+    const knobGeos = [];
     for (let ch of [-0.18, 0.18]) {
       for (let row = 0; row < 4; row++) {
-        const knob = new THREE.Mesh(knobGeo, knobMat);
-        knob.position.set(ch, 0.045, -0.28 + row * 0.12);
-        mixerGroup.add(knob);
-        this.mixerKnobs.push(knob);
+        const g = knobGeo.clone();
+        g.applyMatrix4(new THREE.Matrix4().makeTranslation(ch, 0.045, -0.28 + row * 0.12));
+        knobGeos.push(g);
       }
     }
+    const mergedKnobs = mergeGeometries(knobGeos);
+    knobGeos.forEach(g => g.dispose());
+    knobGeo.dispose();
+    const knobsMesh = new THREE.Mesh(mergedKnobs, knobMat);
+    mixerGroup.add(knobsMesh);
+    // Keep individual refs for animation (use the merged mesh instead)
+    this.mixerKnobsMesh = knobsMesh;
 
-    // Mixer VU Meter Bars (Green-Yellow-Red LED columns)
+    // Mixer VU Meter Bars — merged into 1 draw call
+    const vuGeo = new THREE.BoxGeometry(0.03, 0.015, 0.015);
+    const vuMat = new THREE.MeshBasicMaterial({ color: 0x112211 });
+    const vuGeos = [];
     for (let ch of [-0.05, 0.05]) {
       for (let i = 0; i < 8; i++) {
-        const vuLed = new THREE.Mesh(
-          new THREE.BoxGeometry(0.03, 0.015, 0.015),
-          new THREE.MeshBasicMaterial({ color: 0x112211 })
-        );
-        vuLed.position.set(ch, 0.035, -0.25 + i * 0.05);
-        mixerGroup.add(vuLed);
-        this.vuLeds.push(vuLed);
+        const g = vuGeo.clone();
+        g.applyMatrix4(new THREE.Matrix4().makeTranslation(ch, 0.035, -0.25 + i * 0.05));
+        vuGeos.push(g);
       }
     }
+    const mergedVu = mergeGeometries(vuGeos);
+    vuGeos.forEach(g => g.dispose());
+    vuGeo.dispose();
+    const vuMesh = new THREE.Mesh(mergedVu, vuMat);
+    mixerGroup.add(vuMesh);
+    this.vuLedsMesh = vuMesh;
 
     this.group.add(mixerGroup);
   }

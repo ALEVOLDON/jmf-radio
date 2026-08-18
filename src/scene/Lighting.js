@@ -66,11 +66,15 @@ export class Lighting {
     this.ambientLight = new THREE.AmbientLight(this.currentTheme.ambient, 1.4);
     this.group.add(this.ambientLight);
 
-    // 2. Focused Spotlight on DJ Booth
+    // 2. Focused Spotlight on DJ Booth (only shadow-caster in the scene)
     this.djSpotlight = new THREE.SpotLight(this.currentTheme.spotlight, 6.0, 16, Math.PI / 4, 0.4, 1.5);
     this.djSpotlight.position.set(0, 8.5, 1.2);
     this.djSpotlight.target.position.set(0, 1.0, 0);
     this.djSpotlight.castShadow = true;
+    this.djSpotlight.shadow.mapSize.width = 1024;
+    this.djSpotlight.shadow.mapSize.height = 1024;
+    this.djSpotlight.shadow.camera.near = 1.0;
+    this.djSpotlight.shadow.camera.far = 18;
     this.group.add(this.djSpotlight);
     this.group.add(this.djSpotlight.target);
 

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 export class BarArea {
   constructor(scene) {
@@ -103,6 +104,10 @@ export class BarArea {
 
     const bottleColors = [0xff0055, 0x00f0ff, 0xffd700, 0x00ff88, 0x9d4edd, 0xff8800, 0x3a86ff, 0xff00aa];
 
+    // Group bottle geometries by color → 8 draw calls instead of 42
+    const bottleGeosByColor = {};
+    bottleColors.forEach(c => { bottleGeosByColor[c] = []; });
+
     for (let s = 0; s < 3; s++) {
       const y = 1.2 + s * 0.7;
       const shelf = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.04, 0.35), shelfMat);
@@ -118,27 +123,35 @@ export class BarArea {
       this.group.add(shelfLed);
       this.barLights.push(shelfLed.material);
 
-      // Bottles on shelf
+      // Collect bottle geometries by color
       for (let b = 0; b < 14; b++) {
         const bottleColor = bottleColors[(s * 5 + b) % bottleColors.length];
-        const bMat = new THREE.MeshStandardMaterial({
-          color: bottleColor,
-          emissive: bottleColor,
-          emissiveIntensity: 0.4,
-          roughness: 0.1,
-          metalness: 0.6,
-          transparent: true,
-          opacity: 0.85
-        });
-
-        // Bottle body
-        const bottleGeo = new THREE.CylinderGeometry(0.035, 0.035, 0.25, 12);
-        const bottle = new THREE.Mesh(bottleGeo, bMat);
-        bottle.position.set(-2.1 + b * 0.32, y + 0.14, -1.05);
-        this.group.add(bottle);
-        this.bottles.push(bottle);
+        const g = new THREE.CylinderGeometry(0.035, 0.035, 0.25, 8);
+        g.applyMatrix4(new THREE.Matrix4().makeTranslation(-2.1 + b * 0.32, y + 0.14, -1.05));
+        bottleGeosByColor[bottleColor].push(g);
       }
     }
+
+    // Create 1 merged mesh per unique bottle color (8 draw calls total)
+    bottleColors.forEach(bottleColor => {
+      const geos = bottleGeosByColor[bottleColor];
+      if (!geos.length) return;
+      const mergedGeo = mergeGeometries(geos);
+      geos.forEach(g => g.dispose());
+      const bMat = new THREE.MeshStandardMaterial({
+        color: bottleColor,
+        emissive: bottleColor,
+        emissiveIntensity: 0.4,
+        roughness: 0.1,
+        metalness: 0.6,
+        transparent: true,
+        opacity: 0.85
+      });
+      const mesh = new THREE.Mesh(mergedGeo, bMat);
+      this.group.add(mesh);
+      this.bottles.push(mesh);
+    });
+
 
     // Neon "BAR LOUNGE" Sign above shelves
     const signCanvas = document.createElement('canvas');
