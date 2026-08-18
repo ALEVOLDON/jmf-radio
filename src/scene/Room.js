@@ -18,6 +18,17 @@ export class Room {
     this.stageCtx = null;
     this.stagePhase = 0;
 
+    // Generative Wall Panels
+    this.leftWallCanvas = null;
+    this.leftWallCtx = null;
+    this.leftWallTex = null;
+    this.rightWallCanvas = null;
+    this.rightWallCtx = null;
+    this.rightWallTex = null;
+    this.wallParticles = [];
+    this.wallGenMode = 0;
+    this.lastWallGenSwitch = 0;
+
     this.init();
     this.scene.add(this.group);
   }
@@ -25,6 +36,7 @@ export class Room {
   init() {
     this.createFloor();
     this.createWalls();
+    this.createGenerativeWallPanels();
     this.createCeilingTrusses();
     this.createWindowAndSkyline();
     this.createAcousticPanels();
@@ -1102,6 +1114,274 @@ export class Room {
       }
     }
 
+    this.updateGenerativeWallPanels(audioAnalysis, themeColors);
     this.updateStageScreen(audioAnalysis, themeColors);
+  }
+
+  createGenerativeWallPanels() {
+    // 1. Left Wall Generative LED Screen (1024x512 Canvas)
+    this.leftWallCanvas = document.createElement('canvas');
+    this.leftWallCanvas.width = 1024;
+    this.leftWallCanvas.height = 512;
+    this.leftWallCtx = this.leftWallCanvas.getContext('2d');
+    this.leftWallTex = new THREE.CanvasTexture(this.leftWallCanvas);
+    this.leftWallTex.minFilter = THREE.LinearFilter;
+    this.leftWallTex.magFilter = THREE.LinearFilter;
+
+    const screenGeo = new THREE.PlaneGeometry(5.8, 3.2);
+    const leftScreenMat = new THREE.MeshBasicMaterial({ map: this.leftWallTex });
+    const leftScreen = new THREE.Mesh(screenGeo, leftScreenMat);
+    leftScreen.position.set(-11.72, 5.0, 2.0);
+    leftScreen.rotation.y = Math.PI / 2;
+    this.group.add(leftScreen);
+
+    // Frame & Backlight for Left Screen
+    const frameMat = new THREE.MeshStandardMaterial({ color: 0x0a0b12, metalness: 0.9, roughness: 0.2 });
+    const leftFrame = new THREE.Mesh(new THREE.BoxGeometry(0.08, 3.32, 5.92), frameMat);
+    leftFrame.position.set(-11.76, 5.0, 2.0);
+    this.group.add(leftFrame);
+
+    // 2. Right Wall Generative LED Screen (1024x512 Canvas)
+    this.rightWallCanvas = document.createElement('canvas');
+    this.rightWallCanvas.width = 1024;
+    this.rightWallCanvas.height = 512;
+    this.rightWallCtx = this.rightWallCanvas.getContext('2d');
+    this.rightWallTex = new THREE.CanvasTexture(this.rightWallCanvas);
+    this.rightWallTex.minFilter = THREE.LinearFilter;
+    this.rightWallTex.magFilter = THREE.LinearFilter;
+
+    const rightScreenMat = new THREE.MeshBasicMaterial({ map: this.rightWallTex });
+    const rightScreen = new THREE.Mesh(screenGeo, rightScreenMat);
+    rightScreen.position.set(11.72, 5.0, 2.0);
+    rightScreen.rotation.y = -Math.PI / 2;
+    this.group.add(rightScreen);
+
+    // Frame & Backlight for Right Screen
+    const rightFrame = new THREE.Mesh(new THREE.BoxGeometry(0.08, 3.32, 5.92), frameMat);
+    rightFrame.position.set(11.76, 5.0, 2.0);
+    this.group.add(rightFrame);
+
+    // Initialize Wall Flow Particles
+    this.wallParticles = [];
+    for (let i = 0; i < 70; i++) {
+      this.wallParticles.push({
+        x: Math.random() * 1024,
+        y: Math.random() * 512,
+        vx: (Math.random() - 0.5) * 2,
+        vy: (Math.random() - 0.5) * 2,
+        rad: 1.5 + Math.random() * 3.5,
+        colorIdx: i % 4
+      });
+    }
+    this.wallGenMode = 0;
+    this.lastWallGenSwitch = performance.now();
+  }
+
+  updateGenerativeWallPanels(audioAnalysis, themeColors) {
+    if (!this.leftWallCtx || !this.rightWallCtx) return;
+    const now = performance.now();
+    const time = now * 0.002;
+    const bass = audioAnalysis ? audioAnalysis.bass : 0;
+    const beat = audioAnalysis ? audioAnalysis.beat : 0;
+    const treble = audioAnalysis ? audioAnalysis.treble : 0;
+    const raw = (audioAnalysis && audioAnalysis.rawArray) ? audioAnalysis.rawArray : [];
+
+    // Switch generative modes every 15 seconds or on intense drops
+    if (now - this.lastWallGenSwitch > 15000 || (bass > 0.9 && Math.random() < 0.02 && now - this.lastWallGenSwitch > 6000)) {
+      this.wallGenMode = (this.wallGenMode + 1) % 4;
+      this.lastWallGenSwitch = now;
+    }
+
+    const primaryHex = themeColors ? '#' + themeColors.primary.toString(16).padStart(6, '0') : '#00f0ff';
+    const subHex = themeColors ? '#' + themeColors.secondary.toString(16).padStart(6, '0') : '#ff007f';
+    const accentHex = themeColors ? '#' + themeColors.accent.toString(16).padStart(6, '0') : '#9d4edd';
+    const colorPalette = [primaryHex, subHex, accentHex, '#ffffff'];
+
+    const ctxL = this.leftWallCtx;
+    const ctxR = this.rightWallCtx;
+    const w = 1024;
+    const h = 512;
+
+    // Dark motion blur trails
+    ctxL.fillStyle = 'rgba(6, 7, 14, 0.25)';
+    ctxL.fillRect(0, 0, w, h);
+    ctxR.fillStyle = 'rgba(6, 7, 14, 0.25)';
+    ctxR.fillRect(0, 0, w, h);
+
+    if (this.wallGenMode === 0) {
+      // Mode 0: Cyber Voronoi Flow Field & Bioluminescent Particles
+      for (let p of this.wallParticles) {
+        const angle = Math.sin(p.x * 0.006 + time) * Math.cos(p.y * 0.006 + time) * Math.PI * 2;
+        const speed = 2.0 + bass * 6.0 + beat * 4.0;
+        p.vx = Math.cos(angle) * speed;
+        p.vy = Math.sin(angle) * speed;
+        p.x = (p.x + p.vx + w) % w;
+        p.y = (p.y + p.vy + h) % h;
+
+        const col = colorPalette[p.colorIdx % colorPalette.length];
+        
+        ctxL.fillStyle = col;
+        ctxL.shadowColor = col;
+        ctxL.shadowBlur = 12;
+        ctxL.beginPath();
+        ctxL.arc(p.x, p.y, p.rad * (1.0 + bass * 0.8), 0, Math.PI * 2);
+        ctxL.fill();
+
+        ctxR.fillStyle = col;
+        ctxR.shadowColor = col;
+        ctxR.shadowBlur = 12;
+        ctxR.beginPath();
+        ctxR.arc(w - p.x, p.y, p.rad * (1.0 + treble * 0.8), 0, Math.PI * 2);
+        ctxR.fill();
+      }
+
+      ctxL.strokeStyle = 'rgba(0, 240, 255, 0.15)';
+      ctxL.beginPath();
+      for (let i = 0; i < this.wallParticles.length - 1; i += 2) {
+        ctxL.moveTo(this.wallParticles[i].x, this.wallParticles[i].y);
+        ctxL.lineTo(this.wallParticles[i + 1].x, this.wallParticles[i + 1].y);
+      }
+      ctxL.stroke();
+
+    } else if (this.wallGenMode === 1) {
+      // Mode 1: Hyperspace Concentric Polyhedra & Tunnel Warp
+      const cx = w / 2;
+      const cy = h / 2;
+
+      for (let ring = 1; ring <= 8; ring++) {
+        const rad = (ring * 48 + (time * 120) % 350) * (1.0 + bass * 0.25);
+        const col = ring % 2 === 0 ? primaryHex : subHex;
+        
+        ctxL.strokeStyle = col;
+        ctxL.shadowColor = col;
+        ctxL.shadowBlur = 14;
+        ctxL.lineWidth = 2 + (ring % 2 === 0 ? beat * 4 : 1);
+
+        ctxL.save();
+        ctxL.translate(cx, cy);
+        ctxL.rotate(time * 0.8 + ring * 0.4);
+        ctxL.strokeRect(-rad / 2, -rad / 2, rad, rad);
+        ctxL.restore();
+
+        ctxR.strokeStyle = col;
+        ctxR.shadowColor = col;
+        ctxR.shadowBlur = 14;
+        ctxR.lineWidth = 2 + (ring % 2 === 0 ? treble * 4 : 1);
+
+        ctxR.save();
+        ctxR.translate(cx, cy);
+        ctxR.rotate(-time * 0.8 - ring * 0.4);
+        ctxR.beginPath();
+        for (let side = 0; side < 6; side++) {
+          const a = (side / 6) * Math.PI * 2;
+          const hx = Math.cos(a) * rad;
+          const hy = Math.sin(a) * rad;
+          if (side === 0) ctxR.moveTo(hx, hy);
+          else ctxR.lineTo(hx, hy);
+        }
+        ctxR.closePath();
+        ctxR.stroke();
+        ctxR.restore();
+      }
+
+    } else if (this.wallGenMode === 2) {
+      // Mode 2: Matrix Digital Code Stream & Audio Spectrum Pillars
+      ctxL.font = '700 16px monospace';
+      ctxR.font = '700 16px monospace';
+      const cols = 32;
+      const colWidth = w / cols;
+
+      for (let c = 0; c < cols; c++) {
+        const freq = raw[c % raw.length] || 0;
+        const charY = (Math.sin(time * 3 + c * 0.5) * 200 + 256 + (time * 80) % 512) % 512;
+        const charCode = String.fromCharCode(0x30A0 + ((c + (time * 10) | 0) % 96));
+        
+        const col = (freq > 140) ? '#ffffff' : ((c % 2 === 0) ? primaryHex : subHex);
+        ctxL.fillStyle = col;
+        ctxL.shadowColor = col;
+        ctxL.shadowBlur = freq > 160 ? 16 : 6;
+        ctxL.fillText(charCode, c * colWidth + 8, charY);
+
+        ctxR.fillStyle = col;
+        ctxR.shadowColor = col;
+        ctxR.shadowBlur = freq > 160 ? 16 : 6;
+        ctxR.fillText(charCode, w - (c * colWidth + 8), charY);
+      }
+
+      ctxL.strokeStyle = accentHex;
+      ctxL.lineWidth = 3;
+      ctxL.beginPath();
+      for (let x = 0; x < w; x += 16) {
+        const v = (raw[(x / w * 32) | 0] || 0) / 255;
+        const y = h - 60 - v * 140 * (1.0 + bass * 0.5);
+        if (x === 0) ctxL.moveTo(x, y);
+        else ctxL.lineTo(x, y);
+      }
+      ctxL.stroke();
+
+    } else {
+      // Mode 3: Retro 3D Synthwave Horizon & Neon Sun
+      const cx = w / 2;
+      const horizonY = h * 0.55;
+
+      const sunRad = 110 * (1.0 + bass * 0.15);
+      const sunGrad = ctxL.createLinearGradient(0, horizonY - sunRad, 0, horizonY + sunRad);
+      sunGrad.addColorStop(0, '#ffd700');
+      sunGrad.addColorStop(0.5, '#ff007f');
+      sunGrad.addColorStop(1, '#9d4edd');
+      
+      ctxL.fillStyle = sunGrad;
+      ctxL.shadowColor = '#ff007f';
+      ctxL.shadowBlur = 24;
+      ctxL.beginPath();
+      ctxL.arc(cx, horizonY, sunRad, Math.PI, Math.PI * 2);
+      ctxL.fill();
+
+      ctxR.fillStyle = sunGrad;
+      ctxR.shadowColor = '#ff007f';
+      ctxR.shadowBlur = 24;
+      ctxR.beginPath();
+      ctxR.arc(cx, horizonY, sunRad, Math.PI, Math.PI * 2);
+      ctxR.fill();
+
+      ctxL.strokeStyle = primaryHex;
+      ctxL.shadowColor = primaryHex;
+      ctxL.shadowBlur = 10;
+      ctxL.lineWidth = 1.5;
+
+      for (let x = -w; x < w * 2; x += 48) {
+        ctxL.beginPath();
+        ctxL.moveTo(cx, horizonY);
+        ctxL.lineTo(x + Math.sin(time) * 30, h);
+        ctxL.stroke();
+      }
+      for (let y = horizonY; y < h; y += 18 + bass * 12) {
+        ctxL.beginPath();
+        ctxL.moveTo(0, y);
+        ctxL.lineTo(w, y);
+        ctxL.stroke();
+      }
+
+      ctxR.strokeStyle = primaryHex;
+      ctxR.shadowColor = primaryHex;
+      ctxR.shadowBlur = 10;
+      ctxR.lineWidth = 1.5;
+
+      for (let x = -w; x < w * 2; x += 48) {
+        ctxR.beginPath();
+        ctxR.moveTo(cx, horizonY);
+        ctxR.lineTo(x - Math.sin(time) * 30, h);
+        ctxR.stroke();
+      }
+      for (let y = horizonY; y < h; y += 18 + bass * 12) {
+        ctxR.beginPath();
+        ctxR.moveTo(0, y);
+        ctxR.lineTo(w, y);
+        ctxR.stroke();
+      }
+    }
+
+    if (this.leftWallTex) this.leftWallTex.needsUpdate = true;
+    if (this.rightWallTex) this.rightWallTex.needsUpdate = true;
   }
 }
