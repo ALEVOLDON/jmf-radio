@@ -104,16 +104,29 @@ export class Lighting {
     this.rightFillPoint.position.set(4.5, 3.5, -2.0);
     this.group.add(this.rightFillPoint);
 
-    // 7. Strobe Flash Light (Pulses on heavy bass / kick drops)
+    // 7. Architectural Wall-Wash Uplights (Gives depth and illuminates club walls)
+    this.wallWashLeft = new THREE.PointLight(this.currentTheme.primary, 4.0, 16, 2);
+    this.wallWashLeft.position.set(-11.0, 5.0, 2.0);
+    this.group.add(this.wallWashLeft);
+
+    this.wallWashRight = new THREE.PointLight(this.currentTheme.secondary, 4.0, 16, 2);
+    this.wallWashRight.position.set(11.0, 5.0, 2.0);
+    this.group.add(this.wallWashRight);
+
+    this.wallWashBack = new THREE.PointLight(this.currentTheme.accent, 4.5, 14, 2);
+    this.wallWashBack.position.set(0.0, 6.5, -9.0);
+    this.group.add(this.wallWashBack);
+
+    // 8. Strobe Flash Light (Pulses on heavy bass / kick drops)
     this.strobeLight = new THREE.PointLight(0xffffff, 0, 18, 2);
     this.strobeLight.position.set(0, 7.5, 4.0);
     this.group.add(this.strobeLight);
 
-    // 8. 3D Scanning Laser Beams (Multi-beam fan from stage truss)
+    // 9. 3D Scanning Laser Beams (Multi-beam fan from stage truss)
     this.laserBeams = [];
     this.createLaserBeams();
 
-    // 9. Floating Atmosphere Dust / Haze Particles
+    // 10. Floating Atmosphere Dust / Haze Particles
     this.createAtmosphereParticles();
   }
 
@@ -207,6 +220,9 @@ export class Lighting {
     if (this.vipLight) this.vipLight.color.setHex(this.currentTheme.accent);
     if (this.leftFillPoint) this.leftFillPoint.color.setHex(this.currentTheme.primary);
     if (this.rightFillPoint) this.rightFillPoint.color.setHex(this.currentTheme.secondary);
+    if (this.wallWashLeft) this.wallWashLeft.color.setHex(this.currentTheme.primary);
+    if (this.wallWashRight) this.wallWashRight.color.setHex(this.currentTheme.secondary);
+    if (this.wallWashBack) this.wallWashBack.color.setHex(this.currentTheme.accent);
     if (this.particles) this.particles.material.color.setHex(this.currentTheme.primary);
   }
 
@@ -242,6 +258,9 @@ export class Lighting {
 
     if (this.leftFillPoint) this.leftFillPoint.intensity = (2.0 + bass * 4.0) * mult;
     if (this.rightFillPoint) this.rightFillPoint.intensity = (2.0 + treble * 4.0) * mult;
+    if (this.wallWashLeft) this.wallWashLeft.intensity = (3.0 + bass * 3.5) * mult;
+    if (this.wallWashRight) this.wallWashRight.intensity = (3.0 + treble * 3.5) * mult;
+    if (this.wallWashBack) this.wallWashBack.intensity = (3.5 + beat * 4.0) * mult;
     if (this.barLight) this.barLight.intensity = (2.5 + bass * 2.0) * mult;
     if (this.vipLight) this.vipLight.intensity = (2.0 + beat * 2.0) * mult;
 

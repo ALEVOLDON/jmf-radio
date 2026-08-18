@@ -8,6 +8,11 @@ export class Room {
     this.neonElements = [];
     this.cityBuildings = [];
     this.vipLights = [];
+    this.wallWashNeonMats = [];
+    this.columnLedMats = [];
+    this.billboardNeonMats = [];
+    this.skywayTrails = [];
+    this.artLightboxMats = [];
     this.stageCanvas = null;
     this.stageTexture = null;
     this.stageCtx = null;
@@ -20,40 +25,63 @@ export class Room {
   init() {
     this.createFloor();
     this.createWalls();
+    this.createCeilingTrusses();
     this.createWindowAndSkyline();
     this.createAcousticPanels();
     this.createNeonSigns();
+    this.createClubArtAndPosters();
     this.createVIPLounge();
     this.createStageScreen();
   }
 
   createFloor() {
-    // Large polished dark reflective club floor (24m x 22m)
+    // 1. Polished dark reflective epoxy nightclub floor (26m x 24m)
     const floorGeo = new THREE.PlaneGeometry(26, 24);
     const floorMat = new THREE.MeshStandardMaterial({
       color: 0x0a0b12,
-      roughness: 0.15,
-      metalness: 0.85,
+      roughness: 0.12,
+      metalness: 0.88,
     });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
     floor.receiveShadow = true;
     this.group.add(floor);
 
-    // Floor grid accent lines
-    const gridHelper = new THREE.GridHelper(24, 48, 0x00f0ff, 0x181a28);
-    gridHelper.position.y = 0.005;
-    this.group.add(gridHelper);
+    // 2. Architectural Floor Line Insets (Separating Stage, Dancefloor, and Lounge)
+    const lineMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.45 });
+    this.wallWashNeonMats.push(lineMat);
+
+    // Stage border line
+    const stageLine = new THREE.Mesh(new THREE.PlaneGeometry(16, 0.05), lineMat);
+    stageLine.rotation.x = -Math.PI / 2;
+    stageLine.position.set(0, 0.006, -1.2);
+    this.group.add(stageLine);
+
+    // Central circular glow ring around the DJ & dancefloor
+    const ringGeo = new THREE.RingGeometry(4.2, 4.26, 64);
+    const ringMesh = new THREE.Mesh(ringGeo, lineMat);
+    ringMesh.rotation.x = -Math.PI / 2;
+    ringMesh.position.set(0, 0.006, 3.5);
+    this.group.add(ringMesh);
+
+    // Outer dancefloor runway neon lines
+    const leftRunway = new THREE.Mesh(new THREE.PlaneGeometry(0.04, 14), lineMat);
+    leftRunway.rotation.x = -Math.PI / 2;
+    leftRunway.position.set(-5.8, 0.006, 4.0);
+    const rightRunway = new THREE.Mesh(new THREE.PlaneGeometry(0.04, 14), lineMat);
+    rightRunway.rotation.x = -Math.PI / 2;
+    rightRunway.position.set(5.8, 0.006, 4.0);
+    this.group.add(leftRunway, rightRunway);
   }
 
   createWalls() {
     const wallMat = new THREE.MeshStandardMaterial({
-      color: 0x10111a,
-      roughness: 0.85,
-      metalness: 0.1,
+      color: 0x12131d,
+      roughness: 0.75,
+      metalness: 0.25,
     });
 
-    // Back Wall (behind DJ, with big window cut-out)
+    // 1. Back Wall (behind DJ, with big window opening)
     const backLeftPillar = new THREE.Mesh(new THREE.BoxGeometry(7, 9, 0.4), wallMat);
     backLeftPillar.position.set(-8.5, 4.5, -9.8);
     backLeftPillar.receiveShadow = true;
@@ -74,50 +102,255 @@ export class Room {
     backBottomSill.position.set(0, 0.6, -9.8);
     this.group.add(backBottomSill);
 
-    // Left Wall
+    // 2. Left Wall & Right Wall
     const leftWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 9, 24), wallMat);
     leftWall.position.set(-12, 4.5, 2);
     leftWall.receiveShadow = true;
     this.group.add(leftWall);
 
-    // Right Wall
     const rightWall = new THREE.Mesh(new THREE.BoxGeometry(0.4, 9, 24), wallMat);
     rightWall.position.set(12, 4.5, 2);
     rightWall.receiveShadow = true;
     this.group.add(rightWall);
 
-    // Ceiling
+    // 3. Ceiling with concrete beams
     const ceilingMat = new THREE.MeshStandardMaterial({
-      color: 0x06070c,
-      roughness: 0.9,
+      color: 0x080910,
+      roughness: 0.85,
+      metalness: 0.2
     });
     const ceiling = new THREE.Mesh(new THREE.BoxGeometry(26, 0.4, 24), ceilingMat);
     ceiling.position.set(0, 9, 2);
     this.group.add(ceiling);
+
+    // 4. Heavy Architectural Structural Columns (2 on Left, 2 on Right)
+    const columnPositions = [
+      { x: -11.7, z: -1.5 },
+      { x: -11.7, z: 6.5 },
+      { x: 11.7, z: -1.5 },
+      { x: 11.7, z: 6.5 }
+    ];
+
+    const columnMat = new THREE.MeshStandardMaterial({
+      color: 0x161824,
+      roughness: 0.6,
+      metalness: 0.4
+    });
+
+    const columnLedMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    this.columnLedMats.push(columnLedMat);
+
+    columnPositions.forEach(pos => {
+      // Main concrete pillar (1.2m wide, 9m tall, 0.8m deep)
+      const colMesh = new THREE.Mesh(new THREE.BoxGeometry(0.8, 9, 1.2), columnMat);
+      colMesh.position.set(pos.x, 4.5, pos.z);
+      colMesh.castShadow = true;
+      colMesh.receiveShadow = true;
+      this.group.add(colMesh);
+
+      // Recessed vertical RGB LED light slot running up the column
+      const slotX = pos.x < 0 ? pos.x + 0.38 : pos.x - 0.38;
+      const ledSlot = new THREE.Mesh(new THREE.BoxGeometry(0.04, 8.8, 0.08), columnLedMat);
+      ledSlot.position.set(slotX, 4.5, pos.z);
+      this.group.add(ledSlot);
+    });
+
+    // 5. Continuous Floor and Ceiling LED Cove Washers (Скрытая подсветка стен)
+    const coveLedMat = new THREE.MeshBasicMaterial({ color: 0xff007f, transparent: true, opacity: 0.8 });
+    this.wallWashNeonMats.push(coveLedMat);
+
+    // Bottom baseboard cove strips
+    const baseLeft = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 23.6), coveLedMat);
+    baseLeft.position.set(-11.75, 0.04, 2);
+    const baseRight = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 23.6), coveLedMat);
+    baseRight.position.set(11.75, 0.04, 2);
+    const baseBack = new THREE.Mesh(new THREE.BoxGeometry(23.6, 0.06, 0.06), coveLedMat);
+    baseBack.position.set(0, 0.04, -9.75);
+    this.group.add(baseLeft, baseRight, baseBack);
+
+    // Ceiling cornice cove strips
+    const topLeft = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 23.6), coveLedMat);
+    topLeft.position.set(-11.75, 8.75, 2);
+    const topRight = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.06, 23.6), coveLedMat);
+    topRight.position.set(11.75, 8.75, 2);
+    const topBack = new THREE.Mesh(new THREE.BoxGeometry(23.6, 0.06, 0.06), coveLedMat);
+    topBack.position.set(0, 8.75, -9.75);
+    this.group.add(topLeft, topRight, topBack);
+  }
+
+  createCeilingTrusses() {
+    // Stage Lighting Aluminum Triangular Truss System (Y = 8.25)
+    const trussMat = new THREE.MeshStandardMaterial({
+      color: 0x242738,
+      metalness: 0.95,
+      roughness: 0.2
+    });
+
+    const trussGeos = [];
+
+    // Helper to build a triangular truss segment
+    const addTrussBeam = (x1, y, z1, x2, z2) => {
+      const length = Math.hypot(x2 - x1, z2 - z1);
+      const angle = Math.atan2(x2 - x1, z2 - z1);
+
+      // 3 main tubular rails
+      const r = 0.03;
+      const railGeo = new THREE.CylinderGeometry(r, r, length, 8);
+
+      // Top rail
+      const g1 = railGeo.clone();
+      g1.rotateX(Math.PI / 2);
+      g1.rotateY(angle);
+      g1.translate((x1 + x2) / 2, y + 0.18, (z1 + z2) / 2);
+      trussGeos.push(g1);
+
+      // Bottom left rail
+      const g2 = railGeo.clone();
+      g2.rotateX(Math.PI / 2);
+      g2.rotateY(angle);
+      g2.translate((x1 + x2) / 2 - 0.15 * Math.cos(angle), y - 0.12, (z1 + z2) / 2 + 0.15 * Math.sin(angle));
+      trussGeos.push(g2);
+
+      // Bottom right rail
+      const g3 = railGeo.clone();
+      g3.rotateX(Math.PI / 2);
+      g3.rotateY(angle);
+      g3.translate((x1 + x2) / 2 + 0.15 * Math.cos(angle), y - 0.12, (z1 + z2) / 2 - 0.15 * Math.sin(angle));
+      trussGeos.push(g3);
+
+      railGeo.dispose();
+    };
+
+    // 2 Longitudinal Main Trusses (along Z)
+    addTrussBeam(-5.5, 8.25, -9.2, -5.5, 11.0);
+    addTrussBeam(5.5, 8.25, -9.2, 5.5, 11.0);
+
+    // 3 Cross-Stage Trusses (along X)
+    addTrussBeam(-11.5, 8.25, -2.0, 11.5, -2.0); // Stage front
+    addTrussBeam(-11.5, 8.25, 4.5, 11.5, 4.5);   // Dancefloor center
+    addTrussBeam(-11.5, 8.25, 9.8, 11.5, 9.8);   // Rear stage
+
+    const mergedTrusses = mergeGeometries(trussGeos);
+    trussGeos.forEach(g => g.dispose());
+    const trussMesh = new THREE.Mesh(mergedTrusses, trussMat);
+    trussMesh.castShadow = true;
+    this.group.add(trussMesh);
+
+    // Add Suspended PAR Stage Cans with Glowing Lens rings
+    const parMat = new THREE.MeshStandardMaterial({ color: 0x11121a, metalness: 0.9, roughness: 0.3 });
+    const lensMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
+    this.wallWashNeonMats.push(lensMat);
+
+    const parPositions = [
+      { x: -4.0, z: -2.0, rotX: Math.PI / 4, rotY: Math.PI / 6 },
+      { x: 4.0, z: -2.0, rotX: Math.PI / 4, rotY: -Math.PI / 6 },
+      { x: -3.0, z: 4.5, rotX: Math.PI / 6, rotY: Math.PI / 4 },
+      { x: 3.0, z: 4.5, rotX: Math.PI / 6, rotY: -Math.PI / 4 },
+      { x: 0.0, z: 4.5, rotX: 0, rotY: 0 }
+    ];
+
+    parPositions.forEach(p => {
+      const parGroup = new THREE.Group();
+      parGroup.position.set(p.x, 8.0, p.z);
+      parGroup.rotation.set(p.rotX, p.rotY, 0);
+
+      // Clamp & Body
+      const body = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.18, 0.45, 16), parMat);
+      body.rotation.x = Math.PI / 2;
+      parGroup.add(body);
+
+      // Lens
+      const lens = new THREE.Mesh(new THREE.CircleGeometry(0.13, 16), lensMat);
+      lens.position.z = 0.23;
+      parGroup.add(lens);
+
+      this.group.add(parGroup);
+    });
   }
 
   createWindowAndSkyline() {
     const skylineGroup = new THREE.Group();
     skylineGroup.position.set(0, 0, -14);
 
-    const buildingMat = new THREE.MeshBasicMaterial({ color: 0x040508 });
-    const windowColors = [0x00f0ff, 0xff007f, 0xffd000, 0x9d4edd, 0xffffff];
+    // 1. Deep Cyberpunk Night Horizon Gradient Backdrop
+    const skyCanvas = document.createElement('canvas');
+    skyCanvas.width = 1024;
+    skyCanvas.height = 512;
+    const sctx = skyCanvas.getContext('2d');
 
-    // Merge all 45 buildings into 1 draw call
+    const skyGrad = sctx.createLinearGradient(0, 0, 0, 512);
+    skyGrad.addColorStop(0.0, '#03040a');
+    skyGrad.addColorStop(0.4, '#0e081e');
+    skyGrad.addColorStop(0.75, '#1e0836');
+    skyGrad.addColorStop(0.92, '#ff0055');
+    skyGrad.addColorStop(1.0, '#ffaa00');
+    sctx.fillStyle = skyGrad;
+    sctx.fillRect(0, 0, 1024, 512);
+
+    // Add distant neon atmospheric glow & haze
+    sctx.fillStyle = 'rgba(0, 240, 255, 0.12)';
+    sctx.beginPath();
+    sctx.arc(512, 450, 280, 0, Math.PI * 2);
+    sctx.fill();
+
+    const skyTex = new THREE.CanvasTexture(skyCanvas);
+    const skyBackdrop = new THREE.Mesh(
+      new THREE.PlaneGeometry(54, 26),
+      new THREE.MeshBasicMaterial({ map: skyTex })
+    );
+    skyBackdrop.position.set(0, 7.5, -4.5);
+    skylineGroup.add(skyBackdrop);
+
+    // 2. Procedural Glowing Cyberpunk Skyscraper Window Texture
+    const winCanvas = document.createElement('canvas');
+    winCanvas.width = 512;
+    winCanvas.height = 512;
+    const wctx = winCanvas.getContext('2d');
+    wctx.fillStyle = '#06070d';
+    wctx.fillRect(0, 0, 512, 512);
+
+    const winPalette = ['#00f0ff', '#ff007f', '#ffd700', '#00ff88', '#ffffff', '#ff6600'];
+    for (let wy = 12; wy < 500; wy += 20) {
+      for (let wx = 12; wx < 500; wx += 16) {
+        if (Math.random() < 0.42) {
+          wctx.fillStyle = winPalette[Math.floor(Math.random() * winPalette.length)];
+          wctx.shadowColor = wctx.fillStyle;
+          wctx.shadowBlur = 6;
+          wctx.fillRect(wx, wy, 8, 12);
+        }
+      }
+    }
+    const winTexture = new THREE.CanvasTexture(winCanvas);
+    winTexture.wrapS = THREE.RepeatWrapping;
+    winTexture.wrapT = THREE.RepeatWrapping;
+    winTexture.repeat.set(1.5, 3.0);
+
+    const buildingMat = new THREE.MeshStandardMaterial({
+      color: 0x11131f,
+      map: winTexture,
+      roughness: 0.3,
+      metalness: 0.7,
+      emissive: 0x11131f,
+      emissiveIntensity: 0.6
+    });
+
+    const windowColors = [0x00f0ff, 0xff007f, 0xffd000, 0x00ff88, 0xffffff];
+
+    // 60 Skyscraper Towers with Varied Architecture
     const buildingGeos = [];
-    for (let i = 0; i < 45; i++) {
-      const width = 0.8 + Math.random() * 1.6;
-      const height = 4 + Math.random() * 9;
-      const depth = 0.8 + Math.random() * 1.6;
-      const x = -18 + i * 0.8 + (Math.random() - 0.5) * 0.5;
-      const z = (Math.random() - 0.5) * 4;
+    for (let i = 0; i < 55; i++) {
+      const width = 0.9 + Math.random() * 1.8;
+      const height = 4.5 + Math.random() * 9.5;
+      const depth = 0.9 + Math.random() * 1.8;
+      const x = -22 + i * 0.8 + (Math.random() - 0.5) * 0.4;
+      const z = (Math.random() - 0.5) * 4.0;
 
       const g = new THREE.BoxGeometry(width, height, depth);
       g.applyMatrix4(new THREE.Matrix4().makeTranslation(x, height / 2 - 1, z));
       buildingGeos.push(g);
 
-      // Glowing beacon points on rooftops (still individual — they animate)
-      const beaconGeo = new THREE.SphereGeometry(0.06, 6, 6);
+      // Blinking rooftop aviation red beacons
+      const beaconGeo = new THREE.SphereGeometry(0.08, 8, 8);
       const beaconCol = windowColors[Math.floor(Math.random() * windowColors.length)];
       const beaconMat = new THREE.MeshBasicMaterial({ color: beaconCol });
       const beacon = new THREE.Mesh(beaconGeo, beaconMat);
@@ -125,11 +358,55 @@ export class Room {
       skylineGroup.add(beacon);
       this.cityBuildings.push(beacon);
     }
+
     const mergedBuildings = mergeGeometries(buildingGeos);
     buildingGeos.forEach(g => g.dispose());
     skylineGroup.add(new THREE.Mesh(mergedBuildings, buildingMat));
 
-    // Window Glass Frame — merge 4 mullions into 1 draw call
+    // 3. Glowing Holographic Rooftop Billboards Outside
+    const createSkylineBillboard = (text, x, y, z, colorHex) => {
+      const bCanvas = document.createElement('canvas');
+      bCanvas.width = 512;
+      bCanvas.height = 128;
+      const bctx = bCanvas.getContext('2d');
+      bctx.fillStyle = '#060812';
+      bctx.fillRect(0, 0, 512, 128);
+      bctx.font = '900 48px Orbitron, sans-serif';
+      bctx.fillStyle = colorHex;
+      bctx.shadowColor = colorHex;
+      bctx.shadowBlur = 20;
+      bctx.textAlign = 'center';
+      bctx.textBaseline = 'middle';
+      bctx.fillText(text, 256, 64);
+
+      const bTex = new THREE.CanvasTexture(bCanvas);
+      const bMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(3.6, 0.9),
+        new THREE.MeshBasicMaterial({ map: bTex, transparent: true, opacity: 0.9 })
+      );
+      bMesh.position.set(x, y, z);
+      skylineGroup.add(bMesh);
+    };
+
+    createSkylineBillboard('⚡ JMF 24/7 ⚡', -6.0, 9.5, -2.0, '#00f0ff');
+    createSkylineBillboard('● CYBER RADIO ●', 5.5, 10.2, -1.5, '#ff007f');
+    createSkylineBillboard('NEO TOKYO', 0.0, 11.5, -3.0, '#00ff88');
+
+    // 4. Moving Aerial Vehicle Traffic / Light Trails outside
+    const trailMat1 = new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.8 });
+    const trailMat2 = new THREE.MeshBasicMaterial({ color: 0xff0055, transparent: true, opacity: 0.8 });
+
+    for (let t = 0; t < 6; t++) {
+      const tMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 3.2, 8), t % 2 === 0 ? trailMat1 : trailMat2);
+      tMesh.rotation.z = Math.PI / 2;
+      const initialY = 3.5 + t * 1.1;
+      const initialX = -18 + t * 6;
+      tMesh.position.set(initialX, initialY, -1.0 + (t % 3) * 0.8);
+      skylineGroup.add(tMesh);
+      this.skywayTrails.push({ mesh: tMesh, speed: 0.08 + (t % 3) * 0.04, dir: t % 2 === 0 ? 1 : -1 });
+    }
+
+    // 5. Heavy Club Window Frame & Glass
     const frameMat = new THREE.MeshStandardMaterial({
       color: 0x1a1b26,
       metalness: 0.9,
@@ -147,7 +424,6 @@ export class Room {
     mullionGeos.forEach(g => g.dispose());
     this.group.add(new THREE.Mesh(mergedMullions, frameMat));
 
-
     // Glass pane
     const glassMat = new THREE.MeshPhysicalMaterial({
       color: 0x112233,
@@ -163,6 +439,88 @@ export class Room {
     this.group.add(glass);
 
     this.group.add(skylineGroup);
+  }
+
+  createClubArtAndPosters() {
+    // 4 Framed Backlit Rave Art Lightboxes (2 on left wall, 2 on right wall)
+    const createLightbox = (title, sub, x, y, z, rotY, color1, color2) => {
+      const pCanvas = document.createElement('canvas');
+      pCanvas.width = 512;
+      pCanvas.height = 768;
+      const pctx = pCanvas.getContext('2d');
+
+      // Dark metallic poster background
+      const grad = pctx.createLinearGradient(0, 0, 512, 768);
+      grad.addColorStop(0, '#06070e');
+      grad.addColorStop(1, '#12081f');
+      pctx.fillStyle = grad;
+      pctx.fillRect(0, 0, 512, 768);
+
+      // Cyber geometric graphics
+      pctx.strokeStyle = color1;
+      pctx.lineWidth = 4;
+      pctx.shadowColor = color1;
+      pctx.shadowBlur = 15;
+      pctx.beginPath();
+      pctx.arc(256, 340, 160, 0, Math.PI * 2);
+      pctx.stroke();
+
+      pctx.strokeStyle = color2;
+      pctx.lineWidth = 2;
+      pctx.beginPath();
+      for (let i = 0; i < 12; i++) {
+        pctx.moveTo(96, 440 + i * 16);
+        pctx.lineTo(416, 440 + i * 16);
+      }
+      pctx.stroke();
+
+      // Poster Typography
+      pctx.font = '900 36px Orbitron, sans-serif';
+      pctx.fillStyle = '#ffffff';
+      pctx.textAlign = 'center';
+      pctx.fillText(title, 256, 120);
+
+      pctx.font = '700 20px "Space Grotesk", sans-serif';
+      pctx.fillStyle = color1;
+      pctx.fillText(sub, 256, 170);
+
+      pctx.font = '800 16px Orbitron, sans-serif';
+      pctx.fillStyle = color2;
+      pctx.fillText('JMF 24/7 SOUND SYSTEM', 256, 710);
+
+      const pTex = new THREE.CanvasTexture(pCanvas);
+      const pMat = new THREE.MeshStandardMaterial({
+        map: pTex,
+        emissive: 0x111122,
+        emissiveIntensity: 0.6,
+        roughness: 0.2,
+        metalness: 0.8
+      });
+      this.artLightboxMats.push(pMat);
+
+      // Poster Mesh
+      const poster = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 3.0), pMat);
+      poster.position.set(x, y, z);
+      poster.rotation.y = rotY;
+      this.group.add(poster);
+
+      // Outer illuminated neon frame
+      const frameMat = new THREE.MeshBasicMaterial({ color: color1 });
+      this.wallWashNeonMats.push(frameMat);
+
+      const frameBox = new THREE.Mesh(new THREE.BoxGeometry(2.08, 3.08, 0.06), new THREE.MeshStandardMaterial({ color: 0x06070c }));
+      frameBox.position.set(x + (rotY > 0 ? -0.04 : 0.04), y, z);
+      frameBox.rotation.y = rotY;
+      this.group.add(frameBox);
+    };
+
+    // Left Wall Posters
+    createLightbox('UNDERGROUND', 'LIVE ELECTRONIC SETS', -11.72, 4.8, -4.5, Math.PI / 2, '#00f0ff', '#ff007f');
+    createLightbox('ACID MATRIX', 'ANALOG MODULAR SYNTH', -11.72, 4.8, 1.2, Math.PI / 2, '#00ff88', '#ffd700');
+
+    // Right Wall Posters
+    createLightbox('CYBER SESSIONS', 'TOKYO NIGHTS & BASS', 11.72, 4.8, -4.5, -Math.PI / 2, '#ff007f', '#00f0ff');
+    createLightbox('DEEP SUB', 'PRO HARDWARE BROADCAST', 11.72, 4.8, 1.2, -Math.PI / 2, '#9d4edd', '#00f0ff');
   }
 
   createAcousticPanels() {
@@ -237,7 +595,7 @@ export class Room {
     signMesh.position.set(0, 8.0, -9.42);
     this.group.add(signMesh);
 
-    // Decorative wall neon equalizer arches on left wall — merged into 1 draw call
+    // Decorative wall neon equalizer arches on left wall
     const eqNeonMat = new THREE.MeshBasicMaterial({ color: 0x00f0ff });
     const eqGeos = [];
     for (let i = 0; i < 9; i++) {
@@ -269,24 +627,20 @@ export class Room {
     });
 
     // 1. Large L-shaped Modular Sectional Sofa
-    // Main Long Bench
     const bench1 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.45, 1.1), leatherMat);
     bench1.position.set(0, 0.225, 0);
     bench1.castShadow = true;
     bench1.receiveShadow = true;
     vipGroup.add(bench1);
 
-    // Backrest
     const back1 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 0.9, 0.35), leatherMat);
     back1.position.set(0, 0.8, -0.4);
     vipGroup.add(back1);
 
-    // Side Corner Armrest
     const arm1 = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.7, 1.1), leatherMat);
     arm1.position.set(-2.0, 0.6, 0);
     vipGroup.add(arm1);
 
-    // Colorful VIP cushions
     for (let c = 0; c < 4; c++) {
       const cushion = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.18), cushionMat);
       cushion.position.set(-1.4 + c * 0.9, 0.55, -0.25);
@@ -350,7 +704,7 @@ export class Room {
     vctx.shadowBlur = 16;
     vctx.textAlign = 'center';
     vctx.textBaseline = 'middle';
-    vctx.fillText('👑 VIP LOUNGE 👑', 256, 64);
+    vctx.fillText('VIP LOUNGE', 256, 64);
 
     const vipTexture = new THREE.CanvasTexture(vipCanvas);
     const vipSignMesh = new THREE.Mesh(
@@ -417,7 +771,7 @@ export class Room {
     stageRiser.position.set(0, 0.25, -1.0);
     stageGroup.add(stageRiser);
 
-    // 5. Left & Right Neon Wall Banners ("VIP LOUNGE" & "COCKTAIL BAR")
+    // 5. Left & Right Neon Wall Banners
     const createNeonBanner = (text, xPos, colorHex) => {
       const bannerCanvas = document.createElement('canvas');
       bannerCanvas.width = 512;
@@ -487,7 +841,6 @@ export class Room {
     const h = 512;
     const now = performance.now();
 
-    // Initialize VJ state if not present
     if (this.vjMode === undefined) {
       this.vjMode = 0;
       this.lastVJSwitch = now;
@@ -496,236 +849,134 @@ export class Room {
       this.radialAngle = 0;
     }
 
-    // Auto-switch VJ mode every 18 seconds or on massive bass drops
     if (now - this.lastVJSwitch > 18000 || (audioAnalysis.bass > 0.88 && Math.random() < 0.03 && now - this.lastVJSwitch > 5000)) {
-      this.vjMode = (this.vjMode + 1 + Math.floor(Math.random() * 2)) % 5;
+      this.vjMode = (this.vjMode + 1) % 5;
       this.lastVJSwitch = now;
     }
 
-    this.stagePhase += 0.04 + (audioAnalysis.bass || 0) * 0.06;
-    this.radialAngle += 0.02 + (audioAnalysis.treble || 0) * 0.04;
+    const primaryHex = themeColors ? '#' + themeColors.primary.toString(16).padStart(6, '0') : '#00f0ff';
+    const subHex = themeColors ? '#' + themeColors.secondary.toString(16).padStart(6, '0') : '#ff007f';
+    const accentHex = themeColors ? '#' + themeColors.accent.toString(16).padStart(6, '0') : '#9d4edd';
 
-    const accentHex = (themeColors && themeColors.primary) ? `#${themeColors.primary.toString(16).padStart(6, '0')}` : '#00f0ff';
-    const subHex = (themeColors && themeColors.accent) ? `#${themeColors.accent.toString(16).padStart(6, '0')}` : '#ff007f';
-
-    // 1. Clear with motion trail
-    ctx.fillStyle = 'rgba(4, 5, 10, 0.38)';
+    // Dark motion blur trails
+    ctx.fillStyle = 'rgba(5, 6, 14, 0.28)';
     ctx.fillRect(0, 0, w, h);
 
-    // ==========================================
-    // 🎨 VJ VISUALIZER MODES (Background / Midground)
-    // ==========================================
+    const bass = audioAnalysis.bass || 0;
+    const beat = audioAnalysis.beat || 0;
+    const treble = audioAnalysis.treble || 0;
     const raw = audioAnalysis.rawArray || [];
-    const len = raw.length || 64;
+    const time = now * 0.002;
 
+    // VJ BACKGROUNDS
     if (this.vjMode === 0) {
-      // --- MODE 0: 🌊 Multi-Layer Cyber Sine Waves ---
-      const waves = [
-        { color: accentHex, blur: 16, amp: 65 * (0.4 + audioAnalysis.bass * 1.3), speed: 1.0, width: 3.5, yOff: 380 },
-        { color: subHex, blur: 14, amp: 50 * (0.3 + audioAnalysis.mids * 1.0), speed: 1.4, width: 2.5, yOff: 380 },
-        { color: '#a855f7', blur: 12, amp: 35 * (0.3 + audioAnalysis.treble * 1.0), speed: 1.8, width: 2.0, yOff: 380 }
-      ];
-
-      waves.forEach(wave => {
-        ctx.strokeStyle = wave.color;
-        ctx.shadowColor = wave.color;
-        ctx.shadowBlur = wave.blur;
-        ctx.lineWidth = wave.width;
+      // 1. Cyber Waves
+      ctx.lineWidth = 3 + bass * 4;
+      for (let wave = 0; wave < 4; wave++) {
         ctx.beginPath();
-        for (let x = 0; x <= w; x += 10) {
-          const i = Math.floor((x / w) * (len - 1));
-          const val = (raw[i] || 0) / 255;
-          const sinPart = Math.sin(x * 0.012 + this.stagePhase * wave.speed) * Math.cos(x * 0.007);
-          const y = wave.yOff + sinPart * wave.amp + (val - 0.5) * wave.amp * 1.4;
+        ctx.strokeStyle = wave % 2 === 0 ? primaryHex : subHex;
+        ctx.shadowColor = ctx.strokeStyle;
+        ctx.shadowBlur = 14 + bass * 16;
+        for (let x = 0; x < w; x += 16) {
+          const freqVal = raw[(x / w * 32) | 0] || 0;
+          const y = h / 2 + Math.sin(x * 0.015 + time * 2 + wave) * (40 + bass * 70) + (freqVal / 255) * 50;
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
-      });
+      }
     } else if (this.vjMode === 1) {
-      // --- MODE 1: 📊 48-Band Mirrored Equalizer Spectrum Bars ---
-      const numBars = 44;
-      const barWidth = (w - 120) / numBars - 4;
-      const baseY = 420;
-
+      // 2. High-Density EQ Spectrum Bars
+      const numBars = 40;
+      const barW = (w - 120) / numBars;
       for (let i = 0; i < numBars; i++) {
-        const rawIdx = Math.floor((i / numBars) * (len - 1));
-        const val = ((raw[rawIdx] || 0) / 255) * (0.5 + audioAnalysis.bass * 0.7);
-        const barH = Math.max(6, val * 160);
+        const rawVal = raw[i % raw.length] || 0;
+        const targetH = (rawVal / 255) * 260 * (1.0 + bass * 0.5);
+        this.spectrumPeaks[i] = Math.max(targetH, (this.spectrumPeaks[i] || 0) * 0.92);
 
-        if (barH > this.spectrumPeaks[i]) {
-          this.spectrumPeaks[i] = barH;
-        } else {
-          this.spectrumPeaks[i] = Math.max(0, this.spectrumPeaks[i] - 2.5);
-        }
+        const bx = 60 + i * barW;
+        const by = h - 60 - this.spectrumPeaks[i];
 
-        const x = 60 + i * (barWidth + 4);
-        const y = baseY - barH;
+        const barGrad = ctx.createLinearGradient(0, by, 0, h - 60);
+        barGrad.addColorStop(0, subHex);
+        barGrad.addColorStop(0.5, primaryHex);
+        barGrad.addColorStop(1, 'rgba(0, 240, 255, 0.1)');
 
-        // Gradient Bar
-        const grad = ctx.createLinearGradient(0, y, 0, baseY);
-        grad.addColorStop(0, subHex);
-        grad.addColorStop(0.5, accentHex);
-        grad.addColorStop(1, '#1e293b');
-
-        ctx.fillStyle = grad;
-        ctx.shadowColor = accentHex;
-        ctx.shadowBlur = 8;
-        ctx.fillRect(x, y, barWidth, barH);
-
-        // Mirrored Reflection below base
-        ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
-        ctx.fillRect(x, baseY + 2, barWidth, barH * 0.35);
-
-        // Floating Peak Cap
-        ctx.fillStyle = '#ffffff';
-        ctx.shadowColor = '#ffffff';
-        ctx.shadowBlur = 6;
-        ctx.fillRect(x, baseY - this.spectrumPeaks[i] - 3, barWidth, 2.5);
+        ctx.fillStyle = barGrad;
+        ctx.shadowColor = primaryHex;
+        ctx.shadowBlur = 10;
+        ctx.fillRect(bx + 2, by, barW - 4, this.spectrumPeaks[i]);
       }
     } else if (this.vjMode === 2) {
-      // --- MODE 2: 🌌 Cyber Hyperspace Grid & Neon Horizon ---
-      ctx.strokeStyle = 'rgba(0, 240, 255, 0.18)';
-      ctx.lineWidth = 1.5;
-      const horizonY = 320;
-      const fovCenter = 512;
-
-      // Perspective Grid Lines
-      for (let x = -400; x <= w + 400; x += 100) {
-        ctx.beginPath();
-        ctx.moveTo(fovCenter, horizonY);
-        ctx.lineTo(x, h);
-        ctx.stroke();
-      }
-
-      // Moving Horizontal Distance Lines
-      const gridSpeed = (this.stagePhase * 40) % 35;
-      for (let d = 0; d < 180; d += 25) {
-        const y = horizonY + Math.pow((d + gridSpeed) / 180, 2) * (h - horizonY);
-        if (y <= h) {
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(w, y);
-          ctx.stroke();
-        }
-      }
-
-      // Glowing Sun / Halo at horizon
-      ctx.save();
-      const sunRad = 55 + (audioAnalysis.bass || 0) * 30;
-      ctx.shadowColor = subHex;
-      ctx.shadowBlur = 30;
-      ctx.strokeStyle = subHex;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(512, horizonY, sunRad, Math.PI, 0);
-      ctx.stroke();
-      ctx.restore();
-    } else if (this.vjMode === 3) {
-      // --- MODE 3: 🌀 Radial Audio Orbit & Geometric Star ---
-      const cx = 512;
-      const cy = 370;
-      const baseRad = 70 + (audioAnalysis.bass || 0) * 35;
-
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(this.radialAngle);
-
-      // Radial Spectrum Spikes
-      const spokes = 36;
-      for (let i = 0; i < spokes; i++) {
-        const ang = (i / spokes) * Math.PI * 2;
-        const rIdx = Math.floor((i / spokes) * (len - 1));
-        const mag = ((raw[rIdx] || 0) / 255) * 60 * (0.6 + audioAnalysis.mids);
-
-        const x1 = Math.cos(ang) * baseRad;
-        const y1 = Math.sin(ang) * baseRad;
-        const x2 = Math.cos(ang) * (baseRad + mag);
-        const y2 = Math.sin(ang) * (baseRad + mag);
-
-        ctx.strokeStyle = i % 2 === 0 ? accentHex : subHex;
-        ctx.shadowColor = ctx.strokeStyle;
-        ctx.shadowBlur = 10;
-        ctx.lineWidth = 2.5;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
-      }
-
-      // Inner Rotating Hexagon
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.shadowColor = '#00f0ff';
+      // 3. Hyperspace Cyber Grid
+      ctx.strokeStyle = primaryHex;
+      ctx.shadowColor = primaryHex;
       ctx.shadowBlur = 12;
+      ctx.lineWidth = 1.5;
+      const horizonY = h * 0.45;
+
+      for (let x = -w; x < w * 2; x += 64) {
+        ctx.beginPath();
+        ctx.moveTo(w / 2, horizonY);
+        ctx.lineTo(x + Math.sin(time) * 40, h);
+        ctx.stroke();
+      }
+      for (let y = horizonY; y < h; y += 24 + bass * 12) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+    } else if (this.vjMode === 3) {
+      // 4. Radial Pulse Rings
+      this.radialAngle += 0.02 + bass * 0.04;
+      const cx = w / 2;
+      const cy = h / 2;
+      for (let r = 0; r < 5; r++) {
+        const radius = (r * 50 + (time * 80) % 250) * (1.0 + bass * 0.3);
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+        ctx.strokeStyle = r % 2 === 0 ? primaryHex : subHex;
+        ctx.shadowColor = ctx.strokeStyle;
+        ctx.shadowBlur = 16;
+        ctx.lineWidth = 2 + beat * 4;
+        ctx.stroke();
+      }
+    } else {
+      // 5. Lissajous Vector Scope
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = accentHex;
+      ctx.shadowColor = accentHex;
+      ctx.shadowBlur = 20;
       ctx.beginPath();
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2 - this.radialAngle * 2;
-        const hx = Math.cos(a) * (baseRad * 0.55);
-        const hy = Math.sin(a) * (baseRad * 0.55);
-        if (i === 0) ctx.moveTo(hx, hy);
-        else ctx.lineTo(hx, hy);
+      for (let t = 0; t < Math.PI * 2; t += 0.05) {
+        const x = w / 2 + Math.sin(t * 3 + time * 3) * (180 + bass * 60);
+        const y = h / 2 + Math.cos(t * 2 + time * 2) * (120 + treble * 50);
+        if (t === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       }
       ctx.closePath();
       ctx.stroke();
-      ctx.restore();
-    } else if (this.vjMode === 4) {
-      // --- MODE 4: ⚡ Lissajous Oscilloscope Matrix ---
-      ctx.save();
-      ctx.translate(512, 380);
-      ctx.strokeStyle = accentHex;
-      ctx.shadowColor = accentHex;
-      ctx.shadowBlur = 18;
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-
-      const aParam = 3;
-      const bParam = 2;
-      const delta = this.stagePhase * 1.5;
-      const scaleX = 220 * (0.6 + audioAnalysis.bass * 0.6);
-      const scaleY = 70 * (0.6 + audioAnalysis.mids * 0.6);
-
-      for (let t = 0; t <= Math.PI * 2; t += 0.05) {
-        const lx = Math.sin(aParam * t + delta) * scaleX;
-        const ly = Math.sin(bParam * t) * scaleY;
-        if (t === 0) ctx.moveTo(lx, ly);
-        else ctx.lineTo(lx, ly);
-      }
-      ctx.stroke();
-      ctx.restore();
     }
 
-    // ==========================================
-    // 🎧 TOP STATUS BAR (Live Status, Genre & Time)
-    // ==========================================
-    // Subtle Top Bar Background Strip
-    ctx.fillStyle = 'rgba(10, 14, 24, 0.75)';
+    // TOP STATUS BAR (Live Status, Genre & Time)
+    ctx.fillStyle = 'rgba(5, 6, 12, 0.75)';
     ctx.fillRect(0, 0, w, 52);
-    ctx.strokeStyle = 'rgba(0, 240, 255, 0.2)';
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, 52);
-    ctx.lineTo(w, 52);
-    ctx.stroke();
 
-    // 1. Pulsing "● ON AIR" Indicator
-    const livePulse = Math.sin(now * 0.005) > 0;
-    ctx.fillStyle = livePulse ? '#ff0055' : '#880022';
+    ctx.fillStyle = '#ff0055';
     ctx.shadowColor = '#ff0055';
-    ctx.shadowBlur = livePulse ? 14 : 4;
+    ctx.shadowBlur = 12;
     ctx.beginPath();
-    ctx.arc(36, 26, 6, 0, Math.PI * 2);
+    ctx.arc(32, 26, 7 + beat * 3, 0, Math.PI * 2);
     ctx.fill();
 
-    ctx.font = '900 15px Orbitron, sans-serif';
+    ctx.font = '800 14px Orbitron, sans-serif';
     ctx.fillStyle = '#ffffff';
-    ctx.shadowColor = '#ffffff';
-    ctx.shadowBlur = 6;
+    ctx.shadowBlur = 0;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillText('ON AIR  |  JMF RADIO 24/7', 52, 26);
 
-    // 2. Genre / Style Pill Badge
     const genre = this.currentTrack?.genre;
     const genreText = genre ? (genre.name || 'ALL STYLES').replace(/^[\p{Emoji}\p{Extended_Pictographic}\uFE0F\s]+/u, '').trim() : 'ALL STYLES';
     const genreColor = genre?.color || '#00f0ff';
@@ -748,44 +999,29 @@ export class Room {
     ctx.textAlign = 'center';
     ctx.fillText(genreText, 512, 26);
 
-    // 3. Time Counter & BPM
     const bpm = this.currentTrack?.bpm || 128;
     const curMin = Math.floor(this.elapsedTime / 60);
     const curSec = Math.floor(this.elapsedTime % 60).toString().padStart(2, '0');
     const totMin = Math.floor(this.duration / 60);
     const totSec = Math.floor(this.duration % 60).toString().padStart(2, '0');
-    const timeStr = `${curMin}:${curSec} / ${totMin}:${totSec}  •  ${bpm} BPM`;
 
-    ctx.font = '700 14px "Space Grotesk", monospace';
-    ctx.fillStyle = '#94a3b8';
-    ctx.shadowBlur = 0;
-    ctx.textAlign = 'right';
-    ctx.fillText(timeStr, w - 36, 26);
-
-    // Track Progress Micro Line
-    const pct = this.duration > 0 ? Math.min(1.0, this.elapsedTime / this.duration) : 0;
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-    ctx.fillRect(0, 52, w, 2.5);
-    ctx.fillStyle = accentHex;
-    ctx.shadowColor = accentHex;
+    ctx.font = '700 13px Orbitron, sans-serif';
+    ctx.fillStyle = '#00f0ff';
+    ctx.shadowColor = '#00f0ff';
     ctx.shadowBlur = 8;
-    ctx.fillRect(0, 52, w * pct, 2.5);
+    ctx.textAlign = 'right';
+    ctx.fillText(`BPM: ${bpm}  |  ${curMin}:${curSec} / ${totMin}:${totSec}`, w - 24, 26);
 
-    // ==========================================
-    // 🎵 NOW PLAYING TRACK DISPLAY (Center of Screen)
-    // ==========================================
-    const track = this.currentTrack;
-    const artistName = (track?.artist || 'JMF RADIO').toUpperCase();
-    const trackTitle = (track?.title || 'THE FUTURE OF SOUND').toUpperCase();
+    // CENTER METADATA (Artist & Track Title)
+    const artistName = this.currentTrack?.artist ? this.currentTrack.artist.toUpperCase() : 'JMF RESIDENT DJ';
+    const trackTitle = this.currentTrack?.title ? this.currentTrack.title.toUpperCase() : 'LIVE AUDIO BROADCAST';
 
-    // Bass-reactive scaling on text
-    const bassScale = 1.0 + (audioAnalysis.bass || 0) * 0.08;
-
-    // 1. ARTIST NAME (Large, Powerful)
     ctx.save();
     ctx.translate(512, 135);
-    ctx.scale(bassScale, bassScale);
-    ctx.font = '900 52px Orbitron, sans-serif';
+    const scale = 1.0 + (audioAnalysis.bass || 0) * 0.08;
+    ctx.scale(scale, scale);
+
+    ctx.font = '900 42px Orbitron, sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.shadowColor = (audioAnalysis.bass || 0) > 0.65 ? subHex : accentHex;
     ctx.shadowBlur = 20 + (audioAnalysis.bass || 0) * 20;
@@ -794,7 +1030,6 @@ export class Room {
     ctx.fillText(artistName.length > 28 ? artistName.substring(0, 26) + '...' : artistName, 0, 0);
     ctx.restore();
 
-    // 2. TRACK TITLE (Glowing with smooth ticker scroll if long)
     ctx.save();
     ctx.font = '700 26px "Space Grotesk", sans-serif';
     ctx.fillStyle = accentHex;
@@ -813,8 +1048,7 @@ export class Room {
     }
     ctx.restore();
 
-    // 3. Mini VJ Mode Watermark in bottom corner
-    const vjModeNames = ['🌊 CYBER WAVES', '📊 SPECTRUM PEAKS', '🌌 HYPERSPACE GRID', '🌀 RADIAL ORBIT', '⚡ VECTOR SCOPE'];
+    const vjModeNames = ['CYBER WAVES', 'SPECTRUM PEAKS', 'HYPERSPACE GRID', 'RADIAL ORBIT', 'VECTOR SCOPE'];
     ctx.font = '700 11px Orbitron, sans-serif';
     ctx.fillStyle = 'rgba(148, 163, 184, 0.4)';
     ctx.shadowBlur = 0;
@@ -826,16 +1060,45 @@ export class Room {
 
   update(audioAnalysis, themeColors) {
     const time = performance.now() * 0.002;
+    const bass = audioAnalysis ? audioAnalysis.bass : 0;
+    const beat = audioAnalysis ? audioAnalysis.beat : 0;
+
+    // 1. Animate rooftop beacons
     for (let i = 0; i < this.cityBuildings.length; i++) {
       const beacon = this.cityBuildings[i];
       beacon.scale.setScalar(0.8 + 0.4 * Math.sin(time * 2 + i));
     }
 
+    // 2. Animate skyway aerial vehicle traffic outside window
+    for (let trail of this.skywayTrails) {
+      trail.mesh.position.x += trail.speed * trail.dir;
+      if (trail.dir > 0 && trail.mesh.position.x > 22) {
+        trail.mesh.position.x = -22;
+      } else if (trail.dir < 0 && trail.mesh.position.x < -22) {
+        trail.mesh.position.x = 22;
+      }
+    }
+
+    // 3. Theme & Audio Reactivity for Wall Cove Washers & Structural Columns
     if (themeColors) {
-      const bass = audioAnalysis.bass;
       for (let lamp of this.vipLights) {
         lamp.emissive.setHex(themeColors.accent || 0xff007f);
         lamp.emissiveIntensity = 0.5 + bass * 1.5;
+      }
+
+      for (let mat of this.columnLedMats) {
+        mat.color.setHex(themeColors.primary || 0x00f0ff);
+      }
+
+      for (let mat of this.wallWashNeonMats) {
+        mat.opacity = 0.45 + bass * 0.45 + beat * 0.2;
+        if (mat.color && themeColors.primary) {
+          mat.color.setHex(themeColors.primary);
+        }
+      }
+
+      for (let mat of this.artLightboxMats) {
+        mat.emissiveIntensity = 0.4 + bass * 0.6 + beat * 0.4;
       }
     }
 
