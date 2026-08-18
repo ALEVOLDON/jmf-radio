@@ -700,12 +700,12 @@ export class UIController {
       }
     };
 
-    let currentDjLang = localStorage.getItem('jmf_ui_lang') || (navigator.language?.startsWith('ru') ? 'ru' : 'en');
+    let currentDjLang = localStorage.getItem('jmf_ui_lang') || 'en';
 
     const updateDjModalLang = (lang) => {
       currentDjLang = lang;
       localStorage.setItem('jmf_ui_lang', lang);
-      const dict = djAuthDict[lang] || djAuthDict.ru;
+      const dict = djAuthDict[lang] || djAuthDict.en;
 
       const titleEl = document.getElementById('dj-auth-title');
       const headingEl = document.getElementById('dj-auth-heading');
